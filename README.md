@@ -1,2 +1,2 @@
-# money-flow
-A web app to help people to control they finances
+# stay-focused
+A browser extension to help you to stay focused!
