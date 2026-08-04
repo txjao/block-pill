@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "Block Pill",
+  "short_name": "Block Pill",
+  "version": "0.1.0",
+  "description": "Uma extensão privada para reduzir distrações e recuperar o controle da navegação.",
+  "author": "txjao",
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_title": "Block Pill",
+    "default_popup": "src/entrypoints/popup/index.html",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png",
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png"
+    }
+  },
+  "options_page": "src/entrypoints/options/index.html",
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  }
+}

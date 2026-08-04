@@ -1,0 +1,11 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M15.4995 30.9999C5.50022 30.9999 5.50031 17.9999 15.4995 17.9999" stroke="black" stroke-width="2"/>
+<line x1="24.0001" y1="29.9999" x2="24.0001" y2="18.9999" stroke="black" stroke-width="2"/>
+<line x1="25.0001" y1="30.9999" x2="15.0001" y2="30.9999" stroke="black" stroke-width="2"/>
+<line x1="25.0001" y1="17.9999" x2="15.0001" y2="17.9999" stroke="black" stroke-width="2"/>
+<path d="M32.5006 30.9999C42.4999 30.9999 42.4998 17.9999 32.5006 17.9999" stroke="black" stroke-width="2"/>
+<line y1="-1" x2="10" y2="-1" transform="matrix(1 0 0 -1 23.0001 29.9999)" stroke="black" stroke-width="2"/>
+<line y1="-1" x2="10" y2="-1" transform="matrix(1 0 0 -1 23.0001 16.9999)" stroke="black" stroke-width="2"/>
+<circle cx="24" cy="24" r="23" stroke="#FF383C" stroke-width="2"/>
+<line x1="7.93109" y1="39.4514" x2="39.9311" y2="6.94766" stroke="#FF383C" stroke-width="3"/>
+</svg>
