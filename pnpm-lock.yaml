@@ -6,7 +6,9 @@ settings:
 
 importers:
 
-  .:
+  .: {}
+
+  apps/extension:
     dependencies:
       preact:
         specifier: ^10.29.8
@@ -30,6 +32,22 @@ importers:
       vitest:
         specifier: ^4.1.10
         version: 4.1.10(@types/node@26.1.2)(vite@8.2.0(@types/node@26.1.2))
+
+  apps/web:
+    dependencies:
+      preact:
+        specifier: ^10.29.8
+        version: 10.29.8
+    devDependencies:
+      '@preact/preset-vite':
+        specifier: ^2.10.6
+        version: 2.10.6(@babel/core@7.29.7)(preact@10.29.8)(vite@8.2.0(@types/node@26.1.2))
+      typescript:
+        specifier: ^7.0.2
+        version: 7.0.2
+      vite:
+        specifier: ^8.2.0
+        version: 8.2.0(@types/node@26.1.2)
 
 packages:
 

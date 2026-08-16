@@ -2,12 +2,29 @@
 
 Block Pill é uma extensão de navegador filantrópica e focada em privacidade para ajudar pessoas que desejam reduzir distrações digitais.
 
+O repositório também contém a landing page pública do projeto.
+
 ## Estado do projeto
 
-O projeto está na fundação técnica. O bloqueio de sites e conteúdos ainda não foi implementado.
+O primeiro fluxo de bloqueio padrão está implementado: domínios podem ser
+adicionados e removidos nas configurações, são armazenados localmente e geram
+regras persistentes de redirecionamento para a página de bloqueio.
 
 A organização do código e as regras de dependência estão descritas em
 [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md).
+
+## Estrutura
+
+```text
+apps/
+├── extension/  # Extensão Manifest V3
+└── web/        # Landing page publicada na Vercel
+shared/
+└── brand/      # Identidade visual consumida pelas duas aplicações
+```
+
+O workspace é coordenado por pnpm. Cada aplicação possui configuração, scripts,
+dependências e diretório de build próprios.
 
 ## Princípios
 
@@ -22,20 +39,33 @@ Requisitos: Node.js 20.19 ou superior e pnpm 11.
 
 ```bash
 pnpm install
-pnpm dev
 ```
 
-O build de produção é gerado em `dist/`:
+Para iniciar a landing page:
 
 ```bash
-pnpm build
+pnpm dev:web
 ```
 
-Para executar testes e validar o pacote:
+Para observar o build da extensão:
+
+```bash
+pnpm dev:extension
+```
+
+Para validar as duas aplicações:
 
 ```bash
 pnpm check
 ```
+
+Os artefatos são gerados separadamente em `apps/web/dist` e
+`apps/extension/dist`.
+
+## Vercel
+
+Crie um projeto Vercel apontando a Root Directory para `apps/web`. O preset é
+Vite, o comando de build é `pnpm build` e o diretório de saída é `dist`.
 
 ## Privacidade
 
