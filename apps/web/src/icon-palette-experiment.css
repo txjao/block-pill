@@ -1,0 +1,42 @@
+@import "../../../shared/brand/tokens.css";
+
+/**
+ * EXPERIMENTAL THEME
+ * Remove the import of this file from index.tsx to restore the previous palette.
+ */
+:root {
+  --ink: var(--brand-foreground);
+  --paper: var(--brand-canvas);
+  --surface: var(--brand-inverse-canvas);
+  --muted: var(--brand-muted);
+  --line: var(--brand-line);
+  --red: var(--brand-red);
+  --red-dark: var(--brand-red);
+}
+
+body { background: var(--brand-canvas); }
+::selection { color: var(--brand-black); background: var(--brand-red); }
+
+.hero { color: var(--brand-white); background: var(--brand-black); }
+.hero-media { background: var(--brand-black); }
+.hero-media-overlay { background: transparent; }
+.site-header {
+  color: var(--brand-white);
+  background: color-mix(in srgb, var(--brand-black) 94%, transparent);
+  border-color: var(--brand-line-inverse);
+}
+.site-header .logo img { border-radius: 50%; background: var(--brand-white); }
+.nav-cta { border-color: var(--brand-white); }
+.hero-copy > p { color: color-mix(in srgb, var(--brand-white) 72%, var(--brand-black)); }
+.button-primary { color: var(--brand-action-foreground); background: var(--brand-action); }
+.button-primary:hover { background: var(--brand-action-hover); }
+.hero .route { background: var(--brand-white); }
+.hero .impulse { background: var(--brand-white); }
+.hero .mechanism-label { color: color-mix(in srgb, var(--brand-white) 68%, var(--brand-black)); }
+.hero .choice { color: var(--brand-white); background: var(--brand-black); border-color: var(--brand-white); }
+.hero .choice::before { border-color: var(--brand-line-inverse); }
+
+.contribute { color: var(--brand-black); background: var(--brand-red); }
+.contribute p, .contribute-actions > a:not(.button) { color: var(--brand-black); }
+.button-light { color: var(--brand-black); background: var(--brand-white); }
+.contribute :focus-visible { outline-color: var(--brand-white); }

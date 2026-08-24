@@ -1,6 +1,3 @@
-import preact from "@preact/preset-vite";
+import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
-
-export default defineConfig({
-  plugins: [preact()]
-});
+export default defineConfig({ plugins: [react()] });

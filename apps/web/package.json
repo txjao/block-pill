@@ -8,9 +8,18 @@
     "build": "tsc --noEmit && vite build",
     "check": "pnpm build"
   },
-  "dependencies": { "preact": "^10.29.8" },
+  "dependencies": {
+    "@gsap/react": "^2.1.2",
+    "@radix-ui/react-accordion": "^1.2.12",
+    "gsap": "^3.13.0",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "@fontsource-variable/bricolage-grotesque": "^5.2.8"
+  },
   "devDependencies": {
-    "@preact/preset-vite": "^2.10.6",
+    "@types/react": "^19.1.12",
+    "@types/react-dom": "^19.1.9",
+    "@vitejs/plugin-react": "^5.0.4",
     "typescript": "^7.0.2",
     "vite": "^8.2.0"
   }

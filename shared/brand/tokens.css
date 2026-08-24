@@ -1,0 +1,20 @@
+/**
+ * Block Pill brand foundations.
+ * Canonical source: the official icon palette.
+ */
+:root {
+  --brand-red: #ff2c2c;
+  --brand-black: #000000;
+  --brand-white: #ffffff;
+
+  --brand-action: var(--brand-red);
+  --brand-action-foreground: var(--brand-black);
+  --brand-canvas: var(--brand-white);
+  --brand-foreground: var(--brand-black);
+  --brand-inverse-canvas: var(--brand-black);
+  --brand-inverse-foreground: var(--brand-white);
+  --brand-muted: color-mix(in srgb, var(--brand-black) 62%, var(--brand-white));
+  --brand-line: color-mix(in srgb, var(--brand-black) 18%, var(--brand-white));
+  --brand-line-inverse: color-mix(in srgb, var(--brand-white) 24%, var(--brand-black));
+  --brand-action-hover: color-mix(in srgb, var(--brand-red) 86%, var(--brand-black));
+}

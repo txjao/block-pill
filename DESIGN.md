@@ -2,21 +2,18 @@
 name: Block Pill
 description: Fricção consciente para uma navegação com mais intenção.
 colors:
-  interruption-red: "#e92d32"
-  action-red: "#bd1f24"
-  ink: "#201e22"
-  paper: "#f4f1ed"
-  muted: "#69636a"
-  line: "#cbc5c2"
+  brand-red: "#FF2C2C"
+  brand-black: "#000000"
+  brand-white: "#FFFFFF"
 typography:
   display:
-    fontFamily: "Aptos, Segoe UI Variable, Helvetica Neue, sans-serif"
+    fontFamily: "Bricolage Grotesque, Segoe UI Variable, sans-serif"
     fontSize: "clamp(3.55rem, 7vw, 6rem)"
     fontWeight: 770
     lineHeight: 0.95
     letterSpacing: "-0.04em"
   body:
-    fontFamily: "Aptos, Segoe UI Variable, Helvetica Neue, sans-serif"
+    fontFamily: "Bricolage Grotesque, Segoe UI Variable, sans-serif"
     fontSize: "clamp(1.08rem, 1.6vw, 1.3rem)"
     lineHeight: 1.55
 rounded:
@@ -27,8 +24,8 @@ spacing:
   section-min: "90px"
 components:
   button-primary:
-    backgroundColor: "{colors.action-red}"
-    textColor: "#ffffff"
+    backgroundColor: "{colors.brand-red}"
+    textColor: "{colors.brand-black}"
     rounded: "{rounded.action}"
     padding: "0 21px"
     height: "50px"
@@ -44,14 +41,14 @@ A landing transforma a pausa no próprio material visual. Linhas horizontais rep
 
 **Key Characteristics:**
 
-- Papel frio, tinta grafite e um único acento vermelho.
+- Branco, preto e o vermelho exato do ícone como único acento cromático.
 - Tipografia grande e direta, sem linguagem punitiva.
 - Divisórias e espaço negativo no lugar de coleções de cards.
 - Movimento concentrado na demonstração do mecanismo.
 
 ## Colors
 
-O vermelho Block Pill é raro e funcional; os neutros carregam quase toda a superfície.
+A paleta canônica contém apenas vermelho, preto e branco. Tons auxiliares devem ser derivados por transparência ou `color-mix()`, nunca adicionados como novas cores de marca.
 
 **The Interruption Rule.** Use o vermelho para barreiras, ações principais e estados significativos, nunca como decoração ambiente.
 
@@ -77,7 +74,7 @@ Superfícies editoriais são retas. O contêiner escuro de features usa raio sua
 
 ### Buttons
 
-- Primário: pílula vermelho-escura com texto branco e altura mínima de 50px.
+- Primário: pílula `#FF2C2C` com texto preto e altura mínima de 50px; essa combinação preserva contraste para texto de ação.
 - Claro: pílula branca sobre a chamada final vermelha.
 - Hover: deslocamento vertical de -2px; active retorna 1px para baixo.
 - Focus: contorno vermelho de 3px com afastamento de 4px.
@@ -103,3 +100,17 @@ A demonstração de pausa combina linha de percurso, ponto em movimento, barreir
 - **Don't** transformar a landing em uma grade de cards SaaS.
 - **Don't** inventar métricas, depoimentos ou funcionalidades.
 - **Don't** aplicar círculos, pílulas ou vermelho sem significado funcional.
+
+## Canonical Brand Tokens
+
+- `--brand-red: #FF2C2C` — interrupção, ação e estados significativos.
+- `--brand-black: #000000` — estrutura, texto e superfícies de alto contraste.
+- `--brand-white: #FFFFFF` — canvas, respiro e conteúdo inverso.
+- Cinzas, linhas e estados hover são misturas desses três tokens.
+- A fonte de código é `shared/brand/tokens.css`.
+
+## Palette Experiment
+
+A aplicação da paleta na landing está isolada em `apps/web/src/icon-palette-experiment.css`. Ela é carregada depois dos estilos estáveis e não altera a extensão.
+
+Para reverter o teste, remova apenas o import de `./icon-palette-experiment.css` em `apps/web/src/index.tsx`. A landing anterior volta sem desfazer componentes, movimento ou layout.
