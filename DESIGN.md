@@ -2,33 +2,33 @@
 name: Block Pill
 description: Fricção consciente para uma navegação com mais intenção.
 colors:
-  brand-red: "#FF2C2C"
-  brand-black: "#000000"
-  brand-white: "#FFFFFF"
+  brand-red: '#FF2C2C'
+  brand-black: '#000000'
+  brand-white: '#FFFFFF'
 typography:
   display:
-    fontFamily: "Bricolage Grotesque, Segoe UI Variable, sans-serif"
-    fontSize: "clamp(3.55rem, 7vw, 6rem)"
+    fontFamily: 'Bricolage Grotesque, Segoe UI Variable, sans-serif'
+    fontSize: 'clamp(3.55rem, 7vw, 6rem)'
     fontWeight: 770
     lineHeight: 0.95
-    letterSpacing: "-0.04em"
+    letterSpacing: '-0.04em'
   body:
-    fontFamily: "Bricolage Grotesque, Segoe UI Variable, sans-serif"
-    fontSize: "clamp(1.08rem, 1.6vw, 1.3rem)"
+    fontFamily: 'Bricolage Grotesque, Segoe UI Variable, sans-serif'
+    fontSize: 'clamp(1.08rem, 1.6vw, 1.3rem)'
     lineHeight: 1.55
 rounded:
-  surface: "16px"
-  action: "999px"
+  surface: '16px'
+  action: '999px'
 spacing:
-  page-gutter: "24px"
-  section-min: "90px"
+  page-gutter: '24px'
+  section-min: '90px'
 components:
   button-primary:
-    backgroundColor: "{colors.brand-red}"
-    textColor: "{colors.brand-black}"
-    rounded: "{rounded.action}"
-    padding: "0 21px"
-    height: "50px"
+    backgroundColor: '{colors.brand-red}'
+    textColor: '{colors.brand-black}'
+    rounded: '{rounded.action}'
+    padding: '0 21px'
+    height: '50px'
 ---
 
 # Design System: Block Pill
