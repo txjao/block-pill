@@ -9,7 +9,7 @@ interface InfoPopoverProps {
 export function InfoPopover({ label, children }: InfoPopoverProps) {
   const [open, setOpen] = useState(false);
   const id = useId();
-  
+
   return (
     <span class="info-popover">
       <button
