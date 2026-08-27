@@ -5,6 +5,8 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "dev:web": "pnpm --filter @block-pill/web dev",
     "dev:extension": "pnpm --filter @block-pill/extension dev",
     "build": "pnpm -r build",
@@ -17,11 +19,22 @@
     "type": "git",
     "url": "git+https://github.com/txjao/block-pill.git"
   },
-  "keywords": ["browser-extension", "focus", "privacy"],
+  "keywords": [
+    "browser-extension",
+    "focus",
+    "privacy"
+  ],
   "author": "txjao",
   "license": "ISC",
-  "bugs": { "url": "https://github.com/txjao/block-pill/issues" },
+  "bugs": {
+    "url": "https://github.com/txjao/block-pill/issues"
+  },
   "homepage": "https://github.com/txjao/block-pill#readme",
   "packageManager": "pnpm@11.7.0",
-  "engines": { "node": ">=20.19.0" }
+  "devDependencies": {
+    "prettier": "^3.7.4"
+  },
+  "engines": {
+    "node": ">=20.19.0"
+  }
 }
