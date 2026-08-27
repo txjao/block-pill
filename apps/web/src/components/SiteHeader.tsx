@@ -1,5 +1,5 @@
-import icon from "../../../../shared/brand/icons/block-pill-transparent.svg?url";
-import { repo } from "../content";
+import icon from '../../../../shared/brand/icons/block-pill-transparent.svg?url';
+import { repo } from '../content';
 
 export function Logo() {
   return (
@@ -16,8 +16,12 @@ export function SiteHeader() {
       <div className="header-inner">
         <Logo />
         <nav aria-label="Navegação principal">
-          <a href="#como">Como funciona</a>
-          <a href="#principios">Princípios</a>
+          <a className="motion-link nav-link" href="#como">
+            Como funciona
+          </a>
+          <a className="motion-link nav-link" href="#principios">
+            Princípios
+          </a>
           <a className="nav-cta" href={repo} target="_blank" rel="noreferrer">
             GitHub <span aria-hidden="true">↗</span>
           </a>

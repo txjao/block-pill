@@ -4,30 +4,136 @@
   "title": "Design System: Block Pill",
   "extensions": {
     "colorMeta": {
-      "interruption-red": { "role": "primary", "displayName": "Vermelho de Interrupção", "canonical": "#e92d32", "tonalRamp": ["#3c080a", "#651014", "#941a1f", "#bd1f24", "#e92d32", "#f36c70", "#fab0b2", "#ffe7e8"] },
-      "ink": { "role": "neutral", "displayName": "Tinta Grafite", "canonical": "#201e22", "tonalRamp": ["#201e22", "#39363c", "#534f56", "#706a72", "#918b92", "#b4afb5", "#d9d5d9", "#f4f1ed"] },
-      "paper": { "role": "neutral", "displayName": "Papel Frio", "canonical": "#f4f1ed", "tonalRamp": ["#242220", "#494541", "#6d6862", "#938d86", "#b8b2ab", "#d4cfc9", "#e8e4df", "#f4f1ed"] }
+      "interruption-red": {
+        "role": "primary",
+        "displayName": "Vermelho de Interrupção",
+        "canonical": "#e92d32",
+        "tonalRamp": [
+          "#3c080a",
+          "#651014",
+          "#941a1f",
+          "#bd1f24",
+          "#e92d32",
+          "#f36c70",
+          "#fab0b2",
+          "#ffe7e8"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Tinta Grafite",
+        "canonical": "#201e22",
+        "tonalRamp": [
+          "#201e22",
+          "#39363c",
+          "#534f56",
+          "#706a72",
+          "#918b92",
+          "#b4afb5",
+          "#d9d5d9",
+          "#f4f1ed"
+        ]
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Papel Frio",
+        "canonical": "#f4f1ed",
+        "tonalRamp": [
+          "#242220",
+          "#494541",
+          "#6d6862",
+          "#938d86",
+          "#b8b2ab",
+          "#d4cfc9",
+          "#e8e4df",
+          "#f4f1ed"
+        ]
+      }
     },
     "typographyMeta": {
       "display": { "displayName": "Display direto", "purpose": "Hero e títulos de seção." },
       "body": { "displayName": "Corpo legível", "purpose": "Explicações e conteúdo de apoio." }
     },
-    "shadows": [{ "name": "impact-barrier", "value": "8px 14px 28px rgb(189 31 36 / 20%)", "purpose": "Marca a barreira da demonstração." }],
-    "motion": [{ "name": "intent", "value": "4.8s cubic-bezier(.22,1,.36,1)", "purpose": "Leva o impulso até a barreira e o devolve." }],
-    "breakpoints": [{ "name": "stack", "value": "820px" }, { "name": "compact", "value": "520px" }]
+    "shadows": [
+      {
+        "name": "impact-barrier",
+        "value": "8px 14px 28px rgb(189 31 36 / 20%)",
+        "purpose": "Marca a barreira da demonstração."
+      }
+    ],
+    "motion": [
+      {
+        "name": "intent",
+        "value": "4.8s cubic-bezier(.22,1,.36,1)",
+        "purpose": "Leva o impulso até a barreira e o devolve."
+      }
+    ],
+    "breakpoints": [
+      { "name": "stack", "value": "820px" },
+      { "name": "compact", "value": "520px" }
+    ]
   },
   "components": [
-    { "name": "Primary Button", "kind": "button", "refersTo": "button-primary", "description": "Ação principal de colaboração.", "html": "<a class=\"ds-button\" href=\"#\">Explorar o código</a>", "css": ".ds-button{display:inline-flex;align-items:center;min-height:50px;padding:0 21px;border-radius:999px;background:#bd1f24;color:#fff;font:700 16px sans-serif;text-decoration:none;transition:.2s}.ds-button:hover{background:#97191d;transform:translateY(-2px)}.ds-button:focus-visible{outline:3px solid #e92d32;outline-offset:4px}" },
-    { "name": "Navigation CTA", "kind": "nav", "description": "Acesso persistente ao repositório.", "html": "<a class=\"ds-nav-cta\" href=\"#\">Ver no GitHub</a>", "css": ".ds-nav-cta{display:inline-block;padding:10px 15px;border:1px solid #201e22;border-radius:999px;color:#201e22;font:600 14px sans-serif;text-decoration:none}.ds-nav-cta:focus-visible{outline:3px solid #e92d32;outline-offset:4px}" },
-    { "name": "Roadmap Status", "kind": "chip", "description": "Distingue ideias de funcionalidades entregues.", "html": "<span class=\"ds-status\">EM EXPLORAÇÃO</span>", "css": ".ds-status{color:#e92d32;font:750 11px sans-serif;letter-spacing:.08em;text-transform:uppercase}" },
-    { "name": "Feature Surface", "kind": "card", "description": "Agrupa capacidades disponíveis em uma superfície escura.", "html": "<section class=\"ds-feature\"><h3>Local por princípio</h3><p>Seus dados ficam no navegador.</p></section>", "css": ".ds-feature{padding:30px;border-radius:16px;background:#201e22;color:#fff}.ds-feature h3{margin:0 0 8px}.ds-feature p{margin:0;color:#c7c2c8;line-height:1.55}" }
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Ação principal de colaboração.",
+      "html": "<a class=\"ds-button\" href=\"#\">Explorar o código</a>",
+      "css": ".ds-button{display:inline-flex;align-items:center;min-height:50px;padding:0 21px;border-radius:999px;background:#bd1f24;color:#fff;font:700 16px sans-serif;text-decoration:none;transition:.2s}.ds-button:hover{background:#97191d;transform:translateY(-2px)}.ds-button:focus-visible{outline:3px solid #e92d32;outline-offset:4px}"
+    },
+    {
+      "name": "Navigation CTA",
+      "kind": "nav",
+      "description": "Acesso persistente ao repositório.",
+      "html": "<a class=\"ds-nav-cta\" href=\"#\">Ver no GitHub</a>",
+      "css": ".ds-nav-cta{display:inline-block;padding:10px 15px;border:1px solid #201e22;border-radius:999px;color:#201e22;font:600 14px sans-serif;text-decoration:none}.ds-nav-cta:focus-visible{outline:3px solid #e92d32;outline-offset:4px}"
+    },
+    {
+      "name": "Roadmap Status",
+      "kind": "chip",
+      "description": "Distingue ideias de funcionalidades entregues.",
+      "html": "<span class=\"ds-status\">EM EXPLORAÇÃO</span>",
+      "css": ".ds-status{color:#e92d32;font:750 11px sans-serif;letter-spacing:.08em;text-transform:uppercase}"
+    },
+    {
+      "name": "Feature Surface",
+      "kind": "card",
+      "description": "Agrupa capacidades disponíveis em uma superfície escura.",
+      "html": "<section class=\"ds-feature\"><h3>Local por princípio</h3><p>Seus dados ficam no navegador.</p></section>",
+      "css": ".ds-feature{padding:30px;border-radius:16px;background:#201e22;color:#fff}.ds-feature h3{margin:0 0 8px}.ds-feature p{margin:0;color:#c7c2c8;line-height:1.55}"
+    }
   ],
   "narrative": {
     "northStar": "A Interrupção Consciente",
     "overview": "A pausa é o material visual. Linhas representam fluxo; vermelho interrompe; círculos representam escolha recuperada.",
-    "keyCharacteristics": ["Papel frio, tinta grafite e um acento vermelho.", "Tipografia grande e direta.", "Divisórias e espaço negativo.", "Movimento concentrado no mecanismo."],
-    "rules": [{ "name": "Interruption Rule", "body": "Use vermelho para barreiras, ações e estados significativos.", "section": "colors" }, { "name": "Direct Voice Rule", "body": "Sem eyebrows ou texto em gradiente.", "section": "typography" }],
-    "dos": ["Preserve o vermelho como único acento.", "Diferencie disponível de exploratório.", "Mantenha foco, contraste e redução de movimento."],
-    "donts": ["Não use grade de cards SaaS.", "Não invente métricas ou funcionalidades.", "Não use círculos ou vermelho sem significado."]
+    "keyCharacteristics": [
+      "Papel frio, tinta grafite e um acento vermelho.",
+      "Tipografia grande e direta.",
+      "Divisórias e espaço negativo.",
+      "Movimento concentrado no mecanismo."
+    ],
+    "rules": [
+      {
+        "name": "Interruption Rule",
+        "body": "Use vermelho para barreiras, ações e estados significativos.",
+        "section": "colors"
+      },
+      {
+        "name": "Direct Voice Rule",
+        "body": "Sem eyebrows ou texto em gradiente.",
+        "section": "typography"
+      }
+    ],
+    "dos": [
+      "Preserve o vermelho como único acento.",
+      "Diferencie disponível de exploratório.",
+      "Mantenha foco, contraste e redução de movimento."
+    ],
+    "donts": [
+      "Não use grade de cards SaaS.",
+      "Não invente métricas ou funcionalidades.",
+      "Não use círculos ou vermelho sem significado."
+    ]
   }
 }
