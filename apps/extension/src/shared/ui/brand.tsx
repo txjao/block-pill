@@ -1,4 +1,4 @@
-import blockPillIcon from "../../../../../shared/brand/icons/block-pill-transparent.svg?url";
+import blockPillIcon from '../../../../../shared/brand/icons/block-pill-transparent.svg?url';
 
 interface BrandProps {
   title: string;

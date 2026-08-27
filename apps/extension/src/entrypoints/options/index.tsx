@@ -1,157 +1,67 @@
-import { useEffect, useState } from "preact/hooks";
-import type { JSX } from "preact";
-import type {
-  StandardBlockingRequest,
-  StandardBlockingResponse
-} from "../../contracts/standard-blocking-messages";
-import type { StandardBlock } from "../../modules/standard-blocking";
-import { Brand } from "../../shared/ui/brand";
-import { renderPage } from "../../shared/ui/render-page";
-import "../../shared/ui/base.css";
+import { StandardBlockPage } from '../../features/standard-block';
+import { PermanentBlockPage } from '../../features/permanent-block';
+import { ActivityDashboardPage } from '../../features/activity';
+import { AntiModePage } from '../../features/anti-mode';
+import { useState } from 'preact/hooks';
+import { Brand } from '../../shared/ui/brand';
+import { renderPage } from '../../shared/ui/render-page';
+import '../../shared/ui/base.css';
+import '../../shared/ui/design-system.css';
+import '../../shared/ui/feature-overrides.css';
+import '../../shared/ui/anti-dashboard.css';
 
-export function Options() {
-  const [blocks, setBlocks] = useState<StandardBlock[]>([]);
-  const [hostname, setHostname] = useState("");
-  const [feedback, setFeedback] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
+type SettingsSection = 'blocking' | 'anti' | 'activity';
 
-  useEffect(() => {
-    void loadBlocks();
-  }, []);
+function initialSection(): SettingsSection {
+  const section = new URLSearchParams(window.location.search).get('section');
+  return section === 'anti' || section === 'activity' ? section : 'blocking';
+}
 
-  async function loadBlocks() {
-    setIsLoading(true);
-    const response = await sendStandardBlockingMessage({
-      type: "standard-blocking/list"
-    });
+function SettingsApp() {
+  const [section, setSection] = useState<SettingsSection>(initialSection);
+  const sections: Array<{ id: SettingsSection; label: string; hint: string }> = [
+    { id: 'blocking', label: 'Bloqueios', hint: 'Regras padrão e permanentes' },
+    { id: 'anti', label: 'Modos anti', hint: 'Compromissos de proteção' },
+    { id: 'activity', label: 'Atividade', hint: 'Registros locais por modo' },
+  ];
 
-    if (response.ok) {
-      setBlocks(response.blocks);
-      setFeedback("");
-    } else {
-      setFeedback(response.message);
-    }
-
-    setIsLoading(false);
-  }
-
-  async function addBlock(event: JSX.TargetedSubmitEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setIsLoading(true);
-
-    const response = await sendStandardBlockingMessage({
-      type: "standard-blocking/add",
-      hostname
-    });
-
-    if (response.ok) {
-      setBlocks(response.blocks);
-      setHostname("");
-      setFeedback("Domínio bloqueado.");
-    } else {
-      setFeedback(response.message);
-    }
-
-    setIsLoading(false);
-  }
-
-  async function removeBlock(block: StandardBlock) {
-    setIsLoading(true);
-    const response = await sendStandardBlockingMessage({
-      type: "standard-blocking/remove",
-      hostname: block.hostname
-    });
-
-    if (response.ok) {
-      setBlocks(response.blocks);
-      setFeedback("Domínio removido dos bloqueios padrão.");
-    } else {
-      setFeedback(response.message);
-    }
-
-    setIsLoading(false);
+  function selectSection(next: SettingsSection) {
+    setSection(next);
+    history.replaceState(null, '', `?section=${next}`);
   }
 
   return (
-    <main>
+    <main class="settings-shell">
       <Brand title="Configurações" />
-      <p>
-        Cadastre os sites que deseja interromper. Endereços completos são
-        convertidos para o domínio correspondente.
+      <p class="page-intro">
+        Defina onde o Block Pill cria uma pausa. Tudo é armazenado somente neste navegador.
       </p>
-
-      <section class="panel" aria-labelledby="standard-blocks-title">
-        <h2 id="standard-blocks-title">Bloqueios padrão</h2>
-        <form class="domain-form" onSubmit={addBlock}>
-          <label for="hostname">Domínio ou endereço do site</label>
-          <div class="form-row">
-            <input
-              id="hostname"
-              name="hostname"
-              type="text"
-              inputMode="url"
-              placeholder="exemplo.com"
-              value={hostname}
-              onInput={(event) => setHostname(event.currentTarget.value)}
-              disabled={isLoading}
-              required
-            />
-            <button type="submit" disabled={isLoading}>
-              Bloquear
-            </button>
+      <nav class="settings-nav" aria-label="Seções das configurações">
+        {sections.map((item) => (
+          <button
+            key={item.id}
+            class={section === item.id ? 'is-current' : 'secondary-button'}
+            type="button"
+            aria-current={section === item.id ? 'page' : undefined}
+            onClick={() => selectSection(item.id)}
+          >
+            <span>{item.label}</span>
+            <small>{item.hint}</small>
+          </button>
+        ))}
+      </nav>
+      <div class="settings-content">
+        {section === 'blocking' && (
+          <div class="blocking-stack">
+            <StandardBlockPage />
+            <PermanentBlockPage />
           </div>
-        </form>
-
-        <p class="feedback" aria-live="polite">
-          {feedback}
-        </p>
-
-        {blocks.length === 0 ? (
-          <p class="empty-state">
-            {isLoading ? "Carregando bloqueios…" : "Nenhum domínio bloqueado."}
-          </p>
-        ) : (
-          <ul class="domain-list">
-            {blocks.map((block) => (
-              <li key={block.hostname}>
-                <span>{block.hostname}</span>
-                <button
-                  class="secondary-button"
-                  type="button"
-                  disabled={isLoading}
-                  onClick={() => void removeBlock(block)}
-                >
-                  Remover
-                </button>
-              </li>
-            ))}
-          </ul>
         )}
-      </section>
+        {section === 'anti' && <AntiModePage />}
+        {section === 'activity' && <ActivityDashboardPage />}
+      </div>
     </main>
   );
 }
 
-async function sendStandardBlockingMessage(
-  request: StandardBlockingRequest
-): Promise<StandardBlockingResponse> {
-  try {
-    const response = await chrome.runtime.sendMessage<
-      StandardBlockingRequest,
-      StandardBlockingResponse
-    >(request);
-
-    if (response && typeof response.ok === "boolean") {
-      return response;
-    }
-
-    throw new Error("Resposta inválida do service worker.");
-  } catch {
-    return {
-      ok: false,
-      message: "Não foi possível comunicar com a extensão. Tente novamente."
-    };
-  }
-}
-
-renderPage(<Options />);
+renderPage(<SettingsApp />);
