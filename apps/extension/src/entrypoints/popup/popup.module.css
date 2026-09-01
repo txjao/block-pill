@@ -1,0 +1,182 @@
+.popup {
+  width: 380px;
+  min-height: 100%;
+  padding: 18px 20px 20px;
+  background: var(--color-surface);
+}
+
+.header,
+.inverseTopline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.header > button,
+.inverseTopline > button {
+  min-height: 32px;
+  padding: 0;
+  border: 0;
+  color: var(--color-text-muted);
+  background: transparent;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.siteRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 22px 0 14px;
+}
+
+.siteRow strong {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.summary {
+  margin: 18px 0 0;
+}
+
+.summary > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 2px;
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.summary dt {
+  color: var(--color-text-secondary);
+  font-size: 0.8125rem;
+}
+
+.summary dd {
+  margin: 0;
+  color: var(--color-text);
+  font-size: 0.78125rem;
+  font-weight: 600;
+  text-align: right;
+}
+
+.permissionAlert {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  padding: 12px;
+  border-left: 3px solid var(--color-action);
+  border-radius: 12px;
+  background: var(--color-danger-surface);
+}
+
+.permissionAlert p {
+  margin: 0;
+  font-size: 0.8125rem;
+}
+
+.footerActions,
+.actions {
+  display: grid;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.eyebrow {
+  margin: 22px 0 8px;
+  color: var(--color-text-secondary);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.tooltipTrigger {
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  color: var(--color-danger);
+  background: transparent;
+  font: inherit;
+  text-decoration: underline dotted;
+  text-underline-offset: 3px;
+  cursor: help;
+}
+
+.hostname {
+  margin: 0;
+  overflow-wrap: anywhere;
+  font-size: 1.625rem;
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+}
+
+.paused {
+  padding: 0;
+}
+
+.inverseHeader {
+  padding: 22px 20px 20px;
+  color: #fff;
+  background: #000;
+}
+
+.inverseTopline > button {
+  color: rgb(255 255 255 / 75%);
+}
+
+.inverseHeader > p {
+  margin: 24px 0 3px;
+  color: rgb(255 255 255 / 72%);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.inverseHeader h1 {
+  margin: 0;
+  overflow-wrap: anywhere;
+  font-size: 1.375rem;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}
+
+.inverseHeader > span {
+  display: block;
+  margin-top: 16px;
+  color: rgb(255 255 255 / 80%);
+  font-size: 0.84375rem;
+}
+
+.pausedBody {
+  padding: 18px 20px 20px;
+}
+
+.timer {
+  display: block;
+  font-size: 2.125rem;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+}
+
+.timerLabel {
+  display: block;
+  margin-top: 4px;
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+}
+
+.error {
+  margin: 14px 0 0;
+  color: var(--color-danger);
+  font-size: 0.75rem;
+}
