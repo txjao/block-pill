@@ -1,0 +1,100 @@
+@import '@fontsource-variable/bricolage-grotesque';
+@import '../../../../../../shared/brand/tokens.css';
+
+:root {
+  color-scheme: light;
+  font-family: 'Bricolage Grotesque Variable', 'Segoe UI Variable', 'Segoe UI', sans-serif;
+  --color-canvas: #faf8f5;
+  --color-surface: #fff;
+  --color-text: #171717;
+  --color-text-secondary: #3d3d3d;
+  --color-text-muted: #525252;
+  --color-action: var(--brand-red);
+  --color-action-hover: #e51f1f;
+  --color-danger: #9d1c20;
+  --color-danger-surface: #fff0f0;
+  --color-success: #075c25;
+  --color-success-surface: #e7f8ec;
+  --color-warning: #6a4100;
+  --color-warning-surface: #fff2ce;
+  --color-border-control: #8c8c8c;
+  --color-border-medium: rgb(0 0 0 / 12%);
+  --color-border-light: rgb(0 0 0 / 8%);
+  --color-disabled: #e6e3df;
+  --radius-control: 10px;
+  --radius-surface: 16px;
+  --radius-empty: 18px;
+  --radius-pill: 999px;
+  --focus-light: 3px solid #000;
+  --focus-dark: 3px solid #fff;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 40px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  min-height: 100%;
+}
+
+html {
+  background: var(--color-canvas);
+}
+
+body {
+  margin: 0;
+  color: var(--color-text);
+  background: var(--color-canvas);
+  font-size: 0.90625rem;
+  line-height: 1.5;
+  text-rendering: optimizeLegibility;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: var(--focus-light);
+  outline-offset: 3px;
+}
+
+::selection {
+  color: #000;
+  background: color-mix(in srgb, var(--color-action) 55%, #fff);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

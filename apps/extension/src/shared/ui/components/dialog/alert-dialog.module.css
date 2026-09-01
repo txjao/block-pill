@@ -1,0 +1,51 @@
+.overlay {
+  position: fixed;
+  z-index: 80;
+  inset: 0;
+  background: rgb(0 0 0 / 54%);
+}
+
+.content {
+  position: fixed;
+  z-index: 81;
+  top: 50%;
+  left: 50%;
+  width: min(520px, calc(100vw - 32px));
+  max-height: calc(100vh - 32px);
+  overflow: auto;
+  padding: 26px;
+  border: 1px solid #000;
+  border-radius: var(--radius-surface);
+  background: var(--color-surface);
+  box-shadow: 0 20px 70px rgb(0 0 0 / 24%);
+  transform: translate(-50%, -50%);
+}
+
+.title {
+  margin: 0;
+  font-size: 1.25rem;
+  letter-spacing: -0.02em;
+}
+
+.description {
+  margin: 12px 0 0;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+@media (max-width: 520px) {
+  .actions {
+    flex-direction: column-reverse;
+  }
+
+  .actions button {
+    width: 100%;
+  }
+}

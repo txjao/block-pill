@@ -1,0 +1,35 @@
+.root {
+  position: relative;
+  display: inline-flex;
+}
+
+.content {
+  position: absolute;
+  z-index: 60;
+  left: 0;
+  width: min(238px, calc(100vw - 24px));
+  padding: 9px 11px;
+  border-radius: 10px;
+  color: #fff;
+  background: #000;
+  box-shadow: 0 6px 18px rgb(0 0 0 / 22%);
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.45;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 150ms ease-out;
+}
+
+.top {
+  bottom: calc(100% + 8px);
+}
+
+.bottom {
+  top: calc(100% + 8px);
+}
+
+.root:hover .content,
+.root:focus-within .content {
+  opacity: 1;
+}
