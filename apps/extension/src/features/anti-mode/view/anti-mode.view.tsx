@@ -1,25 +1,31 @@
-import type { AntiModeId } from '../domain/anti-mode.types';
+import type { AntiModeConfig, AntiModeId } from '../domain/anti-mode.types';
 import type { useAntiModeModel } from './anti-mode.model';
-import { Toggle } from '../../../shared/ui/toggle';
-import { Badge } from '../../../shared/ui/badge';
+import { AlertDialog } from '../../../shared/ui/components/dialog/alert-dialog';
+import { Badge } from '../../../shared/ui/components/badge/badge';
+import { Button } from '../../../shared/ui/components/button/button';
+import { Toggle } from '../../../shared/ui/components/toggle/toggle';
+import styles from './anti-mode.module.css';
 
 type AntiModeModel = ReturnType<typeof useAntiModeModel>;
+
 const copy = {
   'anti-porn': {
     title: 'Anti-pornografia',
     description:
       'Reduza encontros impulsivos com conteúdo adulto e crie espaço para retomar seus objetivos.',
     domainHelp: 'Adicione sites adultos que não aparecem na proteção inicial.',
+    count: '1.482 domínios na lista',
   },
   'anti-bet': {
     title: 'Anti-aposta',
     description:
       'Crie distância de bets, cassinos e estímulos que incentivam decisões financeiras por impulso.',
     domainHelp: 'Adicione casas de aposta ou páginas promocionais que você encontrou.',
+    count: 'proteção inicial e sites adicionados',
   },
 } as const;
 
-export function AntiModeView(props: AntiModeModel) {
+export function AntiModeView(props: AntiModeModel & { selectedMode?: AntiModeId }) {
   const {
     configs,
     drafts,
@@ -35,224 +41,218 @@ export function AntiModeView(props: AntiModeModel) {
     confirmDeactivate,
     setShowCelebration,
     openIncognitoSettings,
+    selectedMode = 'anti-porn',
   } = props;
+  const mode = selectedMode;
+  const config = configs.find((item) => item.id === mode);
+  const draft = drafts[mode];
+  const active = config?.enabled ?? false;
+  const canDeactivate =
+    active && !config?.permanent && (config?.commitmentEndsAt ?? Infinity) <= Date.now();
 
   return (
-    <section class="anti-section" aria-labelledby="anti-title">
-      <div class="section-heading">
+    <section class={styles.section} aria-labelledby="anti-title">
+      <p class={styles.breadcrumb}>Modos anti › {copy[mode].title}</p>
+      <header class={styles.pageHeader}>
         <div>
-          <Badge tone="accent">Proteção por objetivo</Badge>
-          <h2 id="anti-title">Modos anti</h2>
+          <h1 id="anti-title">{copy[mode].title}</h1>
           <p>
-            Escolha um compromisso. Cada modo tem um propósito próprio, mesmo quando algumas regras
-            técnicas são parecidas.
+            Um compromisso com prazo. Enquanto ele durar, a configuração não pode ser desfeita por
+            impulso.
           </p>
         </div>
-      </div>
+      </header>
 
       {!incognitoAllowed && (
-        <div class="permission-alert" role="alert">
-          <strong>Permita a proteção em janelas anônimas</strong>
-          <p>Sem essa permissão, uma janela anônima poderia ignorar o compromisso escolhido.</p>
-          <button type="button" onClick={() => void openIncognitoSettings()}>
-            Abrir permissão da extensão
-          </button>
+        <div class={styles.permissionAlert} role="alert">
+          <span>
+            <strong>Janelas anônimas podem passar por cima do compromisso.</strong>
+            <p>É necessário permitir o funcionamento da extensão nesse contexto.</p>
+          </span>
+          <Button variant="dark" onClick={() => void openIncognitoSettings()}>
+            Permitir
+          </Button>
         </div>
       )}
 
-      <div class="anti-mode-stack">
-        {(['anti-porn', 'anti-bet'] as const).map((mode) => {
-          const config = configs.find((item) => item.id === mode);
-          const draft = drafts[mode];
-          const active = config?.enabled ?? false;
-          const canDeactivate =
-            active && !config?.permanent && (config?.commitmentEndsAt ?? Infinity) <= Date.now();
-          return (
-            <article class={`anti-panel anti-panel--${mode}`} key={mode}>
-              <header class="anti-panel-header">
-                <div>
-                  <Badge tone={active ? 'positive' : 'neutral'}>
-                    {active ? 'Proteção ativa' : 'Inativo'}
-                  </Badge>
-                  <h3>{copy[mode].title}</h3>
-                  <p>{copy[mode].description}</p>
-                </div>
-                <Toggle
-                  checked={active}
-                  disabled={
-                    isLoading || (!incognitoAllowed && !active) || (active && !canDeactivate)
-                  }
-                  label={active ? 'Modo ativo' : 'Ativar modo'}
-                  description={
-                    active
-                      ? canDeactivate
-                        ? 'O prazo terminou. Você pode desligar quando quiser.'
-                        : 'O modo ficará ligado até o compromisso terminar.'
-                      : 'Revise o prazo e ative quando estiver pronto.'
-                  }
-                  onChange={(checked) =>
-                    checked ? void activate(mode) : setPendingDeactivate(mode)
-                  }
-                />
-              </header>
-
-              {active && config ? (
-                <ActiveMode config={config} />
-              ) : (
-                <div class="anti-form">
-                  <div class="field-group">
-                    <label class="field-label" for={`${mode}-duration`}>
-                      Duração do compromisso
-                    </label>
-                    <p class="field-help">
-                      Durante esse período o modo não poderá ser desligado por impulso.
-                    </p>
-                    <div class="duration-row">
-                      <input
-                        id={`${mode}-duration`}
-                        type="number"
-                        min="1"
-                        list={`${mode}-duration-presets`}
-                        value={draft.durationValue}
-                        disabled={draft.permanent}
-                        onInput={(event) =>
-                          updateDraft(mode, 'durationValue', event.currentTarget.value)
-                        }
-                      />
-                      <datalist id={`${mode}-duration-presets`}>
-                        <option value="1" />
-                        <option value="7" />
-                        <option value="31" />
-                        <option value="366" />
-                      </datalist>
-                      <select
-                        value={draft.durationUnit}
-                        disabled={draft.permanent}
-                        onChange={(event) =>
-                          updateDraft(
-                            mode,
-                            'durationUnit',
-                            event.currentTarget.value as 'days' | 'months' | 'years',
-                          )
-                        }
-                      >
-                        <option value="days">dias</option>
-                        <option value="months">meses</option>
-                        <option value="years">anos</option>
-                      </select>
-                    </div>
-                  </div>
-                  <Toggle
-                    checked={draft.permanent}
-                    label="Compromisso sem prazo"
-                    description="A configuração não poderá ser removida pelo painel."
-                    onChange={(checked) => updateDraft(mode, 'permanent', checked)}
-                  />
-                  <label class="field-group">
-                    <span class="field-label">
-                      Por que isso importa para você? <small>opcional</small>
-                    </span>
-                    <textarea
-                      value={draft.goals}
-                      onInput={(event) => updateDraft(mode, 'goals', event.currentTarget.value)}
-                      placeholder={
-                        mode === 'anti-porn'
-                          ? 'Relacionamentos, presença, autoestima…'
-                          : 'Tranquilidade financeira, família, planos…'
-                      }
-                    />
-                  </label>
-                  <label class="field-group">
-                    <span class="field-label">
-                      Alternativas que fazem bem <small>opcional</small>
-                    </span>
-                    <textarea
-                      value={draft.hobbies}
-                      onInput={(event) => updateDraft(mode, 'hobbies', event.currentTarget.value)}
-                      placeholder="Caminhar, ler, cozinhar, conversar, treinar…"
-                    />
-                  </label>
-                  <label class="confirm-check">
-                    <input
-                      type="checkbox"
-                      checked={draft.philosophicalKnowledge}
-                      onChange={(event) =>
-                        updateDraft(mode, 'philosophicalKnowledge', event.currentTarget.checked)
-                      }
-                    />
-                    Mostrar reflexões filosóficas nos momentos de pausa
-                  </label>
-                  {configs.some(
-                    (item) => item.id !== mode && (item.goals.length || item.hobbies.length),
-                  ) && (
-                    <label class="confirm-check">
-                      <input
-                        type="checkbox"
-                        checked={draft.importProfile}
-                        onChange={(event) =>
-                          updateDraft(mode, 'importProfile', event.currentTarget.checked)
-                        }
-                      />
-                      Reutilizar objetivos e alternativas do outro modo
-                    </label>
-                  )}
-                </div>
-              )}
-
-              <form
-                class="domain-form field-group"
-                onSubmit={(event) => void addDomain(mode, event)}
-              >
-                <label class="field-label" for={`${mode}-domain`}>
-                  Adicionar site à proteção
-                </label>
-                <p class="field-help">{copy[mode].domainHelp}</p>
-                <div class="form-row">
-                  <input
-                    id={`${mode}-domain`}
-                    inputMode="url"
-                    placeholder="exemplo.com"
-                    value={draft.hostname}
-                    onInput={(event) => updateDraft(mode, 'hostname', event.currentTarget.value)}
-                    required
-                  />
-                  <button type="submit" disabled={isLoading}>
-                    Adicionar site
-                  </button>
-                </div>
-              </form>
-              <details>
-                <summary>{config?.domains.length ?? 0} sites adicionados manualmente</summary>
-                <ul class="compact-list">
-                  {config?.domains.map((domain) => (
-                    <li key={domain}>{domain}</li>
-                  ))}
-                </ul>
-              </details>
-            </article>
-          );
-        })}
+      <div class={styles.statusRow}>
+        <span>
+          <Badge variant={active ? 'success' : 'neutral'}>
+            {active ? 'proteção ativa' : 'inativo'}
+          </Badge>
+          <small>{copy[mode].count}</small>
+          <p>{copy[mode].description}</p>
+        </span>
+        <Toggle
+          checked={active}
+          disabled={isLoading || (!incognitoAllowed && !active) || (active && !canDeactivate)}
+          label={active ? 'Modo ativo' : 'Ativar modo'}
+          description={active ? 'O compromisso está protegido.' : 'Revise antes de ativar.'}
+          onCheckedChange={(checked) =>
+            checked ? void activate(mode) : setPendingDeactivate(mode)
+          }
+        />
       </div>
 
-      {pendingDeactivate && (
-        <DeactivateDialog
-          mode={pendingDeactivate}
-          isLoading={isLoading}
-          onCancel={() => setPendingDeactivate(undefined)}
-          onConfirm={() => void confirmDeactivate()}
-        />
-      )}
-      {showCelebration && (
-        <div class="friction-dialog celebration" role="dialog" aria-modal="true">
-          <h2>Você cumpriu seu compromisso.</h2>
-          <p>Reconheça o esforço antes de escolher o próximo passo.</p>
-          <button type="button" onClick={() => setShowCelebration(false)}>
-            Continuar
-          </button>
+      {active && config ? (
+        <ActiveMode config={config} />
+      ) : (
+        <div class={styles.configuration}>
+          <header>
+            <strong>Configurar este modo</strong>
+            <small>Passo 1 de 2 · revise antes de ativar</small>
+          </header>
+          <div class={styles.formGrid}>
+            <div class={styles.fieldGroup}>
+              <label for={`${mode}-duration`}>Duração do compromisso</label>
+              <p>Durante esse período o modo não poderá ser desligado por impulso.</p>
+              <div class={styles.durationRow}>
+                <input
+                  id={`${mode}-duration`}
+                  type="number"
+                  min="1"
+                  value={draft.durationValue}
+                  disabled={draft.permanent}
+                  onInput={(event) => updateDraft(mode, 'durationValue', event.currentTarget.value)}
+                />
+                <select
+                  value={draft.durationUnit}
+                  disabled={draft.permanent}
+                  onChange={(event) =>
+                    updateDraft(
+                      mode,
+                      'durationUnit',
+                      event.currentTarget.value as 'days' | 'months' | 'years',
+                    )
+                  }
+                >
+                  <option value="days">dias</option>
+                  <option value="months">meses</option>
+                  <option value="years">anos</option>
+                </select>
+              </div>
+            </div>
+            <Toggle
+              checked={draft.permanent}
+              label="Compromisso sem prazo"
+              description="A configuração não poderá ser removida pelo painel."
+              onCheckedChange={(checked) => updateDraft(mode, 'permanent', checked)}
+            />
+            <label class={styles.fieldGroup}>
+              <span>
+                Por que isso importa para você? <small>opcional</small>
+              </span>
+              <textarea
+                value={draft.goals}
+                onInput={(event) => updateDraft(mode, 'goals', event.currentTarget.value)}
+                placeholder="Relacionamentos, presença, tranquilidade, planos…"
+              />
+            </label>
+            <label class={styles.fieldGroup}>
+              <span>
+                Alternativas que fazem bem <small>opcional</small>
+              </span>
+              <textarea
+                value={draft.hobbies}
+                onInput={(event) => updateDraft(mode, 'hobbies', event.currentTarget.value)}
+                placeholder="Caminhar, ler, cozinhar, conversar, treinar…"
+              />
+            </label>
+            <label class={styles.checkbox}>
+              <input
+                type="checkbox"
+                checked={draft.philosophicalKnowledge}
+                onChange={(event) =>
+                  updateDraft(mode, 'philosophicalKnowledge', event.currentTarget.checked)
+                }
+              />
+              Mostrar reflexões filosóficas nos momentos de pausa
+            </label>
+            {configs.some(
+              (item) => item.id !== mode && (item.goals.length || item.hobbies.length),
+            ) && (
+              <label class={styles.checkbox}>
+                <input
+                  type="checkbox"
+                  checked={draft.importProfile}
+                  onChange={(event) =>
+                    updateDraft(mode, 'importProfile', event.currentTarget.checked)
+                  }
+                />
+                Reutilizar objetivos e alternativas do outro modo
+              </label>
+            )}
+          </div>
         </div>
       )}
+
+      <form class={styles.domainForm} onSubmit={(event) => void addDomain(mode, event)}>
+        <label for={`${mode}-domain`}>Adicionar site à proteção</label>
+        <p>{copy[mode].domainHelp}</p>
+        <div>
+          <input
+            id={`${mode}-domain`}
+            inputMode="url"
+            placeholder="exemplo.com"
+            value={draft.hostname}
+            onInput={(event) => updateDraft(mode, 'hostname', event.currentTarget.value)}
+            required
+          />
+          <Button type="submit" disabled={isLoading}>
+            Adicionar site
+          </Button>
+        </div>
+      </form>
+
+      <details class={styles.domains}>
+        <summary>{config?.domains.length ?? 0} sites adicionados manualmente</summary>
+        <ul>
+          {config?.domains.map((domain) => (
+            <li key={domain}>{domain}</li>
+          ))}
+        </ul>
+      </details>
+
+      <section class={styles.explanation}>
+        <h2>O que é o modo anti?</h2>
+        <p>
+          O modo anti ajuda você a manter distância de conteúdos ou atividades que deseja evitar. Ao
+          ativá-lo, você assume um compromisso por um período definido — ou sem prazo — e os sites
+          relacionados ficam bloqueados durante esse tempo.
+        </p>
+        <p>
+          A proposta não é punir nem vigiar você, mas criar uma pausa entre o impulso e a decisão.
+          Caso precise acessar um site bloqueado, será necessário solicitar uma liberação
+          temporária, tornando o acesso mais consciente.
+        </p>
+        <p>
+          Existem modos específicos, como anti-pornografia e anti-aposta. Toda a proteção funciona
+          localmente no seu navegador, respeitando sua privacidade e mantendo você no controle.
+        </p>
+      </section>
+
+      <AlertDialog
+        open={Boolean(pendingDeactivate)}
+        title="Desativar esta proteção?"
+        description="Se ainda quiser apoio, mantenha o modo ativo. Seus objetivos e registros locais não serão apagados."
+        cancelLabel="Manter proteção"
+        confirmLabel="Desativar modo"
+        loading={isLoading}
+        onOpenChange={(open) => !open && setPendingDeactivate(undefined)}
+        onConfirm={() => void confirmDeactivate()}
+      />
+      <AlertDialog
+        open={showCelebration}
+        title="Você cumpriu seu compromisso."
+        description="Reconheça o esforço antes de escolher o próximo passo."
+        cancelLabel="Fechar"
+        confirmLabel="Continuar"
+        variant="dark"
+        onOpenChange={setShowCelebration}
+        onConfirm={() => setShowCelebration(false)}
+      />
       {feedback && (
-        <p class="feedback" role="status">
+        <p class={styles.feedback} role="status">
           {feedback}
         </p>
       )}
@@ -260,9 +260,9 @@ export function AntiModeView(props: AntiModeModel) {
   );
 }
 
-function ActiveMode({ config }: { config: NonNullable<AntiModeModel['configs'][number]> }) {
+function ActiveMode({ config }: { config: AntiModeConfig }) {
   return (
-    <div class="active-commitment">
+    <div class={styles.activeCommitment}>
       <strong>
         {config.permanent
           ? 'Compromisso sem prazo definido'
@@ -273,43 +273,6 @@ function ActiveMode({ config }: { config: NonNullable<AntiModeModel['configs'][n
           ? `Você escolheu este modo por: ${config.goals.join(', ')}`
           : 'Seu compromisso está ativo.'}
       </p>
-    </div>
-  );
-}
-
-function DeactivateDialog({
-  mode,
-  isLoading,
-  onCancel,
-  onConfirm,
-}: {
-  mode: AntiModeId;
-  isLoading: boolean;
-  onCancel: () => void;
-  onConfirm: () => void;
-}) {
-  return (
-    <div
-      class="friction-dialog"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="anti-deactivate-title"
-    >
-      <span class="dialog-kicker">Fim do compromisso</span>
-      <h2 id="anti-deactivate-title">Desativar esta proteção?</h2>
-      <p>
-        Se ainda quiser apoio, mantenha o modo ativo. Seus objetivos e registros locais não serão
-        apagados.
-      </p>
-      <div class="dialog-actions">
-        <button class="secondary-button" type="button" onClick={onCancel}>
-          Manter proteção
-        </button>
-        <button type="button" disabled={isLoading} onClick={onConfirm}>
-          Desativar modo
-        </button>
-      </div>
-      <span class="sr-only">{mode}</span>
     </div>
   );
 }
