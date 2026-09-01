@@ -13,10 +13,10 @@ page pública e a extensão de navegador.
 As aplicações não importam código uma da outra. Código só deve sair de uma
 aplicação quando já possuir consumidores concretos em mais de uma aplicação.
 
-## Vertical slices na extensão
+## Recortes funcionais na extensão
 
-Cada funcionalidade fica em `apps/extension/src/features/<domínio>` e contém
-tudo o que pertence ao seu domínio:
+Cada funcionalidade fica em `apps/extension/src/features/<feature>` e contém
+tudo o que pertence a esse recorte do produto:
 
 ```text
 features/
@@ -47,14 +47,58 @@ permanecem nos slices `anti-porn` e `anti-bet`.
 
 As responsabilidades internas são:
 
-- `domain`: entidades, regras puras, schemas, constantes e contratos de
-  repositório ou gerenciador de regras;
+- `domain`: valores, regras de negócio, constantes, schemas semânticos e
+  contratos necessários para executar essas regras;
 - `application`: controllers, casos de uso e mensagens que coordenam o domínio;
 - `infrastructure`: implementações de contratos para Chrome, armazenamento ou
   outras APIs externas;
 - `view`: página, View, Model e componentes específicos do slice;
 - `tests`: testes comportamentais do slice;
 - `index.ts`: interface pública pequena do módulo.
+
+### O significado de Domain
+
+Domain é a área do problema que o software representa. Um modelo de domínio é
+uma seleção dos conceitos e regras relevantes dessa área; a camada `domain` é a
+fronteira usada no código para manter esse modelo independente da interface e
+do Chrome.
+
+No Block Pill, regras de cooldown, compromissos, orçamento de acesso temporário,
+normalização de domínios e limites de configuração pertencem a essa camada. Elas
+são representadas diretamente por tipos, schemas, funções e serviços, sem exigir
+classes para todo conceito.
+
+Uma feature não é automaticamente um Bounded Context. Em Domain-Driven Design,
+um Bounded Context é uma fronteira dentro da qual um modelo e sua linguagem têm
+significado consistente. As pastas em `features/` são inicialmente recortes
+funcionais; só devem ser descritas como Bounded Contexts quando suas fronteiras
+de linguagem, modelo e integração tiverem sido analisadas.
+
+O estudo de domínios em engenharia de software antecede Domain-Driven Design:
+James Neighbors descreveu domain analysis em 1980, FODA sistematizou análise de
+comunalidades e variabilidades em 1990, e Eric Evans consolidou o vocabulário de
+Domain-Driven Design em 2003. Referências:
+
+- [The Draco Approach to Constructing Software from Reusable Components](https://escholarship.org/uc/item/5687j6g6);
+- [Feature-Oriented Domain Analysis](https://www.sei.cmu.edu/library/feature-oriented-domain-analysis-foda-feasibility-study/);
+- [Domain-Driven Design Reference](https://www.domainlanguage.com/ddd/reference/);
+- [Domain Model, por Martin Fowler](https://martinfowler.com/eaaCatalog/domainModel.html).
+
+### Responsabilidade dos schemas
+
+A localização de um schema é definida pelo dado validado, não pela biblioteca
+usada para validá-lo:
+
+| Local                                | Responsabilidade                         | Exemplo                                 |
+| ------------------------------------ | ---------------------------------------- | --------------------------------------- |
+| `domain/*.schema.ts`                 | valores e invariantes de negócio         | hostname, cooldown, duração permitida   |
+| `application/*.messages.schema.ts`   | envelope de comandos e consultas         | `type` e payload de uma mensagem        |
+| `infrastructure/*.storage.schema.ts` | formato externo quando difere do domínio | versão ou migração de dados persistidos |
+
+Schemas de mensagem reutilizam schemas semânticos do domínio. A infraestrutura
+valida dados desconhecidos ao lê-los e também impede a persistência de modelos
+inválidos. Erros internos do Zod não fazem parte do contrato das Views; cada
+fronteira devolve uma mensagem estável da aplicação ou do domínio.
 
 ## Módulos profundos e interface simples
 
@@ -99,6 +143,16 @@ export function StandardBlockView(props: StandardBlockModel) {
 
 Isso evita manter manualmente uma segunda interface de props. A View ainda
 desestrutura `props` no corpo para deixar as dependências visíveis.
+
+Componentes específicos de uma tela são extraídos prioritariamente quando
+precisam de testes isolados ou quando a extração reduz claramente a
+responsabilidade da View principal. Reuso, comportamento próprio e múltiplos
+estados são sinais auxiliares; número de linhas, sozinho, não decide a extração.
+Elementos pequenos que apenas envolvem uma tag e uma classe permanecem na View.
+
+Cada superfície mantém seu CSS Module ao lado da View. Uma pasta `styles/` não é
+criada para um único arquivo, e um componente extraído mantém seu próprio CSS
+Module somente quando também possui estilos sob sua responsabilidade.
 
 ## Entrypoints
 

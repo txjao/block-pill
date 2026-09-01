@@ -3,6 +3,7 @@ export {
   handlePermanentBlockRequest,
   parsePermanentBlockRequest,
   type PermanentBlockRequest,
+  type ParsedPermanentBlockRequest,
   type PermanentBlockResponse,
 } from './application/permanent-block.messages';
 export {

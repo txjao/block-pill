@@ -16,6 +16,10 @@ export class ChromeAntiModeRepository implements AntiModeRepository {
   }
 
   async setAll(configs: AntiModeConfig[]): Promise<void> {
-    await chrome.storage.local.set({ [STORAGE_KEY]: configs });
+    const result = antiModeConfigSchema.array().safeParse(configs);
+    if (!result.success) {
+      throw new Error('Não foi possível salvar uma configuração de modo anti inválida.');
+    }
+    await chrome.storage.local.set({ [STORAGE_KEY]: result.data });
   }
 }

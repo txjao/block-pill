@@ -16,6 +16,10 @@ export class ChromeActivityRepository implements ActivityRepository {
   }
 
   async setAll(events: ActivityEvent[]): Promise<void> {
-    await chrome.storage.local.set({ [STORAGE_KEY]: events });
+    const result = activityEventSchema.array().safeParse(events);
+    if (!result.success) {
+      throw new Error('Não foi possível salvar um evento de atividade inválido.');
+    }
+    await chrome.storage.local.set({ [STORAGE_KEY]: result.data });
   }
 }

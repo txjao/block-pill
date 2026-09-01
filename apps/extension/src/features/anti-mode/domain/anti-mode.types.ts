@@ -1,6 +1,14 @@
-export type AntiModeId = 'anti-porn' | 'anti-bet';
-export type AntiDurationUnit = 'days' | 'months' | 'years';
-export type AntiAccessMinutes = 1 | 5 | 15;
+import type { z } from 'zod';
+import type {
+  activateAntiModeInputSchema,
+  antiAccessMinutesSchema,
+  antiDurationUnitSchema,
+  antiModeIdSchema,
+} from './anti-mode.schema';
+
+export type AntiModeId = z.output<typeof antiModeIdSchema>;
+export type AntiDurationUnit = z.output<typeof antiDurationUnitSchema>;
+export type AntiAccessMinutes = z.output<typeof antiAccessMinutesSchema>;
 
 export interface AntiModeConfig {
   id: AntiModeId;
@@ -16,13 +24,4 @@ export interface AntiModeConfig {
   accessUntilByHostname: Record<string, number>;
 }
 
-export interface ActivateAntiModeInput {
-  mode: AntiModeId;
-  permanent: boolean;
-  durationValue?: number;
-  durationUnit?: AntiDurationUnit;
-  goals: string[];
-  hobbies: string[];
-  philosophicalKnowledge: boolean;
-  importFrom?: AntiModeId;
-}
+export type ActivateAntiModeInput = z.output<typeof activateAntiModeInputSchema>;

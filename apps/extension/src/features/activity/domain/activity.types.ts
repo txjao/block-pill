@@ -1,6 +1,13 @@
-export type ActivitySource = 'standard' | 'permanent' | 'anti-porn' | 'anti-bet';
+import type { z } from 'zod';
+import type {
+  activityDurationMinutesSchema,
+  activityKindSchema,
+  activitySourceSchema,
+} from './activity.schema';
 
-export type ActivityKind = 'created' | 'attempt' | 'access-granted' | 'reflection';
+export type ActivitySource = z.output<typeof activitySourceSchema>;
+export type ActivityKind = z.output<typeof activityKindSchema>;
+export type ActivityDurationMinutes = z.output<typeof activityDurationMinutesSchema>;
 
 export interface ActivityEvent {
   id: string;
@@ -9,7 +16,7 @@ export interface ActivityEvent {
   hostname: string;
   path: string;
   at: number;
-  durationMinutes?: number;
+  durationMinutes?: ActivityDurationMinutes;
   feelings?: string[];
   reason?: string;
 }

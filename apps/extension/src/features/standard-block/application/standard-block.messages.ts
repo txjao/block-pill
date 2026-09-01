@@ -1,47 +1,18 @@
-import { z } from 'zod';
-import type { StandardBlock, StandardBlockSnapshot } from '../domain/standard-block.types';
+import type {
+  StandardBlock,
+  StandardBlockSettings,
+  StandardBlockSnapshot,
+} from '../domain/standard-block.types';
 import type { StandardBlockController } from './standard-block.controller';
-import type { StandardBlockSettingsRepository } from '../domain/standard-block.settings-repository';
-import type { StandardBlockSettings } from '../domain/standard-block.types';
+import {
+  standardBlockRequestSchema,
+  type ParsedStandardBlockRequest,
+} from './standard-block.messages.schema';
 
-const standardBlockRequestSchema = z.discriminatedUnion('type', [
-  z.object({ type: z.literal('standard-blocking/list') }),
-  z.object({
-    type: z.literal('standard-blocking/add'),
-    hostname: z.string(),
-  }),
-  z.object({
-    type: z.literal('standard-blocking/remove'),
-    hostname: z.string(),
-  }),
-  z.object({
-    type: z.literal('standard-blocking/status'),
-    hostname: z.string(),
-  }),
-  z.object({ type: z.literal('standard-blocking/context') }),
-  z.object({
-    type: z.literal('standard-blocking/request-access'),
-    hostname: z.string(),
-    minutes: z.union([z.literal(1), z.literal(5), z.literal(15)]),
-  }),
-  z.object({ type: z.literal('standard-blocking/settings') }),
-  z.object({
-    type: z.literal('standard-blocking/update-settings'),
-    globalCooldownMilliseconds: z.number(),
-  }),
-  z.object({
-    type: z.literal('standard-blocking/update-domain-cooldown'),
-    hostname: z.string(),
-    cooldownMilliseconds: z.number().nullable(),
-  }),
-  z.object({
-    type: z.literal('standard-blocking/add-subdomain-exception'),
-    hostname: z.string(),
-    subdomain: z.string(),
-  }),
-]);
-
-export type StandardBlockRequest = z.infer<typeof standardBlockRequestSchema>;
+export type {
+  ParsedStandardBlockRequest,
+  StandardBlockRequest,
+} from './standard-block.messages.schema';
 
 export type StandardBlockResponse =
   | { ok: true; blocks: StandardBlock[] }
@@ -50,18 +21,19 @@ export type StandardBlockResponse =
   | { ok: true; settings: StandardBlockSettings; blocks: StandardBlock[] }
   | { ok: false; message: string };
 
-export function parseStandardBlockRequest(message: unknown): StandardBlockRequest | undefined {
+export function parseStandardBlockRequest(
+  message: unknown,
+): ParsedStandardBlockRequest | undefined {
   const result = standardBlockRequestSchema.safeParse(message);
   return result.success ? result.data : undefined;
 }
 
 export async function handleStandardBlockRequest(
   controller: StandardBlockController,
-  request: StandardBlockRequest,
-  settingsRepository: StandardBlockSettingsRepository,
+  request: ParsedStandardBlockRequest,
 ): Promise<StandardBlockResponse> {
   try {
-    const settings = await settingsRepository.get();
+    const settings = await controller.getSettings();
     if (request.type === 'standard-blocking/add') {
       await controller.add(request.hostname);
     } else if (request.type === 'standard-blocking/remove') {
@@ -81,12 +53,9 @@ export async function handleStandardBlockRequest(
         ),
       };
     } else if (request.type === 'standard-blocking/update-settings') {
-      await settingsRepository.set({
-        globalCooldownMilliseconds: request.globalCooldownMilliseconds,
-      });
       return {
         ok: true,
-        settings: await settingsRepository.get(),
+        settings: await controller.updateSettings(request.globalCooldownMilliseconds),
         blocks: await controller.list(),
       };
     } else if (request.type === 'standard-blocking/update-domain-cooldown') {

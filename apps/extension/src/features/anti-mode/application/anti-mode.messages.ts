@@ -1,40 +1,8 @@
-import { z } from 'zod';
 import type { AntiModeController } from './anti-mode.controller';
 import type { AntiModeConfig } from '../domain/anti-mode.types';
+import { antiModeRequestSchema, type ParsedAntiModeRequest } from './anti-mode.messages.schema';
 
-const mode = z.enum(['anti-porn', 'anti-bet']);
-
-const antiModeRequestSchema = z.discriminatedUnion('type', [
-  z.object({ type: z.literal('anti-mode/list') }),
-  z.object({
-    type: z.literal('anti-mode/activate'),
-    mode,
-    permanent: z.boolean(),
-    durationValue: z.number().positive().optional(),
-    durationUnit: z.enum(['days', 'months', 'years']).optional(),
-    goals: z.array(z.string()),
-    hobbies: z.array(z.string()),
-    philosophicalKnowledge: z.boolean(),
-    importFrom: mode.optional(),
-  }),
-  z.object({ type: z.literal('anti-mode/deactivate'), mode }),
-  z.object({ type: z.literal('anti-mode/add-domain'), mode, hostname: z.string() }),
-  z.object({
-    type: z.literal('anti-mode/grant-access'),
-    mode,
-    hostname: z.string(),
-    minutes: z.union([z.literal(1), z.literal(5), z.literal(15)]),
-  }),
-  z.object({ type: z.literal('incognito/status') }),
-  z.object({ type: z.literal('incognito/open-settings') }),
-  z.object({ type: z.literal('incognito/set-control'), blocked: z.boolean() }),
-  z.object({
-    type: z.literal('incognito/suspend'),
-    minutes: z.union([z.literal(1), z.literal(5), z.literal(15)]),
-  }),
-]);
-
-export type AntiModeRequest = z.infer<typeof antiModeRequestSchema>;
+export type { AntiModeRequest, ParsedAntiModeRequest } from './anti-mode.messages.schema';
 export type AntiModeResponse =
   | { ok: true; configs: AntiModeConfig[]; activeUntil?: number }
   | {
@@ -47,14 +15,14 @@ export type AntiModeResponse =
     }
   | { ok: false; message: string; permissionRequired?: boolean };
 
-export function parseAntiModeRequest(message: unknown): AntiModeRequest | undefined {
+export function parseAntiModeRequest(message: unknown): ParsedAntiModeRequest | undefined {
   const result = antiModeRequestSchema.safeParse(message);
   return result.success ? result.data : undefined;
 }
 
 export async function handleAntiModeRequest(
   controller: AntiModeController,
-  request: Exclude<AntiModeRequest, { type: `incognito/${string}` }>,
+  request: Exclude<ParsedAntiModeRequest, { type: `incognito/${string}` }>,
 ): Promise<AntiModeResponse> {
   try {
     if (request.type === 'anti-mode/activate') {

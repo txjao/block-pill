@@ -35,6 +35,10 @@ Os testes do projeto cobrem:
 - habilitação, cancelamento, confirmação, erro e carregamento dos fluxos;
 - integrações entre Page, Model, View e mensagens da extensão;
 - contratos de acessibilidade que dependem da composição feita pelo Block Pill.
+- contratos de mensagens, incluindo discriminador, payload, normalização e
+  rejeição de valores que violam regras do domínio;
+- compatibilidade de schemas de persistência com dados antigos e seus valores
+  padrão.
 
 Um componente compartilhado puramente visual não exige teste unitário próprio.
 Ele passa a exigir teste quando acrescenta estado, transformação de dados,

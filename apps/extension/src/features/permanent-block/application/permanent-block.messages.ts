@@ -1,27 +1,27 @@
-import { z } from 'zod';
 import type { PermanentBlock } from '../domain/permanent-block.types';
 import type { PermanentBlockController } from './permanent-block.controller';
+import {
+  permanentBlockRequestSchema,
+  type ParsedPermanentBlockRequest,
+} from './permanent-block.messages.schema';
 
-const permanentBlockRequestSchema = z.discriminatedUnion('type', [
-  z.object({ type: z.literal('permanent-block/list') }),
-  z.object({
-    type: z.literal('permanent-block/add'),
-    hostname: z.string(),
-  }),
-]);
-
-export type PermanentBlockRequest = z.infer<typeof permanentBlockRequestSchema>;
+export type {
+  PermanentBlockRequest,
+  ParsedPermanentBlockRequest,
+} from './permanent-block.messages.schema';
 export type PermanentBlockResponse =
   { ok: true; blocks: PermanentBlock[] } | { ok: false; message: string };
 
-export function parsePermanentBlockRequest(message: unknown): PermanentBlockRequest | undefined {
+export function parsePermanentBlockRequest(
+  message: unknown,
+): ParsedPermanentBlockRequest | undefined {
   const result = permanentBlockRequestSchema.safeParse(message);
   return result.success ? result.data : undefined;
 }
 
 export async function handlePermanentBlockRequest(
   controller: PermanentBlockController,
-  request: PermanentBlockRequest,
+  request: ParsedPermanentBlockRequest,
 ): Promise<PermanentBlockResponse> {
   try {
     if (request.type === 'permanent-block/add') {

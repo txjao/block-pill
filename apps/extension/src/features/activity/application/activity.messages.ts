@@ -1,38 +1,19 @@
-import { z } from 'zod';
 import type { ActivityService } from '../domain/activity.service';
 import type { ActivityEvent } from '../domain/activity.types';
+import { activityRequestSchema, type ParsedActivityRequest } from './activity.messages.schema';
 
-const activityRequestSchema = z.discriminatedUnion('type', [
-  z.object({ type: z.literal('activity/list') }),
-  z.object({
-    type: z.literal('activity/record'),
-    source: z.enum(['standard', 'permanent', 'anti-porn', 'anti-bet']),
-    kind: z.enum(['created', 'attempt', 'access-granted', 'reflection']),
-    hostname: z.string(),
-    path: z.string().default('/'),
-    durationMinutes: z.union([z.literal(1), z.literal(5), z.literal(15)]).optional(),
-    feelings: z.array(z.string()).optional(),
-    reason: z.string().optional(),
-  }),
-  z.object({
-    type: z.literal('activity/remove'),
-    source: z.enum(['standard', 'permanent', 'anti-porn', 'anti-bet']).optional(),
-    hostname: z.string().optional(),
-  }),
-]);
-
-export type ActivityRequest = z.infer<typeof activityRequestSchema>;
+export type { ActivityRequest, ParsedActivityRequest } from './activity.messages.schema';
 export type ActivityResponse =
   { ok: true; events: ActivityEvent[] } | { ok: false; message: string };
 
-export function parseActivityRequest(message: unknown): ActivityRequest | undefined {
+export function parseActivityRequest(message: unknown): ParsedActivityRequest | undefined {
   const result = activityRequestSchema.safeParse(message);
   return result.success ? result.data : undefined;
 }
 
 export async function handleActivityRequest(
   service: ActivityService,
-  request: ActivityRequest,
+  request: ParsedActivityRequest,
 ): Promise<ActivityResponse> {
   try {
     if (request.type === 'activity/record') {

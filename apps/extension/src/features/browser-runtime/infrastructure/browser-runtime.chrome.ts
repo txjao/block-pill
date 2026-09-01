@@ -7,7 +7,7 @@ import {
   createStandardAccessAlarmName,
   handleStandardBlockRequest,
   parseStandardBlockRequest,
-  type StandardBlockRequest,
+  type ParsedStandardBlockRequest,
   type StandardBlockResponse,
 } from '../../standard-block';
 import {
@@ -34,18 +34,19 @@ import {
   ChromeAntiModeRuleManager,
   handleAntiModeRequest,
   parseAntiModeRequest,
-  type AntiModeRequest,
+  type ParsedAntiModeRequest,
   type AntiModeResponse,
 } from '../../anti-mode';
 
+const standardBlockSettings = new ChromeStandardBlockSettingsRepository();
 const standardBlock = new StandardBlockController(
   new StandardBlockService(
     new ChromeStandardBlockRepository(),
     new ChromeStandardBlockRuleManager(),
     systemClock,
   ),
+  standardBlockSettings,
 );
-const standardBlockSettings = new ChromeStandardBlockSettingsRepository();
 
 const permanentBlock = new PermanentBlockController(
   new PermanentBlockService(
@@ -133,11 +134,19 @@ export function registerChromeBrowserRuntime(): void {
       });
       return true;
     }
+    if (hasMessageTypePrefix(message, 'standard-blocking/')) {
+      sendResponse(invalidMessageResponse());
+      return false;
+    }
 
     const permanentRequest = parsePermanentBlockRequest(message);
     if (permanentRequest) {
       void handlePermanentRequest(permanentRequest).then(sendResponse);
       return true;
+    }
+    if (hasMessageTypePrefix(message, 'permanent-block/')) {
+      sendResponse(invalidMessageResponse());
+      return false;
     }
 
     const activityRequest = parseActivityRequest(message);
@@ -145,16 +154,28 @@ export function registerChromeBrowserRuntime(): void {
       void handleActivityRequest(activity, activityRequest).then(sendResponse);
       return true;
     }
+    if (hasMessageTypePrefix(message, 'activity/')) {
+      sendResponse(invalidMessageResponse());
+      return false;
+    }
 
     const antiRequest = parseAntiModeRequest(message);
-    if (!antiRequest) return;
+    if (!antiRequest) {
+      if (
+        hasMessageTypePrefix(message, 'anti-mode/') ||
+        hasMessageTypePrefix(message, 'incognito/')
+      ) {
+        sendResponse(invalidMessageResponse());
+      }
+      return false;
+    }
     void handleAntiRequest(antiRequest).then(sendResponse);
     return true;
   });
 }
 
 async function handleStandardRequest(
-  request: StandardBlockRequest,
+  request: ParsedStandardBlockRequest,
 ): Promise<StandardBlockResponse> {
   if (request.type === 'standard-blocking/add') {
     const hostname = parseHostname(request.hostname);
@@ -169,7 +190,16 @@ async function handleStandardRequest(
       };
     }
   }
-  return handleStandardBlockRequest(standardBlock, request, standardBlockSettings);
+  return handleStandardBlockRequest(standardBlock, request);
+}
+
+function hasMessageTypePrefix(message: unknown, prefix: string): boolean {
+  if (typeof message !== 'object' || message === null || !('type' in message)) return false;
+  return typeof message.type === 'string' && message.type.startsWith(prefix);
+}
+
+function invalidMessageResponse(): { ok: false; message: string } {
+  return { ok: false, message: 'A mensagem recebida possui dados inválidos.' };
 }
 
 async function synchronizeRules(): Promise<void> {
@@ -286,7 +316,7 @@ async function getStandardBlockContext(
     return undefined;
   return { hostname: context.hostname, attemptedHostname: context.attemptedHostname };
 }
-async function handleAntiRequest(request: AntiModeRequest): Promise<AntiModeResponse> {
+async function handleAntiRequest(request: ParsedAntiModeRequest): Promise<AntiModeResponse> {
   if (request.type === 'incognito/status') return getIncognitoStatus();
   if (request.type === 'incognito/open-settings') {
     await chrome.tabs.create({ url: `chrome://extensions/?id=${chrome.runtime.id}` });

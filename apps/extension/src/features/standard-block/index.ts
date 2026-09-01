@@ -3,6 +3,7 @@ export {
   handleStandardBlockRequest,
   parseStandardBlockRequest,
   type StandardBlockRequest,
+  type ParsedStandardBlockRequest,
   type StandardBlockResponse,
 } from './application/standard-block.messages';
 export {

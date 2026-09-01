@@ -1,12 +1,20 @@
-import type { StandardBlockService } from '../domain/standard-block.service';
+import {
+  validateCooldownMilliseconds,
+  type StandardBlockService,
+} from '../domain/standard-block.service';
+import type { StandardBlockSettingsRepository } from '../domain/standard-block.settings-repository';
 import type {
   StandardBlock,
   StandardBlockSnapshot,
+  StandardBlockSettings,
   TemporaryAccessMinutes,
 } from '../domain/standard-block.types';
 
 export class StandardBlockController {
-  constructor(private readonly service: StandardBlockService) {}
+  constructor(
+    private readonly service: StandardBlockService,
+    private readonly settingsRepository: StandardBlockSettingsRepository,
+  ) {}
 
   list(): Promise<StandardBlock[]> {
     return this.service.list();
@@ -38,6 +46,18 @@ export class StandardBlockController {
     globalCooldownMilliseconds?: number,
   ): Promise<StandardBlockSnapshot> {
     return this.service.grantTemporaryAccess(hostname, minutes, globalCooldownMilliseconds);
+  }
+
+  getSettings(): Promise<StandardBlockSettings> {
+    return this.settingsRepository.get();
+  }
+
+  async updateSettings(globalCooldownMilliseconds: number): Promise<StandardBlockSettings> {
+    const settings = {
+      globalCooldownMilliseconds: validateCooldownMilliseconds(globalCooldownMilliseconds),
+    };
+    await this.settingsRepository.set(settings);
+    return settings;
   }
 
   synchronize(): Promise<void> {
