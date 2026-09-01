@@ -5,6 +5,57 @@
 Validar as regras de domínio, persistência local, regras declarativas, alarmes,
 abas, modo anônimo, interfaces e privacidade do Block Pill antes da publicação.
 
+## Estratégia adotada para o refactor visual
+
+O refactor visual será implementado antes da criação dos novos testes de
+interface. Os testes automatizados já existentes continuam obrigatórios durante
+todo o trabalho e não podem regredir.
+
+A sequência para a nova interface é:
+
+1. concluir a implementação visual e a integração com os Models;
+2. levantar as regras específicas acrescentadas pelo Block Pill;
+3. discutir cada regra, incluindo entradas, saída esperada, erros e casos
+   extremos;
+4. aprovar o comportamento que será considerado correto;
+5. criar os testes unitários das regras aprovadas;
+6. validar os fluxos completos e executar os testes manuais relevantes.
+
+### Responsabilidade dos testes
+
+Componentes de terceiros são escolhidos para encapsular comportamentos
+complexos, como gerenciamento de foco, navegação por teclado, portais e
+atributos ARIA. O Block Pill não reproduz os testes internos mantidos pela
+biblioteca.
+
+Os testes do projeto cobrem:
+
+- regras implementadas pelos Models, casos de uso e componentes do Block Pill;
+- dados enviados a um componente de terceiros e respostas tratadas pelo projeto;
+- habilitação, cancelamento, confirmação, erro e carregamento dos fluxos;
+- integrações entre Page, Model, View e mensagens da extensão;
+- contratos de acessibilidade que dependem da composição feita pelo Block Pill.
+
+Um componente compartilhado puramente visual não exige teste unitário próprio.
+Ele passa a exigir teste quando acrescenta estado, transformação de dados,
+decisão ou outra regra pertencente ao projeto.
+
+### Registro de cada regra
+
+Antes de criar um novo teste de interface, a regra será detalhada com o seguinte
+formato:
+
+| Campo                    | Descrição                                       |
+| ------------------------ | ----------------------------------------------- |
+| Regra                    | Comportamento específico do Block Pill          |
+| Entrada e estado inicial | Dados, permissões e estado necessários          |
+| Resultado esperado       | Saída, mensagem ou mudança de estado observável |
+| Erros e limites          | Falhas, valores extremos e ações indisponíveis  |
+| Nível de teste           | Unitário, integração de fluxo ou manual         |
+
+As ferramentas adicionais para testes de DOM serão decididas somente depois do
+levantamento dessas regras. Vitest permanece como executor dos testes existentes.
+
 ## Ambientes
 
 - Node.js 20.19 ou superior e pnpm 11.

@@ -117,6 +117,30 @@ as regras internas de cada slice.
 Content scripts futuros permanecem em
 `src/entrypoints/content-scripts/<site>` e delegam comportamento aos slices.
 
+## Imports e composição do build
+
+Imports estáticos são o padrão para páginas, componentes e slices da extensão.
+As seções atuais de Bloqueios e Modos anti não justificam uma etapa assíncrona de
+carregamento.
+
+Cada `index.ts` expõe somente a interface pública necessária do slice. Ele não
+deve reexportar indiscriminadamente View, domínio, aplicação e infraestrutura.
+Entrypoints consomem a interface pública do slice e não atravessam suas camadas
+internas.
+
+O Vite pode mover código usado por mais de um entrypoint para um chunk
+compartilhado. A existência desse arquivo não representa, por si só, um problema
+de performance. Imports dinâmicos somente serão adotados quando uma medição
+demonstrar custo relevante de inicialização ou de interpretação de código.
+
+Qualquer proposta de carregamento dinâmico deve registrar:
+
+- tamanho do build antes e depois;
+- entrypoints afetados;
+- tempo de inicialização observado;
+- estado de carregamento e tratamento de falha introduzidos;
+- benefício que compensa a complexidade adicional.
+
 ## Dependências
 
 ```text
@@ -133,6 +157,59 @@ implementações em memória.
 `apps/extension/src/shared` contém apenas utilidades reutilizadas por mais de um
 slice, como parsing de hostname e relógio. Um tipo ou constante usado por apenas
 um domínio permanece dentro dele.
+
+## Tokens e estilos da interface
+
+A identidade visual e a estilização da extensão seguem quatro camadas:
+
+```text
+tokens da marca -> tokens semânticos da extensão -> CSS Modules -> variant
+```
+
+- `shared/brand/tokens.css` contém somente fundamentos compartilhados da marca;
+- a extensão traduz esses fundamentos em papéis semânticos, como canvas, texto,
+  ação, borda, foco e feedback;
+- CSS global fica restrito a fonte, reset, tokens e comportamento de documento;
+- cada componente mantém seu layout e seus estados em um CSS Module;
+- componentes recebem diferenças visuais por `variant`, não por `tone`;
+- valores brutos de cor não são repetidos dentro de componentes quando existe um
+  token semântico equivalente.
+
+### Organização dos componentes
+
+Os componentes reutilizáveis da extensão ficam em
+`apps/extension/src/shared/ui/components/<componente>`. Cada diretório mantém o
+TSX e seu CSS Module lado a lado. Views importam componentes por esse limite e
+não importam Radix diretamente.
+
+Primitives com comportamento complexo, como diálogo, abas e switch, são
+encapsulados pelos componentes compartilhados. Atualmente esses wrappers usam
+Radix com `preact/compat`. Essa dependência não altera o contrato das Views e
+pode ser substituída sem atravessar os vertical slices.
+
+O botão animado compartilhado entre a landing e a extensão permanece separado
+do botão base da extensão. A nova interface usa o botão simples; a animação não
+é transformada em comportamento implícito de toda ação.
+
+### Dados estáticos durante o refactor
+
+Mocks visuais ficam próximos ao Model da superfície, nunca dentro do domínio,
+controller ou infraestrutura. Eles mantêm o formato esperado pela View e só
+preenchem estados sem contrato real. Dados e fluxos já existentes continuam
+usando as mensagens da extensão.
+
+As lacunas conhecidas do handoff ficam documentadas em
+`.new_features/design_handoff_block_pill_interfaces/DYNAMIC_INTERFACE_REQUIREMENTS.md`.
+
+WCAG 2.2 AA é o requisito obrigatório: contraste mínimo de `4.5:1` para texto
+normal e `3:1` para texto grande, controles e indicadores significativos. O nível
+AAA de `7:1` é aplicado quando surgir naturalmente, sem comprometer identidade,
+clareza ou manutenção.
+
+Cor nunca é o único indicador de estado. Erro, sucesso, aviso, seleção e bloqueio
+também usam texto, ícone, borda, forma ou outro sinal perceptível. O foco possui
+tratamento próprio para superfícies claras e escuras, e movimentos não essenciais
+respeitam `prefers-reduced-motion`.
 
 ## Convenções de nomes
 
