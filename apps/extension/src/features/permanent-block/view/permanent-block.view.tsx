@@ -1,115 +1,91 @@
 import type { usePermanentBlockModel } from './permanent-block.model';
-import { InteractiveHoverButton } from '../../../shared/ui/interactive-hover-button';
-import { Badge } from '../../../shared/ui/badge';
-import { InfoPopover } from '../../../shared/ui/info-popover';
+import { Button } from '../../../shared/ui/components/button/button';
+import blockPillIcon from '../../../../../../shared/brand/icons/block-pill-transparent.svg?url';
+import styles from './permanent-block.module.css';
 
 type PermanentBlockModel = ReturnType<typeof usePermanentBlockModel>;
-const docsUrl =
+const documentationUrl =
   'https://github.com/txjao/block-pill/blob/main/docs/BLOCKING_RULES.md#bloqueio-permanente';
 
 export function PermanentBlockView(props: PermanentBlockModel) {
   const {
     blocks,
     hostname,
-    pendingHostname,
+    acknowledged,
     feedback,
     isLoading,
     setHostname,
-    setPendingHostname,
-    prepare,
-    confirm,
+    setAcknowledged,
+    addBlock,
   } = props;
 
   return (
-    <section class="panel permanent-panel" aria-labelledby="permanent-title">
-      <div class="panel-header">
-        <div>
-          <Badge>Pausa definitiva</Badge>
-          <h2 id="permanent-title">Bloqueio permanente</h2>
-          <p>Para uma decisão que você não quer renegociar nos momentos de impulso.</p>
-        </div>
-        <InfoPopover label="Como funciona o bloqueio permanente">
-          A regra permanece ativa enquanto o Block Pill estiver instalado e não pode ser removida
-          pelas configurações.{' '}
-          <a href={docsUrl} target="_blank" rel="noreferrer">
-            Entenda os detalhes na documentação.
-          </a>
-        </InfoPopover>
-      </div>
+    <section class={styles.section} aria-labelledby="permanent-title">
+      <h2 id="permanent-title" class={styles.srOnly}>
+        Decisões permanentes
+      </h2>
 
-      <form class="domain-form field-group" onSubmit={prepare}>
-        <label class="field-label" for="permanent-hostname">
-          Site que ficará bloqueado
-        </label>
-        <p class="field-help">O domínio e seus subdomínios serão incluídos na mesma decisão.</p>
-        <div class="form-row">
-          <input
-            id="permanent-hostname"
-            inputMode="url"
-            placeholder="exemplo.com"
-            value={hostname}
-            onInput={(event) => setHostname(event.currentTarget.value)}
-            disabled={isLoading}
-            required
-          />
-          <InteractiveHoverButton
-            className="interactive-hover-button--fluid"
-            text="Bloquear permanentemente"
-            type="submit"
-            loading={isLoading}
-          />
-        </div>
-      </form>
-
-      {pendingHostname && (
-        <div
-          class="friction-dialog"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="permanent-confirm-title"
-        >
-          <span class="dialog-kicker">Decisão crítica</span>
-          <h2 id="permanent-confirm-title">Confirmar bloqueio permanente?</h2>
+      {blocks.length === 0 ? (
+        <div class={styles.emptyState}>
+          <img src={blockPillIcon} alt="" />
+          <h3>Nenhum bloqueio permanente ainda</h3>
           <p>
-            <strong>{pendingHostname}</strong> e seus subdomínios não poderão ser liberados pelas
-            configurações do Block Pill.
+            Reserve esta lista para o que você já decidiu. Depois de criado, não sai por este
+            painel.
           </p>
-          <p>Confirme somente se esta é a proteção que você deseja manter.</p>
-          <div class="dialog-actions">
-            <button class="secondary-button" type="button" onClick={() => setPendingHostname('')}>
-              Voltar e revisar
-            </button>
-            <button
-              class="danger-button"
-              type="button"
-              onClick={() => void confirm()}
-              disabled={isLoading}
-            >
-              Confirmar bloqueio
-            </button>
-          </div>
+          <small>Para uma decisão ajustável, use a aba Pausas flexíveis.</small>
         </div>
-      )}
-
-      {feedback && (
-        <p class="feedback" role="status">
-          {feedback}
-        </p>
-      )}
-      <div class="list-heading">
-        <h3>Bloqueios permanentes</h3>
-        <Badge>{blocks.length}</Badge>
-      </div>
-      {blocks.length ? (
-        <ul class="domain-list permanent-list">
+      ) : (
+        <ul class={styles.list}>
           {blocks.map((block) => (
             <li key={block.hostname}>
               <strong>{block.hostname}</strong>
+              <small>decisão permanente</small>
             </li>
           ))}
         </ul>
-      ) : (
-        <p class="empty-state">Nenhum bloqueio permanente cadastrado.</p>
+      )}
+
+      <form class={styles.formCard} onSubmit={addBlock}>
+        <header>
+          <h3>Novo bloqueio permanente</h3>
+          <p>Não há liberação por minutos. Só sai daqui reinstalando a extensão.</p>
+        </header>
+        <label class={styles.fieldLabel} for="permanent-hostname">
+          Endereço
+        </label>
+        <input
+          id="permanent-hostname"
+          inputMode="url"
+          placeholder="exemplo.com"
+          value={hostname}
+          onInput={(event) => setHostname(event.currentTarget.value)}
+          disabled={isLoading}
+          required
+        />
+        <label class={styles.acknowledgement}>
+          <input
+            type="checkbox"
+            checked={acknowledged}
+            onChange={(event) => setAcknowledged(event.currentTarget.checked)}
+          />
+          <span>Entendo que este bloqueio não pode ser desfeito por este painel.</span>
+        </label>
+        <Button variant="dark" type="submit" loading={isLoading} disabled={!acknowledged}>
+          Bloquear em definitivo
+        </Button>
+        <small>
+          Use para o que você já decidiu que não volta a negociar.{' '}
+          <a href={documentationUrl} target="_blank" rel="noreferrer">
+            Entenda os detalhes.
+          </a>
+        </small>
+      </form>
+
+      {feedback && (
+        <p class={styles.feedback} role="status">
+          {feedback}
+        </p>
       )}
     </section>
   );

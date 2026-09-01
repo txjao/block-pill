@@ -9,7 +9,7 @@ import type { PermanentBlock } from '../domain/permanent-block.types';
 export function usePermanentBlockModel() {
   const [blocks, setBlocks] = useState<PermanentBlock[]>([]);
   const [hostname, setHostname] = useState('');
-  const [pendingHostname, setPendingHostname] = useState('');
+  const [acknowledged, setAcknowledged] = useState(false);
   const [feedback, setFeedback] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
@@ -23,22 +23,19 @@ export function usePermanentBlockModel() {
     setIsLoading(false);
   }
 
-  function prepare(event: JSX.TargetedSubmitEvent<HTMLFormElement>): void {
+  async function addBlock(event: JSX.TargetedSubmitEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault();
-    setPendingHostname(hostname.trim());
-  }
-
-  async function confirm(): Promise<void> {
+    if (!acknowledged) return;
     setIsLoading(true);
     const response = await send({
       type: 'permanent-block/add',
-      hostname: pendingHostname,
+      hostname: hostname.trim(),
     });
 
     if (response.ok) {
       setBlocks(response.blocks);
       setHostname('');
-      setPendingHostname('');
+      setAcknowledged(false);
       setFeedback('Bloqueio permanente criado.');
     } else {
       setFeedback(response.message);
@@ -49,13 +46,12 @@ export function usePermanentBlockModel() {
   return {
     blocks,
     hostname,
-    pendingHostname,
+    acknowledged,
     feedback,
     isLoading,
     setHostname,
-    setPendingHostname,
-    prepare,
-    confirm,
+    setAcknowledged,
+    addBlock,
   };
 }
 
