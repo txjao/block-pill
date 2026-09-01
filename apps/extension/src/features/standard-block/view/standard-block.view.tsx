@@ -1,6 +1,7 @@
 import type { useStandardBlockModel } from './standard-block.model';
-import { InteractiveHoverButton } from '../../../shared/ui/interactive-hover-button';
-import { Badge } from '../../../shared/ui/badge';
+import { Button } from '../../../shared/ui/components/button/button';
+import blockPillIcon from '../../../../../../shared/brand/icons/block-pill-transparent.svg?url';
+import styles from './standard-block.module.css';
 
 type StandardBlockModel = ReturnType<typeof useStandardBlockModel>;
 
@@ -20,109 +21,40 @@ export function StandardBlockView(props: StandardBlockModel) {
   } = props;
 
   return (
-    <section class="panel standard-panel" aria-labelledby="standard-blocks-title">
-      <div class="panel-header">
-        <div>
-          <Badge tone="accent">Pausa flexível</Badge>
-          <h2 id="standard-blocks-title">Bloqueio padrão</h2>
-          <p>Interrompe o acesso e permite uma liberação curta depois do período de espera.</p>
-        </div>
-      </div>
+    <section class={styles.section} aria-labelledby="standard-blocks-title">
+      <h2 id="standard-blocks-title" class={styles.srOnly}>
+        Pausas flexíveis
+      </h2>
 
-      <div class="rules-layout">
-        <form class="cooldown-form field-group" onSubmit={saveGlobalCooldown}>
-          <label class="field-label" for="global-cooldown">
-            Tempo entre liberações
-          </label>
-          <p class="field-help">
-            Depois de usar uma pausa, esse período precisa passar antes de uma nova liberação.
-          </p>
-          <div class="form-row">
-            <input
-              id="global-cooldown"
-              type="number"
-              min="1"
-              max="17568"
-              step="0.5"
-              list="cooldown-presets"
-              value={globalCooldownHours}
-              onInput={(event) => setGlobalCooldownHours(event.currentTarget.value)}
-              required
-            />
-            <span class="input-suffix">horas</span>
-            <button class="secondary-button" type="submit" disabled={isLoading}>
-              Salvar tempo
-            </button>
-          </div>
-          <datalist id="cooldown-presets">
-            <option value="1" />
-            <option value="2" />
-            <option value="4" />
-            <option value="6" />
-            <option value="12" />
-            <option value="24" />
-          </datalist>
-        </form>
-
-        <form class="domain-form field-group" onSubmit={addBlock}>
-          <label class="field-label" for="hostname">
-            Site que você quer pausar
-          </label>
-          <p class="field-help">
-            Cole um endereço completo ou digite apenas o domínio, como youtube.com.
-          </p>
-          <div class="form-row">
-            <input
-              id="hostname"
-              name="hostname"
-              type="text"
-              inputMode="url"
-              placeholder="exemplo.com"
-              value={hostname}
-              onInput={(event) => setHostname(event.currentTarget.value)}
-              disabled={isLoading}
-              required
-            />
-            <InteractiveHoverButton
-              className="interactive-hover-button--fluid"
-              text="Criar bloqueio"
-              type="submit"
-              loading={isLoading}
-            />
-          </div>
-        </form>
-      </div>
-
-      <p class="feedback" aria-live="polite">
-        {feedback}
-      </p>
-      <div class="list-heading">
-        <h3>Sites bloqueados</h3>
-        <Badge>{blocks.length}</Badge>
-      </div>
       {blocks.length === 0 ? (
-        <p class="empty-state">
-          {isLoading
-            ? 'Carregando bloqueios…'
-            : 'Sua lista está vazia. Adicione o primeiro site acima.'}
-        </p>
+        <div class={styles.emptyState}>
+          <img src={blockPillIcon} alt="" />
+          <h3>Nenhum site em pausa ainda</h3>
+          <p>Comece pelo site em que você mais se perde. Dá para mudar ou remover quando quiser.</p>
+          <small>Se a decisão não deve ser desfeita, use a aba Decisões permanentes.</small>
+        </div>
       ) : (
-        <ul class="domain-list">
+        <ul class={styles.list}>
           {blocks.map((block) => (
             <li key={block.hostname}>
-              <div class="domain-details">
-                <strong>{block.hostname}</strong>
-                <small>
-                  {block.cooldownMilliseconds
-                    ? `Espera própria de ${block.cooldownMilliseconds / 3_600_000} h`
-                    : `Usa a espera geral de ${globalCooldownHours} h`}
-                </small>
-                <form
-                  class="inline-cooldown"
-                  onSubmit={(event) => void saveDomainCooldown(block, event)}
-                >
-                  <label class="sr-only" for={`cooldown-${block.ruleId}`}>
-                    Tempo específico para {block.hostname}
+              <div class={styles.listRow}>
+                <span>
+                  <strong>{block.hostname}</strong>
+                  <small>
+                    {block.cooldownMilliseconds
+                      ? `espera própria de ${block.cooldownMilliseconds / 3_600_000} h`
+                      : `espera geral de ${globalCooldownHours} h`}
+                  </small>
+                </span>
+                <Button variant="text" disabled={isLoading} onClick={() => void removeBlock(block)}>
+                  Remover
+                </Button>
+              </div>
+              <details class={styles.domainSettings}>
+                <summary>Ajustar espera deste site</summary>
+                <form onSubmit={(event) => void saveDomainCooldown(block, event)}>
+                  <label class={styles.srOnly} for={`cooldown-${block.ruleId}`}>
+                    Espera específica para {block.hostname}
                   </label>
                   <input
                     id={`cooldown-${block.ruleId}`}
@@ -136,23 +68,66 @@ export function StandardBlockView(props: StandardBlockModel) {
                       block.cooldownMilliseconds ? block.cooldownMilliseconds / 3_600_000 : ''
                     }
                   />
-                  <button class="secondary-button" type="submit">
-                    Aplicar tempo próprio
-                  </button>
+                  <Button variant="secondary" type="submit" disabled={isLoading}>
+                    Aplicar espera própria
+                  </Button>
                 </form>
-              </div>
-              <button
-                class="text-button danger-text"
-                type="button"
-                disabled={isLoading}
-                onClick={() => void removeBlock(block)}
-              >
-                Remover
-              </button>
+                <small>Deixe vazio para voltar a usar a espera geral.</small>
+              </details>
             </li>
           ))}
         </ul>
       )}
+
+      <div class={styles.formCard}>
+        <header>
+          <h3>Novo bloqueio flexível</h3>
+          <p>Você poderá liberar 15 minutos por ciclo quando precisar.</p>
+        </header>
+        <form class={styles.form} onSubmit={addBlock}>
+          <label for="hostname">Endereço</label>
+          <input
+            id="hostname"
+            name="hostname"
+            type="text"
+            inputMode="url"
+            placeholder="exemplo.com"
+            value={hostname}
+            onInput={(event) => setHostname(event.currentTarget.value)}
+            disabled={isLoading}
+            required
+          />
+          <Button type="submit" loading={isLoading}>
+            Criar bloqueio
+          </Button>
+        </form>
+        <form class={styles.cooldownForm} onSubmit={saveGlobalCooldown}>
+          <label for="global-cooldown">Espera entre liberações</label>
+          <div>
+            <input
+              id="global-cooldown"
+              type="number"
+              min="1"
+              max="17568"
+              step="0.5"
+              value={globalCooldownHours}
+              onInput={(event) => setGlobalCooldownHours(event.currentTarget.value)}
+              required
+            />
+            <span>horas</span>
+            <Button variant="secondary" type="submit" disabled={isLoading}>
+              Salvar espera
+            </Button>
+          </div>
+        </form>
+        <small class={styles.suggestions}>
+          Sugestões: youtube.com · instagram.com · tiktok.com
+        </small>
+      </div>
+
+      <p class={styles.feedback} aria-live="polite">
+        {feedback}
+      </p>
     </section>
   );
 }
