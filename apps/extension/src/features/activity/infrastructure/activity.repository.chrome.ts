@@ -1,6 +1,6 @@
-import { activityEventSchema } from '../domain/activity.schema';
-import type { ActivityRepository } from '../domain/activity.repository';
-import type { ActivityEvent } from '../domain/activity.types';
+import { activityEventSchema } from '@/features/activity/domain/activity.schema';
+import type { ActivityRepository } from '@/features/activity/domain/activity.repository';
+import type { ActivityEvent } from '@/features/activity/domain/activity.types';
 
 const STORAGE_KEY = 'activityEvents';
 

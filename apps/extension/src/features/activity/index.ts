@@ -1,3 +1,7 @@
+export {
+  ACTIVITY_MESSAGE_PREFIX,
+  ACTIVITY_MESSAGE_TYPE,
+} from './application/activity.messages.constants';
 export { handleActivityRequest, parseActivityRequest } from './application/activity.messages';
 export type {
   ActivityRequest,
@@ -13,4 +17,4 @@ export type {
 } from './domain/activity.types';
 export { ChromeActivityRepository } from './infrastructure/activity.repository.chrome';
 export { sendActivityRequest } from './view/activity.client';
-export { ActivityDashboardPage } from './view/activity-dashboard.page';
+export { ActivityDashboardPage } from './view/dashboard-page/activity-dashboard.page';

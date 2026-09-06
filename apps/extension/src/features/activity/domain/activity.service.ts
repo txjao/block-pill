@@ -1,4 +1,4 @@
-import type { Clock } from '../../../shared/time/clock';
+import type { Clock } from '@/shared/current-time/domain';
 import type { ActivityRepository } from './activity.repository';
 import type { ActivityEvent, ActivityEventInput, ActivitySource } from './activity.types';
 

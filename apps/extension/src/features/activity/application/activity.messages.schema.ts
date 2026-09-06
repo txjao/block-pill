@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { hostnameSchema } from '../../../shared/site/hostname.schema';
+import { hostnameSchema } from '@/shared/web-address/domain';
 import {
   activityDurationMinutesSchema,
   activityFeelingSchema,
@@ -7,12 +7,13 @@ import {
   activityPathSchema,
   activityReasonSchema,
   activitySourceSchema,
-} from '../domain/activity.schema';
+} from '@/features/activity/domain/activity.schema';
+import { ACTIVITY_MESSAGE_TYPE } from './activity.messages.constants';
 
 export const activityRequestSchema = z.discriminatedUnion('type', [
-  z.object({ type: z.literal('activity/list') }),
+  z.object({ type: z.literal(ACTIVITY_MESSAGE_TYPE.list) }),
   z.object({
-    type: z.literal('activity/record'),
+    type: z.literal(ACTIVITY_MESSAGE_TYPE.record),
     source: activitySourceSchema,
     kind: activityKindSchema,
     hostname: hostnameSchema,
@@ -22,7 +23,7 @@ export const activityRequestSchema = z.discriminatedUnion('type', [
     reason: activityReasonSchema.optional(),
   }),
   z.object({
-    type: z.literal('activity/remove'),
+    type: z.literal(ACTIVITY_MESSAGE_TYPE.remove),
     source: activitySourceSchema.optional(),
     hostname: hostnameSchema.optional(),
   }),

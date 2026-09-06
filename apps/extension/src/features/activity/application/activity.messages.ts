@@ -1,5 +1,6 @@
-import type { ActivityService } from '../domain/activity.service';
-import type { ActivityEvent } from '../domain/activity.types';
+import type { ActivityService } from '@/features/activity/domain/activity.service';
+import type { ActivityEvent } from '@/features/activity/domain/activity.types';
+import { ACTIVITY_MESSAGE_TYPE } from './activity.messages.constants';
 import { activityRequestSchema, type ParsedActivityRequest } from './activity.messages.schema';
 
 export type { ActivityRequest, ParsedActivityRequest } from './activity.messages.schema';
@@ -16,10 +17,10 @@ export async function handleActivityRequest(
   request: ParsedActivityRequest,
 ): Promise<ActivityResponse> {
   try {
-    if (request.type === 'activity/record') {
+    if (request.type === ACTIVITY_MESSAGE_TYPE.record) {
       const { type: _type, ...input } = request;
       await service.record(input);
-    } else if (request.type === 'activity/remove') {
+    } else if (request.type === ACTIVITY_MESSAGE_TYPE.remove) {
       await service.remove(request.source, request.hostname);
     }
     return { ok: true, events: await service.list() };

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { activityEventSchema } from '../domain/activity.schema';
+import { activityEventSchema } from '@/features/activity/domain/activity.schema';
 
 describe('activity schema', () => {
   it('applies the legacy default path and normalizes stored values', () => {

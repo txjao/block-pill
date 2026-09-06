@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'preact/hooks';
-import type { ActivityEvent, ActivitySource } from '../domain/activity.types';
-import { sendActivityRequest } from './activity.client';
+import type { ActivityEvent, ActivitySource } from '@/features/activity/domain/activity.types';
+import { ACTIVITY_MESSAGE_TYPE } from '@/features/activity/application/activity.messages.constants';
+import { sendActivityRequest } from '@/features/activity/view/activity.client';
 
 export interface ActivitySummary {
   key: string;
@@ -34,7 +35,7 @@ export function useActivityDashboardModel() {
 
   async function load(): Promise<void> {
     setIsLoading(true);
-    const response = await sendActivityRequest({ type: 'activity/list' });
+    const response = await sendActivityRequest({ type: ACTIVITY_MESSAGE_TYPE.list });
     if (response.ok) setEvents(response.events);
     else setFeedback(response.message);
     setIsLoading(false);
@@ -44,7 +45,7 @@ export function useActivityDashboardModel() {
     if (!deletionTarget || !deletionConfirmed) return;
     setIsLoading(true);
     const response = await sendActivityRequest({
-      type: 'activity/remove',
+      type: ACTIVITY_MESSAGE_TYPE.remove,
       source: deletionTarget.source,
       hostname: deletionTarget.hostname,
     });
@@ -77,6 +78,8 @@ export function useActivityDashboardModel() {
     confirmDeletion,
   };
 }
+
+export type ActivityDashboardModel = ReturnType<typeof useActivityDashboardModel>;
 
 export function createSummaries(events: ActivityEvent[]): ActivitySummary[] {
   const groups = new Map<string, ActivityEvent[]>();

@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import type { Clock } from '../../../shared/time/clock';
-import type { ActivityRepository } from '../domain/activity.repository';
-import { ActivityService } from '../domain/activity.service';
-import type { ActivityEvent } from '../domain/activity.types';
+import type { Clock } from '@/shared/current-time/domain';
+import type { ActivityRepository } from '@/features/activity/domain/activity.repository';
+import { ActivityService } from '@/features/activity/domain/activity.service';
+import type { ActivityEvent } from '@/features/activity/domain/activity.types';
 
 class Repository implements ActivityRepository {
   events: ActivityEvent[] = [];

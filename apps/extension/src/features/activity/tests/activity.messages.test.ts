@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { parseActivityRequest } from '../application/activity.messages';
+import { parseActivityRequest } from '@/features/activity/application/activity.messages';
 
 describe('activity messages', () => {
   it('normalizes semantic values before delivering a record request', () => {

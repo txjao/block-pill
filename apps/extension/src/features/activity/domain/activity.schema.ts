@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { hostnameSchema } from '../../../shared/site/hostname.schema';
+import { hostnameSchema } from '@/shared/web-address/domain';
 
 export const activitySourceSchema = z.enum(['standard', 'permanent', 'anti-porn', 'anti-bet']);
 export const activityKindSchema = z.enum(['created', 'attempt', 'access-granted', 'reflection']);

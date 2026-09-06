@@ -1,4 +1,7 @@
-import type { ActivityRequest, ActivityResponse } from '../application/activity.messages';
+import type {
+  ActivityRequest,
+  ActivityResponse,
+} from '@/features/activity/application/activity.messages';
 
 export async function sendActivityRequest(request: ActivityRequest): Promise<ActivityResponse> {
   try {
