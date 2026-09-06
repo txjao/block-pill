@@ -13,6 +13,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': resolve(projectRoot, 'src'),
+      '@workspace': resolve(projectRoot, '../..'),
     },
   },
   build: {

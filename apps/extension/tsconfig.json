@@ -16,6 +16,7 @@
     "skipLibCheck": true,
     "paths": {
       "@/*": ["./src/*"],
+      "@workspace/*": ["../../*"],
       "react": ["./node_modules/preact/compat/"],
       "react/jsx-runtime": ["./node_modules/preact/jsx-runtime"],
       "react-dom": ["./node_modules/preact/compat/"],

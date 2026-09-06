@@ -1,4 +1,4 @@
-import { repo } from '../content';
+import { repo } from '@/content';
 import { SiteHeader } from './SiteHeader';
 import { InteractiveHoverButton } from './ui/interactive-hover-button';
 

@@ -1,13 +1,5 @@
-declare const hostnameBrand: unique symbol;
-
-export type Hostname = string & { readonly [hostnameBrand]: true };
-
-export class InvalidHostnameError extends Error {
-  constructor() {
-    super('Informe um domínio válido, como "exemplo.com".');
-    this.name = 'InvalidHostnameError';
-  }
-}
+import { InvalidHostnameError } from './hostname.error';
+import type { Hostname } from './hostname';
 
 export function parseHostname(input: string): Hostname {
   const value = input.trim();
@@ -32,7 +24,9 @@ export function parseHostname(input: string): Hostname {
     .toLowerCase()
     .replace(/^www\./, '')
     .replace(/\.$/, '');
+
   const labels = hostname.split('.');
+
   const isValidLabel = (label: string) => /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/.test(label);
 
   if (hostname.length > 253 || labels.length < 2 || labels.some((label) => !isValidLabel(label))) {

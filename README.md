@@ -25,7 +25,8 @@ apps/
 ├── extension/  # Extensão Manifest V3
 └── web/        # Landing page publicada na Vercel
 shared/
-└── brand/      # Identidade visual consumida pelas duas aplicações
+├── brand/      # Identidade visual consumida pelas duas aplicações
+└── ui/         # Implementações de interface consumidas pelas duas aplicações
 ```
 
 O workspace é coordenado por pnpm. Cada aplicação possui configuração, scripts,

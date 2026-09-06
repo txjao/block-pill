@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { InvalidHostnameError, parseHostname } from './hostname';
+import { InvalidHostnameError, parseHostname } from '@/shared/web-address/domain';
 
 describe('hostname', () => {
   it.each([

@@ -1,5 +1,5 @@
-import icon from '../../../../shared/brand/icons/block-pill-transparent.svg?url';
-import { repo } from '../content';
+import icon from '@workspace/shared/brand/icons/block-pill-transparent.svg?url';
+import { repo } from '@/content';
 
 export function Logo() {
   return (

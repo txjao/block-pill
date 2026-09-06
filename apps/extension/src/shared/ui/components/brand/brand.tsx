@@ -1,5 +1,5 @@
-import blockPillIcon from '../../../../../../../shared/brand/icons/block-pill-transparent.svg?url';
-import filledIcon from '../../../../../../../shared/brand/icons/block-pill-filled.svg?url';
+import blockPillIcon from '@workspace/shared/brand/icons/block-pill-transparent.svg?url';
+import filledIcon from '@workspace/shared/brand/icons/block-pill-filled.svg?url';
 import styles from './brand.module.css';
 
 export function Brand({

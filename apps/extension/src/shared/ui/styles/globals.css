@@ -1,5 +1,5 @@
 @import '@fontsource-variable/bricolage-grotesque';
-@import '../../../../../../shared/brand/tokens.css';
+@import '@workspace/shared/brand/tokens.css';
 
 :root {
   color-scheme: light;

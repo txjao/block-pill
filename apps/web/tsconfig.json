@@ -9,7 +9,11 @@
     "strict": true,
     "noEmit": true,
     "isolatedModules": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "paths": {
+      "@/*": ["./src/*"],
+      "@workspace/*": ["../../*"]
+    }
   },
   "include": ["src", "vite.config.ts"]
 }

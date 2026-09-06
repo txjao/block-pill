@@ -1,6 +1,6 @@
 import type { ComponentChildren } from 'preact';
 import * as RadixAlertDialog from 'radix-ui/alert-dialog';
-import { Button } from '../button/button';
+import { Button } from '@/shared/ui/components/button';
 import styles from './alert-dialog.module.css';
 
 interface AlertDialogProps {

@@ -1,5 +1,5 @@
 import * as Accordion from '@radix-ui/react-accordion';
-import { capabilities, storySteps } from '../content';
+import { capabilities, storySteps } from '@/content';
 export function ProductStory() {
   return (
     <>
