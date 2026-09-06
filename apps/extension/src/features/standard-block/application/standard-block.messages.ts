@@ -2,8 +2,9 @@ import type {
   StandardBlock,
   StandardBlockSettings,
   StandardBlockSnapshot,
-} from '../domain/standard-block.types';
+} from '@/features/standard-block/domain/standard-block.types';
 import type { StandardBlockController } from './standard-block.controller';
+import { STANDARD_BLOCK_MESSAGE_TYPE } from './standard-block.messages.constants';
 import {
   standardBlockRequestSchema,
   type ParsedStandardBlockRequest,
@@ -34,16 +35,16 @@ export async function handleStandardBlockRequest(
 ): Promise<StandardBlockResponse> {
   try {
     const settings = await controller.getSettings();
-    if (request.type === 'standard-blocking/add') {
+    if (request.type === STANDARD_BLOCK_MESSAGE_TYPE.add) {
       await controller.add(request.hostname);
-    } else if (request.type === 'standard-blocking/remove') {
+    } else if (request.type === STANDARD_BLOCK_MESSAGE_TYPE.remove) {
       await controller.remove(request.hostname);
-    } else if (request.type === 'standard-blocking/status') {
+    } else if (request.type === STANDARD_BLOCK_MESSAGE_TYPE.status) {
       return {
         ok: true,
         snapshot: await controller.getStatus(request.hostname),
       };
-    } else if (request.type === 'standard-blocking/request-access') {
+    } else if (request.type === STANDARD_BLOCK_MESSAGE_TYPE.requestAccess) {
       return {
         ok: true,
         snapshot: await controller.requestAccess(
@@ -52,20 +53,20 @@ export async function handleStandardBlockRequest(
           settings.globalCooldownMilliseconds,
         ),
       };
-    } else if (request.type === 'standard-blocking/update-settings') {
+    } else if (request.type === STANDARD_BLOCK_MESSAGE_TYPE.updateSettings) {
       return {
         ok: true,
         settings: await controller.updateSettings(request.globalCooldownMilliseconds),
         blocks: await controller.list(),
       };
-    } else if (request.type === 'standard-blocking/update-domain-cooldown') {
+    } else if (request.type === STANDARD_BLOCK_MESSAGE_TYPE.updateDomainCooldown) {
       await controller.setDomainCooldown(
         request.hostname,
         request.cooldownMilliseconds ?? undefined,
       );
-    } else if (request.type === 'standard-blocking/add-subdomain-exception') {
+    } else if (request.type === STANDARD_BLOCK_MESSAGE_TYPE.addSubdomainException) {
       await controller.addAllowedSubdomain(request.hostname, request.subdomain);
-    } else if (request.type === 'standard-blocking/settings') {
+    } else if (request.type === STANDARD_BLOCK_MESSAGE_TYPE.settings) {
       return { ok: true, settings, blocks: await controller.list() };
     }
 

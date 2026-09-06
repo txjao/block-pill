@@ -1,5 +1,9 @@
 export { StandardBlockController } from './application/standard-block.controller';
 export {
+  STANDARD_BLOCK_MESSAGE_PREFIX,
+  STANDARD_BLOCK_MESSAGE_TYPE,
+} from './application/standard-block.messages.constants';
+export {
   handleStandardBlockRequest,
   parseStandardBlockRequest,
   type StandardBlockRequest,
@@ -8,6 +12,7 @@ export {
 } from './application/standard-block.messages';
 export {
   COOLDOWN_PRESET_HOURS,
+  STANDARD_ACCESS_ALARM_PREFIX,
   createStandardAccessAlarmName,
   DEFAULT_COOLDOWN_HOURS,
   DEFAULT_COOLDOWN_MS,
@@ -47,5 +52,5 @@ export type {
 export { ChromeStandardBlockRepository } from './infrastructure/standard-block.repository.chrome';
 export { ChromeStandardBlockRuleManager } from './infrastructure/standard-block.rule-manager.chrome';
 export { ChromeStandardBlockSettingsRepository } from './infrastructure/standard-block.settings-repository.chrome';
-export { StandardBlockBlockedPage } from './view/standard-block.blocked-page';
-export { StandardBlockPage } from './view/standard-block.page';
+export { StandardBlockBlockedPage } from './view/blocked-page/standard-block.blocked-page';
+export { StandardBlockPage } from './view/settings-page/standard-block.page';

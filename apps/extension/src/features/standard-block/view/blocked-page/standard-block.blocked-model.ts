@@ -2,8 +2,12 @@ import { useEffect, useState } from 'preact/hooks';
 import type {
   StandardBlockRequest,
   StandardBlockResponse,
-} from '../application/standard-block.messages';
-import type { StandardBlockSnapshot, TemporaryAccessMinutes } from '../domain/standard-block.types';
+} from '@/features/standard-block/application/standard-block.messages';
+import { STANDARD_BLOCK_MESSAGE_TYPE } from '@/features/standard-block/application/standard-block.messages.constants';
+import type {
+  StandardBlockSnapshot,
+  TemporaryAccessMinutes,
+} from '@/features/standard-block/domain/standard-block.types';
 
 export function useStandardBlockBlockedModel() {
   const hostname = new URLSearchParams(window.location.search).get('hostname') ?? '';
@@ -24,8 +28,8 @@ export function useStandardBlockBlockedModel() {
     }
     setIsLoading(true);
     const [response, contextResponse] = await Promise.all([
-      send({ type: 'standard-blocking/status', hostname }),
-      send({ type: 'standard-blocking/context' }),
+      send({ type: STANDARD_BLOCK_MESSAGE_TYPE.status, hostname }),
+      send({ type: STANDARD_BLOCK_MESSAGE_TYPE.context }),
     ]);
     if (response.ok && 'snapshot' in response) {
       setSnapshot(response.snapshot);
@@ -47,7 +51,7 @@ export function useStandardBlockBlockedModel() {
     if (!attemptedHostname) return;
     setIsLoading(true);
     const response = await send({
-      type: 'standard-blocking/add-subdomain-exception',
+      type: STANDARD_BLOCK_MESSAGE_TYPE.addSubdomainException,
       hostname,
       subdomain: attemptedHostname,
     });
@@ -61,7 +65,11 @@ export function useStandardBlockBlockedModel() {
 
   async function requestAccess(minutes: TemporaryAccessMinutes) {
     setIsLoading(true);
-    const response = await send({ type: 'standard-blocking/request-access', hostname, minutes });
+    const response = await send({
+      type: STANDARD_BLOCK_MESSAGE_TYPE.requestAccess,
+      hostname,
+      minutes,
+    });
     if (response.ok && 'snapshot' in response) {
       setSnapshot(response.snapshot);
       window.location.assign(`https://${hostname}`);

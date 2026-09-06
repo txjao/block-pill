@@ -1,4 +1,4 @@
-import type { Hostname } from '../../../shared/site/hostname';
+import type { Hostname } from '@/shared/web-address/domain';
 import type { TEMPORARY_ACCESS_MINUTES } from './standard-block.constants';
 
 export type TemporaryAccessMinutes = (typeof TEMPORARY_ACCESS_MINUTES)[number];

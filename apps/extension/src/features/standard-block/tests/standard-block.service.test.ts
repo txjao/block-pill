@@ -1,15 +1,15 @@
 import { describe, expect, it } from 'vitest';
-import type { Clock } from '../../../shared/time/clock';
-import { MINUTE_MS } from '../domain/standard-block.constants';
-import type { StandardBlockRepository } from '../domain/standard-block.repository';
-import type { StandardBlockRuleManager } from '../domain/standard-block.rule-manager';
+import type { Clock } from '@/shared/current-time/domain';
+import { MINUTE_MS } from '@/features/standard-block/domain/standard-block.constants';
+import type { StandardBlockRepository } from '@/features/standard-block/domain/standard-block.repository';
+import type { StandardBlockRuleManager } from '@/features/standard-block/domain/standard-block.rule-manager';
 import {
   InvalidCooldownError,
   StandardBlockAlreadyExistsError,
   StandardBlockService,
   TemporaryAccessBudgetError,
-} from '../domain/standard-block.service';
-import type { StandardBlock } from '../domain/standard-block.types';
+} from '@/features/standard-block/domain/standard-block.service';
+import type { StandardBlock } from '@/features/standard-block/domain/standard-block.types';
 
 class MemoryRepository implements StandardBlockRepository {
   blocks: StandardBlock[] = [];

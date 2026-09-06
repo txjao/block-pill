@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { standardBlockSchema } from '../domain/standard-block.schema';
+import { standardBlockSchema } from '@/features/standard-block/domain/standard-block.schema';
 
 describe('standard block schema', () => {
   it('migra um registro legado com os padrões da nova regra', () => {

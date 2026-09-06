@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { MAXIMUM_COOLDOWN_MS, MINIMUM_COOLDOWN_MS } from '../domain/standard-block.constants';
-import { standardBlockSettingsSchema } from '../domain/standard-block.settings.schema';
+import { MAXIMUM_COOLDOWN_MS, MINIMUM_COOLDOWN_MS } from '@/features/standard-block/domain/standard-block.constants';
+import { standardBlockSettingsSchema } from '@/features/standard-block/domain/standard-block.settings.schema';
 
 describe('standard block settings schema', () => {
   it('accepts the cooldown boundaries', () => {

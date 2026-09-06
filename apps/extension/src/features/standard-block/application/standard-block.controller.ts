@@ -1,14 +1,14 @@
 import {
   validateCooldownMilliseconds,
   type StandardBlockService,
-} from '../domain/standard-block.service';
-import type { StandardBlockSettingsRepository } from '../domain/standard-block.settings-repository';
+} from '@/features/standard-block/domain/standard-block.service';
+import type { StandardBlockSettingsRepository } from '@/features/standard-block/domain/standard-block.settings-repository';
 import type {
   StandardBlock,
   StandardBlockSnapshot,
   StandardBlockSettings,
   TemporaryAccessMinutes,
-} from '../domain/standard-block.types';
+} from '@/features/standard-block/domain/standard-block.types';
 
 export class StandardBlockController {
   constructor(

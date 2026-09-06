@@ -1,9 +1,9 @@
 import {
   STANDARD_BLOCK_RULE_ID_END,
   STANDARD_BLOCK_RULE_ID_START,
-} from '../domain/standard-block.constants';
-import type { StandardBlockRuleManager } from '../domain/standard-block.rule-manager';
-import type { StandardBlock } from '../domain/standard-block.types';
+} from '@/features/standard-block/domain/standard-block.constants';
+import type { StandardBlockRuleManager } from '@/features/standard-block/domain/standard-block.rule-manager';
+import type { StandardBlock } from '@/features/standard-block/domain/standard-block.types';
 
 const BLOCKED_PAGE_PATH = 'src/entrypoints/blocked/index.html';
 

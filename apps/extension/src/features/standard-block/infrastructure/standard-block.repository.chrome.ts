@@ -1,10 +1,10 @@
-import { standardBlockSchema } from '../domain/standard-block.schema';
+import { standardBlockSchema } from '@/features/standard-block/domain/standard-block.schema';
 import {
   STANDARD_BLOCK_RULE_ID_END,
   STANDARD_BLOCK_RULE_ID_START,
-} from '../domain/standard-block.constants';
-import type { StandardBlockRepository } from '../domain/standard-block.repository';
-import type { StandardBlock } from '../domain/standard-block.types';
+} from '@/features/standard-block/domain/standard-block.constants';
+import type { StandardBlockRepository } from '@/features/standard-block/domain/standard-block.repository';
+import type { StandardBlock } from '@/features/standard-block/domain/standard-block.types';
 
 const STORAGE_KEY = 'standardBlocks';
 

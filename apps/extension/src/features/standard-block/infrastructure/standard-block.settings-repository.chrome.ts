@@ -1,7 +1,7 @@
-import { DEFAULT_COOLDOWN_MS } from '../domain/standard-block.constants';
-import { standardBlockSettingsSchema } from '../domain/standard-block.settings.schema';
-import type { StandardBlockSettingsRepository } from '../domain/standard-block.settings-repository';
-import type { StandardBlockSettings } from '../domain/standard-block.types';
+import { DEFAULT_COOLDOWN_MS } from '@/features/standard-block/domain/standard-block.constants';
+import { standardBlockSettingsSchema } from '@/features/standard-block/domain/standard-block.settings.schema';
+import type { StandardBlockSettingsRepository } from '@/features/standard-block/domain/standard-block.settings-repository';
+import type { StandardBlockSettings } from '@/features/standard-block/domain/standard-block.types';
 
 const STORAGE_KEY = 'standardBlockSettings';
 export class ChromeStandardBlockSettingsRepository implements StandardBlockSettingsRepository {

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { parseHostname } from '../../../shared/site/hostname';
-import type { StandardBlock } from '../domain/standard-block.types';
-import { createStandardBlockRule } from '../infrastructure/standard-block.rule-manager.chrome';
+import { parseHostname } from '@/shared/web-address/domain';
+import type { StandardBlock } from '@/features/standard-block/domain/standard-block.types';
+import { createStandardBlockRule } from '@/features/standard-block/infrastructure/standard-block.rule-manager.chrome';
 
 function createBlock(overrides: Partial<StandardBlock> = {}): StandardBlock {
   return {

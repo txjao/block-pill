@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'preact/hooks';
+import { useEffect, useMemo, useState } from 'preact/hooks';
 import type { JSX } from 'preact';
 import type {
   StandardBlockRequest,
   StandardBlockResponse,
-} from '../application/standard-block.messages';
-import type { StandardBlock } from '../domain/standard-block.types';
+} from '@/features/standard-block/application/standard-block.messages';
+import { STANDARD_BLOCK_MESSAGE_TYPE } from '@/features/standard-block/application/standard-block.messages.constants';
+import type { StandardBlock } from '@/features/standard-block/domain/standard-block.types';
 
 export function useStandardBlockModel() {
   const [blocks, setBlocks] = useState<StandardBlock[]>([]);
@@ -12,6 +13,10 @@ export function useStandardBlockModel() {
   const [feedback, setFeedback] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [globalCooldownHours, setGlobalCooldownHours] = useState('1');
+  const blockRows = useMemo(
+    () => createStandardBlockRows(blocks, globalCooldownHours),
+    [blocks, globalCooldownHours],
+  );
 
   useEffect(() => {
     void loadBlocks();
@@ -20,7 +25,7 @@ export function useStandardBlockModel() {
   async function loadBlocks() {
     setIsLoading(true);
     const response = await sendStandardBlockMessage({
-      type: 'standard-blocking/settings',
+      type: STANDARD_BLOCK_MESSAGE_TYPE.settings,
     });
 
     if (response.ok && 'blocks' in response) {
@@ -41,7 +46,7 @@ export function useStandardBlockModel() {
     setIsLoading(true);
 
     const response = await sendStandardBlockMessage({
-      type: 'standard-blocking/add',
+      type: STANDARD_BLOCK_MESSAGE_TYPE.add,
       hostname,
     });
 
@@ -59,7 +64,7 @@ export function useStandardBlockModel() {
   async function removeBlock(block: StandardBlock) {
     setIsLoading(true);
     const response = await sendStandardBlockMessage({
-      type: 'standard-blocking/remove',
+      type: STANDARD_BLOCK_MESSAGE_TYPE.remove,
       hostname: block.hostname,
     });
 
@@ -77,7 +82,7 @@ export function useStandardBlockModel() {
     event.preventDefault();
     setIsLoading(true);
     const response = await sendStandardBlockMessage({
-      type: 'standard-blocking/update-settings',
+      type: STANDARD_BLOCK_MESSAGE_TYPE.updateSettings,
       globalCooldownMilliseconds: Number(globalCooldownHours) * 3_600_000,
     });
     if (response.ok && 'settings' in response) {
@@ -96,7 +101,7 @@ export function useStandardBlockModel() {
     const value = String(form.get('cooldownHours') ?? '').trim();
     setIsLoading(true);
     const response = await sendStandardBlockMessage({
-      type: 'standard-blocking/update-domain-cooldown',
+      type: STANDARD_BLOCK_MESSAGE_TYPE.updateDomainCooldown,
       hostname: block.hostname,
       cooldownMilliseconds: value ? Number(value) * 3_600_000 : null,
     });
@@ -118,7 +123,7 @@ export function useStandardBlockModel() {
     const subdomain = String(form.get('subdomain') ?? '');
     setIsLoading(true);
     const response = await sendStandardBlockMessage({
-      type: 'standard-blocking/add-subdomain-exception',
+      type: STANDARD_BLOCK_MESSAGE_TYPE.addSubdomainException,
       hostname: block.hostname,
       subdomain,
     });
@@ -132,6 +137,7 @@ export function useStandardBlockModel() {
 
   return {
     blocks,
+    blockRows,
     hostname,
     feedback,
     isLoading,
@@ -144,6 +150,17 @@ export function useStandardBlockModel() {
     saveDomainCooldown,
     addSubdomainException,
   };
+}
+
+export type StandardBlockModel = ReturnType<typeof useStandardBlockModel>;
+
+export function createStandardBlockRows(blocks: StandardBlock[], globalCooldownHours: string) {
+  return blocks.map((block) => ({
+    block,
+    cooldownLabel: block.cooldownMilliseconds
+      ? `espera própria de ${block.cooldownMilliseconds / 3_600_000} h`
+      : `espera geral de ${globalCooldownHours} h`,
+  }));
 }
 
 async function sendStandardBlockMessage(

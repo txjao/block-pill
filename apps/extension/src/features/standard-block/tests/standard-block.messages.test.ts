@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { parseStandardBlockRequest } from '../application/standard-block.messages';
+import { parseStandardBlockRequest } from '@/features/standard-block/application/standard-block.messages';
 
 describe('standard block messages', () => {
   it('accepts the blocked-tab context request', () => {
