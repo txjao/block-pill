@@ -1,3 +1,3 @@
-import { registerChromeBrowserRuntime } from '../../features/browser-runtime';
+import { registerChromeBrowserRuntime } from '@/browser/chrome';
 
 registerChromeBrowserRuntime();
