@@ -1,5 +1,6 @@
-import type { PermanentBlock } from '../domain/permanent-block.types';
+import type { PermanentBlock } from '@/features/permanent-block/domain/permanent-block.types';
 import type { PermanentBlockController } from './permanent-block.controller';
+import { PERMANENT_BLOCK_MESSAGE_TYPE } from './permanent-block.messages.constants';
 import {
   permanentBlockRequestSchema,
   type ParsedPermanentBlockRequest,
@@ -24,7 +25,7 @@ export async function handlePermanentBlockRequest(
   request: ParsedPermanentBlockRequest,
 ): Promise<PermanentBlockResponse> {
   try {
-    if (request.type === 'permanent-block/add') {
+    if (request.type === PERMANENT_BLOCK_MESSAGE_TYPE.add) {
       await controller.add(request.hostname);
     }
 

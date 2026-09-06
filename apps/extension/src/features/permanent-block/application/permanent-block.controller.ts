@@ -1,5 +1,5 @@
-import type { PermanentBlockService } from '../domain/permanent-block.service';
-import type { PermanentBlock } from '../domain/permanent-block.types';
+import type { PermanentBlockService } from '@/features/permanent-block/domain/permanent-block.service';
+import type { PermanentBlock } from '@/features/permanent-block/domain/permanent-block.types';
 
 export class PermanentBlockController {
   constructor(private readonly service: PermanentBlockService) {}

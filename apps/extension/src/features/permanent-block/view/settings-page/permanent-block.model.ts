@@ -3,8 +3,9 @@ import type { JSX } from 'preact';
 import type {
   PermanentBlockRequest,
   PermanentBlockResponse,
-} from '../application/permanent-block.messages';
-import type { PermanentBlock } from '../domain/permanent-block.types';
+} from '@/features/permanent-block/application/permanent-block.messages';
+import { PERMANENT_BLOCK_MESSAGE_TYPE } from '@/features/permanent-block/application/permanent-block.messages.constants';
+import type { PermanentBlock } from '@/features/permanent-block/domain/permanent-block.types';
 
 export function usePermanentBlockModel() {
   const [blocks, setBlocks] = useState<PermanentBlock[]>([]);
@@ -17,7 +18,7 @@ export function usePermanentBlockModel() {
 
   async function load(): Promise<void> {
     setIsLoading(true);
-    const response = await send({ type: 'permanent-block/list' });
+    const response = await send({ type: PERMANENT_BLOCK_MESSAGE_TYPE.list });
     if (response.ok) setBlocks(response.blocks);
     else setFeedback(response.message);
     setIsLoading(false);
@@ -28,7 +29,7 @@ export function usePermanentBlockModel() {
     if (!acknowledged) return;
     setIsLoading(true);
     const response = await send({
-      type: 'permanent-block/add',
+      type: PERMANENT_BLOCK_MESSAGE_TYPE.add,
       hostname: hostname.trim(),
     });
 

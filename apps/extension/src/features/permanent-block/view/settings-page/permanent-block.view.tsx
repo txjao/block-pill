@@ -1,6 +1,6 @@
 import type { usePermanentBlockModel } from './permanent-block.model';
-import { Button } from '../../../shared/ui/components/button/button';
-import blockPillIcon from '../../../../../../shared/brand/icons/block-pill-transparent.svg?url';
+import { Button } from '@/shared/ui/components/button';
+import blockPillIcon from '@workspace/shared/brand/icons/block-pill-transparent.svg?url';
 import styles from './permanent-block.module.css';
 
 type PermanentBlockModel = ReturnType<typeof usePermanentBlockModel>;

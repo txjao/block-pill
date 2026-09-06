@@ -1,10 +1,11 @@
 import { z } from 'zod';
-import { hostnameSchema } from '../../../shared/site/hostname.schema';
+import { hostnameSchema } from '@/shared/web-address/domain';
+import { PERMANENT_BLOCK_MESSAGE_TYPE } from './permanent-block.messages.constants';
 
 export const permanentBlockRequestSchema = z.discriminatedUnion('type', [
-  z.object({ type: z.literal('permanent-block/list') }),
+  z.object({ type: z.literal(PERMANENT_BLOCK_MESSAGE_TYPE.list) }),
   z.object({
-    type: z.literal('permanent-block/add'),
+    type: z.literal(PERMANENT_BLOCK_MESSAGE_TYPE.add),
     hostname: hostnameSchema,
   }),
 ]);

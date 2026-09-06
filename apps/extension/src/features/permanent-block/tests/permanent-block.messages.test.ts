@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { parsePermanentBlockRequest } from '../application/permanent-block.messages';
+import { parsePermanentBlockRequest } from '@/features/permanent-block/application/permanent-block.messages';
 
 describe('permanent block messages', () => {
   it('normalizes the hostname at the application boundary', () => {

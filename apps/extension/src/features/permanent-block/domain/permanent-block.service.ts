@@ -1,5 +1,5 @@
-import { parseHostname } from '../../../shared/site/hostname';
-import type { Clock } from '../../../shared/time/clock';
+import { parseHostname } from '@/shared/web-address/domain';
+import type { Clock } from '@/shared/current-time/domain';
 import {
   PERMANENT_BLOCK_RULE_ID_END,
   PERMANENT_BLOCK_RULE_ID_START,

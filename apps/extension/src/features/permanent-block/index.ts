@@ -1,5 +1,9 @@
 export { PermanentBlockController } from './application/permanent-block.controller';
 export {
+  PERMANENT_BLOCK_MESSAGE_PREFIX,
+  PERMANENT_BLOCK_MESSAGE_TYPE,
+} from './application/permanent-block.messages.constants';
+export {
   handlePermanentBlockRequest,
   parsePermanentBlockRequest,
   type PermanentBlockRequest,
@@ -20,5 +24,5 @@ export {
 export type { PermanentBlock } from './domain/permanent-block.types';
 export { ChromePermanentBlockRepository } from './infrastructure/permanent-block.repository.chrome';
 export { ChromePermanentBlockRuleManager } from './infrastructure/permanent-block.rule-manager.chrome';
-export { PermanentBlockBlockedPage } from './view/permanent-block.blocked-page';
-export { PermanentBlockPage } from './view/permanent-block.page';
+export { PermanentBlockBlockedPage } from './view/blocked-page/permanent-block.blocked-page';
+export { PermanentBlockPage } from './view/settings-page/permanent-block.page';

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { createPermanentBlockRule } from '../infrastructure/permanent-block.rule-manager.chrome';
+import { createPermanentBlockRule } from '@/features/permanent-block/infrastructure/permanent-block.rule-manager.chrome';
 
 describe('permanent block chrome rule', () => {
   it('usa prioridade superior ao bloqueio padrão e não cria exceções', () => {

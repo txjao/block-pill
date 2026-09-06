@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { hostnameSchema } from '../../../shared/site/hostname.schema';
+import { hostnameSchema } from '@/shared/web-address/domain';
 import {
   PERMANENT_BLOCK_RULE_ID_END,
   PERMANENT_BLOCK_RULE_ID_START,

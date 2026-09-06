@@ -1,6 +1,6 @@
-import { permanentBlockSchema } from '../domain/permanent-block.schema';
-import type { PermanentBlockRepository } from '../domain/permanent-block.repository';
-import type { PermanentBlock } from '../domain/permanent-block.types';
+import { permanentBlockSchema } from '@/features/permanent-block/domain/permanent-block.schema';
+import type { PermanentBlockRepository } from '@/features/permanent-block/domain/permanent-block.repository';
+import type { PermanentBlock } from '@/features/permanent-block/domain/permanent-block.types';
 
 const STORAGE_KEY = 'permanentBlocks';
 

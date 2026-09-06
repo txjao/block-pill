@@ -1,9 +1,9 @@
 import {
   PERMANENT_BLOCK_RULE_ID_END,
   PERMANENT_BLOCK_RULE_ID_START,
-} from '../domain/permanent-block.constants';
-import type { PermanentBlockRuleManager } from '../domain/permanent-block.rule-manager';
-import type { PermanentBlock } from '../domain/permanent-block.types';
+} from '@/features/permanent-block/domain/permanent-block.constants';
+import type { PermanentBlockRuleManager } from '@/features/permanent-block/domain/permanent-block.rule-manager';
+import type { PermanentBlock } from '@/features/permanent-block/domain/permanent-block.types';
 
 const BLOCKED_PAGE_PATH = 'src/entrypoints/blocked/index.html';
 

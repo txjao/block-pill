@@ -1,4 +1,4 @@
-import type { Hostname } from '../../../shared/site/hostname';
+import type { Hostname } from '@/shared/web-address/domain';
 
 export interface PermanentBlock {
   hostname: Hostname;
