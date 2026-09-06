@@ -44,6 +44,12 @@ Um componente compartilhado puramente visual não exige teste unitário próprio
 Ele passa a exigir teste quando acrescenta estado, transformação de dados,
 decisão ou outra regra pertencente ao projeto.
 
+Decisões de apresentação extraídas de componentes são mantidas em funções puras
+quando isso permite validá-las no ambiente Node existente. Métricas, seleção de
+insights, textos condicionais e formatação de cooldown são exemplos cobertos sem
+introduzir uma biblioteca de DOM. Interações reais de foco, formulário e teclado
+continuam destinadas aos futuros testes de integração da interface.
+
 ### Registro de cada regra
 
 Antes de criar um novo teste de interface, a regra será detalhada com o seguinte

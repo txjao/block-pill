@@ -37,8 +37,7 @@ features/
 ├── anti-mode/       # motor compartilhado dos compromissos
 ├── anti-porn/       # dados específicos da categoria
 ├── anti-bet/        # dados específicos da categoria
-├── activity/        # histórico local e dashboard
-└── browser-runtime/ # composição das APIs Chrome e dos slices
+└── activity/        # histórico local e dashboard
 ```
 
 Pastas vazias não são criadas antecipadamente. O motor `anti-mode` concentra as
@@ -154,6 +153,28 @@ Cada superfície mantém seu CSS Module ao lado da View. Uma pasta `styles/` nã
 criada para um único arquivo, e um componente extraído mantém seu próprio CSS
 Module somente quando também possui estilos sob sua responsabilidade.
 
+As superfícies são diretórios explícitos dentro de `view/`:
+
+```text
+view/
+├── settings-page/
+│   ├── components/
+│   ├── feature.model.ts
+│   ├── feature.page.tsx
+│   ├── feature.view.tsx
+│   └── feature.module.css
+└── blocked-page/
+    ├── components/
+    ├── feature.blocked-model.ts
+    ├── feature.blocked-page.tsx
+    ├── feature.blocked-view.tsx
+    └── feature.blocked.module.css
+```
+
+Diretórios `components/` só existem quando há componentes extraídos. Uma
+superfície estática pequena pode ter apenas uma Page; não são criados Model e
+View vazios para satisfazer a árvore.
+
 ## Entrypoints
 
 `src/entrypoints` contém os arquivos exigidos pelo navegador ou pelo bundler:
@@ -161,12 +182,27 @@ service worker (`background`), popup, configurações e página de bloqueio. Um
 entrypoint inicia um contexto e compõe dependências; ele não contém regras de
 negócio.
 
-O `background` chama somente `registerChromeBrowserRuntime()`. O slice
-`browser-runtime` é o ponto de composição do contexto de serviço: cria os
-adapters Chrome, serviços e controllers, sincroniza regras e alarmes na
-instalação/inicialização, registra navegações sanitizadas e encaminha mensagens
-tipadas das páginas da extensão. Assim, o entrypoint permanece fino sem misturar
-as regras internas de cada slice.
+O `background` chama somente `registerChromeBrowserRuntime()`. O diretório
+`src/browser/chrome` integra as features às APIs do Chrome. Seu `runtime.ts`
+monta o contexto compartilhado e registra cada integração, sem conhecer alarmes,
+navegações ou formatos de mensagem específicos.
+
+```text
+browser/chrome/
+├── activity/register-activity.ts
+├── anti-mode/register-anti-mode.ts
+├── permanent-block/register-permanent-block.ts
+├── standard-block/register-standard-block.ts
+├── context.ts
+├── message-router.ts
+├── runtime.ts
+└── index.ts
+```
+
+Cada `register-*.ts` conecta sua feature aos eventos e APIs do navegador. O
+`message-router.ts` possui o único listener de mensagens e direciona cada uma
+pelo prefixo declarado pela própria feature; apenas o parser da feature de
+destino é executado.
 
 Content scripts futuros permanecem em
 `src/entrypoints/content-scripts/<site>` e delegam comportamento aos slices.
@@ -198,8 +234,8 @@ Qualquer proposta de carregamento dinâmico deve registrar:
 ## Dependências
 
 ```text
-entrypoint -> browser-runtime -> feature/application
-browser-runtime -> feature/infrastructure -> feature/domain
+entrypoint -> browser/chrome -> feature/application
+browser/chrome -> feature/infrastructure -> feature/domain
 feature/view -> feature/application
 feature/domain -> shared sem dependências de plataforma
 ```
@@ -208,9 +244,31 @@ O domínio não depende de Chrome, Preact, `window` ou `document`. As adaptaçõ
 Chrome implementam contratos declarados pelo domínio, permitindo testes com
 implementações em memória.
 
-`apps/extension/src/shared` contém apenas utilidades reutilizadas por mais de um
-slice, como parsing de hostname e relógio. Um tipo ou constante usado por apenas
-um domínio permanece dentro dele.
+`apps/extension/src/shared` contém apenas capacidades reutilizadas por mais de um
+slice. Cada capacidade explicita suas próprias responsabilidades:
+
+```text
+shared/
+├── web-address/
+│   ├── domain/          # Tipo, parser, erro e schema de hostname
+│   └── tests/
+├── current-time/
+│   ├── domain/          # Contrato Clock consumido pelas regras de negócio
+│   └── infrastructure/  # Relógio concreto baseado no ambiente
+└── ui/
+    ├── components/      # Componentes reutilizáveis da extensão
+    ├── rendering/       # Inicialização do Preact nos entrypoints
+    └── styles/          # Tokens semânticos e estilos globais mínimos
+```
+
+Um tipo ou constante usado por apenas um domínio permanece dentro dele. O
+diretório `shared` da raiz do workspace tem outro alcance: contém recursos
+consumidos tanto pela extensão quanto pela aplicação web.
+
+`web-address` recebe um endereço informado pelo usuário e produz um `Hostname`
+validado e normalizado. `current-time` fornece o instante atual: regras de
+negócio dependem do contrato `Clock`, enquanto o runtime utiliza `systemClock`,
+baseado em `Date.now()`.
 
 ## Tokens e estilos da interface
 
@@ -223,7 +281,8 @@ tokens da marca -> tokens semânticos da extensão -> CSS Modules -> variant
 - `shared/brand/tokens.css` contém somente fundamentos compartilhados da marca;
 - a extensão traduz esses fundamentos em papéis semânticos, como canvas, texto,
   ação, borda, foco e feedback;
-- CSS global fica restrito a fonte, reset, tokens e comportamento de documento;
+- `apps/extension/src/shared/ui/styles/globals.css` concentra fonte, reset,
+  tokens semânticos e comportamento de documento;
 - cada componente mantém seu layout e seus estados em um CSS Module;
 - componentes recebem diferenças visuais por `variant`, não por `tone`;
 - valores brutos de cor não são repetidos dentro de componentes quando existe um
@@ -233,8 +292,8 @@ tokens da marca -> tokens semânticos da extensão -> CSS Modules -> variant
 
 Os componentes reutilizáveis da extensão ficam em
 `apps/extension/src/shared/ui/components/<componente>`. Cada diretório mantém o
-TSX e seu CSS Module lado a lado. Views importam componentes por esse limite e
-não importam Radix diretamente.
+TSX, seu CSS Module e um `index.ts` lado a lado. Views importam a interface
+pública do diretório e não importam o arquivo interno nem o Radix diretamente.
 
 Primitives com comportamento complexo, como diálogo, abas e switch, são
 encapsulados pelos componentes compartilhados. Atualmente esses wrappers usam
@@ -244,6 +303,14 @@ pode ser substituída sem atravessar os vertical slices.
 O botão animado compartilhado entre a landing e a extensão permanece separado
 do botão base da extensão. A nova interface usa o botão simples; a animação não
 é transformada em comportamento implícito de toda ação.
+
+### Imports
+
+- `@/` aponta para o diretório `src` da aplicação atual;
+- `@workspace/` aponta para a raiz do workspace;
+- imports entre módulos não sobem diretórios com `../`;
+- `./` permanece permitido para arquivos que pertencem ao mesmo módulo, como um
+  componente e seu CSS Module.
 
 ### Dados estáticos durante o refactor
 
