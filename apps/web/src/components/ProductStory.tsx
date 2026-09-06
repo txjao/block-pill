@@ -6,7 +6,10 @@ export function ProductStory() {
       <section className="story-shell" id="como" aria-labelledby="story-title">
         <div className="story-copy">
           <h2 id="story-title">Uma pequena fricção muda o próximo gesto.</h2>
-          <p>Sem pontuação, conta ou dashboard. A extensão intervém apenas onde você decidiu.</p>
+          <p>
+            Sem pontuação, conta ou dashboard. A extensão intervém apenas onde
+            você decidiu.
+          </p>
         </div>
         <ol className="story-steps">
           {storySteps.map(([title, text]) => (
@@ -24,9 +27,18 @@ export function ProductStory() {
             <strong>0</strong> contas necessárias
           </p>
         </div>
-        <Accordion.Root className="accordion" type="single" defaultValue="local" collapsible>
+        <Accordion.Root
+          className="accordion"
+          type="single"
+          defaultValue="local"
+          collapsible
+        >
           {capabilities.map((item) => (
-            <Accordion.Item className="accordion-item" value={item.value} key={item.value}>
+            <Accordion.Item
+              className="accordion-item"
+              value={item.value}
+              key={item.value}
+            >
               <Accordion.Header>
                 <Accordion.Trigger className="accordion-trigger">
                   <span>{item.title}</span>

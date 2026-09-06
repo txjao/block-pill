@@ -16,7 +16,11 @@ const config: AntiModeConfig = {
 
 describe('anti mode chrome rules', () => {
   it('prioriza a tela anti e bloqueia subdomínios', () => {
-    const rules = createAntiModeRules([config], 1_000, (path) => `chrome-extension://test/${path}`);
+    const rules = createAntiModeRules(
+      [config],
+      1_000,
+      (path) => `chrome-extension://test/${path}`,
+    );
     expect(rules).toHaveLength(2);
     expect(rules[0]).toMatchObject({
       priority: 3,

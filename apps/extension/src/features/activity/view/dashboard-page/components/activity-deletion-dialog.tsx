@@ -25,22 +25,34 @@ export function ActivityDeletionDialog(props: DeletionDialogProps) {
   if (!deletionTarget) return null;
 
   return (
-    <div class={styles.dialog} role="dialog" aria-modal="true" aria-labelledby="delete-title">
+    <div
+      class={styles.dialog}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="delete-title"
+    >
       <span class={styles.dialogKicker}>Dados locais</span>
       <h2 id="delete-title">Excluir {deletionTarget.label}?</h2>
       <p>
-        Reflexões e métricas selecionadas serão apagadas. As regras de bloqueio continuarão ativas.
+        Reflexões e métricas selecionadas serão apagadas. As regras de bloqueio
+        continuarão ativas.
       </p>
       <label class={styles.confirmation}>
         <input
           type="checkbox"
           checked={deletionConfirmed}
-          onChange={(event) => setDeletionConfirmed(event.currentTarget.checked)}
+          onChange={(event) =>
+            setDeletionConfirmed(event.currentTarget.checked)
+          }
         />
         Entendo que estes dados não poderão ser recuperados.
       </label>
       <div class={styles.dialogActions}>
-        <Button variant="secondary" type="button" onClick={() => setDeletionTarget(undefined)}>
+        <Button
+          variant="secondary"
+          type="button"
+          onClick={() => setDeletionTarget(undefined)}
+        >
           Manter dados
         </Button>
         <Button

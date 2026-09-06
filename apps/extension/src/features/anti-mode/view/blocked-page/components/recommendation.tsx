@@ -5,10 +5,20 @@ import {
 } from '@/features/anti-mode/view/anti-mode.presentation';
 import { Button } from '@/shared/ui/components/button';
 
-export function Recommendation({ need, hobbies }: { need: AntiModeNeed; hobbies: string[] }) {
+export function Recommendation({
+  need,
+  hobbies,
+}: {
+  need: AntiModeNeed;
+  hobbies: string[];
+}) {
   if (need === 'information') {
     return (
-      <form class={styles.searchAlternative} action="https://www.google.com/search" method="get">
+      <form
+        class={styles.searchAlternative}
+        action="https://www.google.com/search"
+        method="get"
+      >
         <strong>Busque a informação sem abrir o site bloqueado</strong>
         <p>Este campo envia sua pesquisa diretamente ao buscador Google.</p>
         <div class={styles.formRow}>
@@ -27,5 +37,7 @@ export function Recommendation({ need, hobbies }: { need: AntiModeNeed; hobbies:
     );
   }
 
-  return <p class={styles.recommendation}>{getRecommendationText(need, hobbies)}</p>;
+  return (
+    <p class={styles.recommendation}>{getRecommendationText(need, hobbies)}</p>
+  );
 }

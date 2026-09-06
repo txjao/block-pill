@@ -36,7 +36,8 @@ export class ChromePermanentBlockRuleManager implements PermanentBlockRuleManage
       .map((rule) => rule.id)
       .filter(
         (ruleId) =>
-          ruleId >= PERMANENT_BLOCK_RULE_ID_START && ruleId <= PERMANENT_BLOCK_RULE_ID_END,
+          ruleId >= PERMANENT_BLOCK_RULE_ID_START &&
+          ruleId <= PERMANENT_BLOCK_RULE_ID_END,
       );
 
     await chrome.declarativeNetRequest.updateDynamicRules({

@@ -8,7 +8,9 @@ export class ChromeStandardBlockSettingsRepository implements StandardBlockSetti
   async get(): Promise<StandardBlockSettings> {
     const stored = await chrome.storage.local.get(STORAGE_KEY);
     const result = standardBlockSettingsSchema.safeParse(stored[STORAGE_KEY]);
-    return result.success ? result.data : { globalCooldownMilliseconds: DEFAULT_COOLDOWN_MS };
+    return result.success
+      ? result.data
+      : { globalCooldownMilliseconds: DEFAULT_COOLDOWN_MS };
   }
 
   async set(settings: StandardBlockSettings): Promise<void> {

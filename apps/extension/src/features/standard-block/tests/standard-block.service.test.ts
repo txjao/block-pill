@@ -95,7 +95,9 @@ describe('standard block', () => {
     const { repository, rules, service } = createFixture();
     rules.shouldFail = true;
 
-    await expect(service.add('youtube.com')).rejects.toThrow('Falha ao atualizar regras.');
+    await expect(service.add('youtube.com')).rejects.toThrow(
+      'Falha ao atualizar regras.',
+    );
     expect(repository.blocks).toEqual([]);
   });
 
@@ -173,14 +175,16 @@ describe('standard block', () => {
       remainingMinutes: 2,
       enabledDurations: [1],
     });
-    await expect(service.grantTemporaryAccess('youtube.com', 5)).rejects.toBeInstanceOf(
-      TemporaryAccessBudgetError,
-    );
+    await expect(
+      service.grantTemporaryAccess('youtube.com', 5),
+    ).rejects.toBeInstanceOf(TemporaryAccessBudgetError);
   });
 
   it('valida cooldowns personalizados', async () => {
     const { service } = createFixture();
 
-    await expect(service.add('youtube.com', 1)).rejects.toBeInstanceOf(InvalidCooldownError);
+    await expect(service.add('youtube.com', 1)).rejects.toBeInstanceOf(
+      InvalidCooldownError,
+    );
   });
 });

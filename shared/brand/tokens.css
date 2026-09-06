@@ -15,6 +15,14 @@
   --brand-inverse-foreground: var(--brand-white);
   --brand-muted: color-mix(in srgb, var(--brand-black) 62%, var(--brand-white));
   --brand-line: color-mix(in srgb, var(--brand-black) 18%, var(--brand-white));
-  --brand-line-inverse: color-mix(in srgb, var(--brand-white) 24%, var(--brand-black));
-  --brand-action-hover: color-mix(in srgb, var(--brand-red) 86%, var(--brand-black));
+  --brand-line-inverse: color-mix(
+    in srgb,
+    var(--brand-white) 24%,
+    var(--brand-black)
+  );
+  --brand-action-hover: color-mix(
+    in srgb,
+    var(--brand-red) 86%,
+    var(--brand-black)
+  );
 }

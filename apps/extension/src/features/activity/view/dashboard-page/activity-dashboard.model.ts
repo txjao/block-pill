@@ -1,5 +1,8 @@
 import { useEffect, useMemo, useState } from 'preact/hooks';
-import type { ActivityEvent, ActivitySource } from '@/features/activity/domain/activity.types';
+import type {
+  ActivityEvent,
+  ActivitySource,
+} from '@/features/activity/domain/activity.types';
 import { ACTIVITY_MESSAGE_TYPE } from '@/features/activity/application/activity.messages.constants';
 import { sendActivityRequest } from '@/features/activity/view/activity.client';
 
@@ -13,7 +16,7 @@ export interface ActivitySummary {
   lastAttemptAt?: number;
   lastAccessAt?: number;
   longestWithoutAccessMs: number;
-  feelings: Array<{ feeling: string; count: number }>;
+  feelings: { feeling: string; count: number }[];
 }
 
 export interface ActivityDeletionTarget {
@@ -26,7 +29,8 @@ export function useActivityDashboardModel() {
   const [events, setEvents] = useState<ActivityEvent[]>([]);
   const [feedback, setFeedback] = useState('');
   const [isLoading, setIsLoading] = useState(true);
-  const [deletionTarget, setDeletionTarget] = useState<ActivityDeletionTarget>();
+  const [deletionTarget, setDeletionTarget] =
+    useState<ActivityDeletionTarget>();
   const [deletionConfirmed, setDeletionConfirmed] = useState(false);
 
   useEffect(() => void load(), []);
@@ -35,7 +39,9 @@ export function useActivityDashboardModel() {
 
   async function load(): Promise<void> {
     setIsLoading(true);
-    const response = await sendActivityRequest({ type: ACTIVITY_MESSAGE_TYPE.list });
+    const response = await sendActivityRequest({
+      type: ACTIVITY_MESSAGE_TYPE.list,
+    });
     if (response.ok) setEvents(response.events);
     else setFeedback(response.message);
     setIsLoading(false);
@@ -79,7 +85,9 @@ export function useActivityDashboardModel() {
   };
 }
 
-export type ActivityDashboardModel = ReturnType<typeof useActivityDashboardModel>;
+export type ActivityDashboardModel = ReturnType<
+  typeof useActivityDashboardModel
+>;
 
 export function createSummaries(events: ActivityEvent[]): ActivitySummary[] {
   const groups = new Map<string, ActivityEvent[]>();
@@ -102,7 +110,9 @@ export function createSummaries(events: ActivityEvent[]): ActivitySummary[] {
       const firstEventAt = sorted[0]?.at ?? Date.now();
       const accessTimes = grants.map((event) => event.at);
       const intervals = [
-        ...accessTimes.map((time, index) => time - (accessTimes[index - 1] ?? firstEventAt)),
+        ...accessTimes.map(
+          (time, index) => time - (accessTimes[index - 1] ?? firstEventAt),
+        ),
         Date.now() - (accessTimes.at(-1) ?? firstEventAt),
       ];
 

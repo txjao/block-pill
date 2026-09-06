@@ -6,13 +6,16 @@ import {
 } from '@/features/anti-mode';
 import { createPopupMock } from './popup.mock';
 
-const documentationUrl = 'https://github.com/txjao/block-pill/blob/main/docs/BLOCKING_RULES.md';
+const documentationUrl =
+  'https://github.com/txjao/block-pill/blob/main/docs/BLOCKING_RULES.md';
 
 export function usePopupModel() {
   const mock = createPopupMock();
   const [hostname, setHostname] = useState('site atual');
   const [incognitoAllowed, setIncognitoAllowed] = useState(true);
-  const [incognitoStatus, setIncognitoStatus] = useState('consultando proteção');
+  const [incognitoStatus, setIncognitoStatus] = useState(
+    'consultando proteção',
+  );
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
@@ -23,7 +26,10 @@ export function usePopupModel() {
   async function load(): Promise<void> {
     setIsLoading(true);
     try {
-      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      const [tab] = await chrome.tabs.query({
+        active: true,
+        currentWindow: true,
+      });
       if (tab?.url) {
         const url = new URL(tab.url);
         if (url.hostname) setHostname(url.hostname);
@@ -46,7 +52,9 @@ export function usePopupModel() {
   async function openOptions(section: 'blocking' | 'anti'): Promise<void> {
     try {
       await chrome.tabs.create({
-        url: chrome.runtime.getURL(`src/entrypoints/options/index.html?section=${section}`),
+        url: chrome.runtime.getURL(
+          `src/entrypoints/options/index.html?section=${section}`,
+        ),
       });
       window.close();
     } catch {
@@ -83,9 +91,9 @@ function formatIncognitoStatus(
   if (!response.controlEnabled) return 'proteção desativada';
   if (response.blocked) return 'abertura bloqueada';
   if (response.suspendedUntil) {
-    const time = new Intl.DateTimeFormat('pt-BR', { timeStyle: 'short' }).format(
-      response.suspendedUntil,
-    );
+    const time = new Intl.DateTimeFormat('pt-BR', {
+      timeStyle: 'short',
+    }).format(response.suspendedUntil);
     return `pausada até ${time}`;
   }
   return 'proteção pronta';
@@ -93,8 +101,13 @@ function formatIncognitoStatus(
 
 async function send(request: AntiModeRequest): Promise<AntiModeResponse> {
   try {
-    return await chrome.runtime.sendMessage<AntiModeRequest, AntiModeResponse>(request);
+    return await chrome.runtime.sendMessage<AntiModeRequest, AntiModeResponse>(
+      request,
+    );
   } catch {
-    return { ok: false, message: 'Não foi possível consultar a proteção anônima.' };
+    return {
+      ok: false,
+      message: 'Não foi possível consultar a proteção anônima.',
+    };
   }
 }

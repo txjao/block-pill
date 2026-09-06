@@ -1,8 +1,16 @@
-import { handleActivityRequest, parseActivityRequest } from '@/features/activity';
+import {
+  handleActivityRequest,
+  parseActivityRequest,
+} from '@/features/activity';
 import type { ChromeBrowserContext } from '@/browser/chrome/context';
-import { invalidMessageResponse, type ChromeMessageHandler } from '@/browser/chrome/message-router';
+import {
+  invalidMessageResponse,
+  type ChromeMessageHandler,
+} from '@/browser/chrome/message-router';
 
-export function registerActivity(context: ChromeBrowserContext): ChromeMessageHandler {
+export function registerActivity(
+  context: ChromeBrowserContext,
+): ChromeMessageHandler {
   return (message, _sender, sendResponse) => {
     const request = parseActivityRequest(message);
     if (!request) {

@@ -1,14 +1,25 @@
 import type { AntiModeBlockedModel } from './anti-mode.blocked-model';
 import { Button } from '@/shared/ui/components/button';
 import styles from './anti-mode.blocked.module.css';
-import type { AntiModeNeed } from '@/features/anti-mode/view/anti-mode.presentation';
 import { Recommendation } from './components/recommendation';
 import { ReflectionForm } from './components/reflection-form';
 
 export function AntiModeBlockedView(props: AntiModeBlockedModel) {
-  const { mode, hostname, kind, config, need, feedback, isLoading, setNeed, requestAccess } = props;
+  const {
+    mode,
+    hostname,
+    kind,
+    config,
+    need,
+    feedback,
+    isLoading,
+    setNeed,
+    requestAccess,
+  } = props;
   const title =
-    mode === 'anti-porn' ? 'Seu compromisso anti-pornografia' : 'Seu compromisso anti-aposta';
+    mode === 'anti-porn'
+      ? 'Seu compromisso anti-pornografia'
+      : 'Seu compromisso anti-aposta';
 
   return (
     <section class={styles.interruption} aria-labelledby="anti-blocked-title">
@@ -18,7 +29,9 @@ export function AntiModeBlockedView(props: AntiModeBlockedModel) {
         <strong>{hostname}</strong> pode afastar você dos objetivos escolhidos.
       </p>
       {config?.goals.length ? (
-        <blockquote>Você ativou este modo por: {config.goals.join(', ')}.</blockquote>
+        <blockquote>
+          Você ativou este modo por: {config.goals.join(', ')}.
+        </blockquote>
       ) : (
         <p class={styles.supportCopy}>
           Respire por alguns segundos antes de decidir o próximo passo.
@@ -40,7 +53,7 @@ export function AntiModeBlockedView(props: AntiModeBlockedModel) {
               className={need === value ? styles.selected : undefined}
               variant="secondary"
               type="button"
-              onClick={() => setNeed(value as AntiModeNeed)}
+              onClick={() => setNeed(value)}
             >
               {label}
             </Button>
@@ -53,15 +66,16 @@ export function AntiModeBlockedView(props: AntiModeBlockedModel) {
 
       {config?.philosophicalKnowledge && (
         <blockquote>
-          “Nenhum homem é livre se não for senhor de si mesmo.” <cite>Epicteto</cite>
+          “Nenhum homem é livre se não for senhor de si mesmo.”{' '}
+          <cite>Epicteto</cite>
         </blockquote>
       )}
       {kind === 'warning' ? (
         <div class={styles.warningAccess}>
           <h2>Este site também pode ter outros usos.</h2>
           <p>
-            Se decidir continuar, escolha um período curto. Cada decisão fica registrada somente no
-            seu histórico local.
+            Se decidir continuar, escolha um período curto. Cada decisão fica
+            registrada somente no seu histórico local.
           </p>
           <div class={styles.accessActions}>
             {([1, 5, 15] as const).map((minutes) => (

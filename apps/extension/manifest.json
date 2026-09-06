@@ -6,7 +6,13 @@
   "description": "Uma extensão privada para reduzir distrações e recuperar o controle da navegação.",
   "author": "txjao",
   "incognito": "spanning",
-  "permissions": ["alarms", "storage", "declarativeNetRequest", "tabs", "webNavigation"],
+  "permissions": [
+    "alarms",
+    "storage",
+    "declarativeNetRequest",
+    "tabs",
+    "webNavigation"
+  ],
   "host_permissions": ["http://*/*", "https://*/*"],
   "background": {
     "service_worker": "background.js",

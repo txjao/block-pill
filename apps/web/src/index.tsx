@@ -21,12 +21,14 @@ function Principles() {
 
       <div>
         <p>
-          Ferramentas de bem-estar digital não precisam observar cada movimento para ajudar. Sua
-          lista permanece no navegador, e você continua no controle.
+          Ferramentas de bem-estar digital não precisam observar cada movimento
+          para ajudar. Sua lista permanece no navegador, e você continua no
+          controle.
         </p>
 
         <blockquote>
-          “Criar fricção contra decisões impulsivas sem impedir a desinstalação.”
+          “Criar fricção contra decisões impulsivas sem impedir a
+          desinstalação.”
           <cite>Princípio de produto do Block Pill</cite>
         </blockquote>
       </div>
@@ -60,7 +62,10 @@ function Contribute() {
     <section className="contribute">
       <div>
         <h2>Construa a próxima pausa com a gente.</h2>
-        <p>Há espaço para código, design, pesquisa, documentação e boas perguntas.</p>
+        <p>
+          Há espaço para código, design, pesquisa, documentação e boas
+          perguntas.
+        </p>
       </div>
 
       <div className="contribute-actions">

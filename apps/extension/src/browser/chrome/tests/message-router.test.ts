@@ -1,6 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ACTIVITY_MESSAGE_TYPE } from '@/features/activity';
-import { ANTI_MODE_MESSAGE_TYPE, INCOGNITO_MESSAGE_TYPE } from '@/features/anti-mode';
+import {
+  ANTI_MODE_MESSAGE_TYPE,
+  INCOGNITO_MESSAGE_TYPE,
+} from '@/features/anti-mode';
 import { PERMANENT_BLOCK_MESSAGE_TYPE } from '@/features/permanent-block';
 import { STANDARD_BLOCK_MESSAGE_TYPE } from '@/features/standard-block';
 import {
@@ -17,7 +20,7 @@ describe('Chrome message router', () => {
     vi.stubGlobal('chrome', {
       runtime: {
         onMessage: {
-          addListener: vi.fn((registered) => {
+          addListener: vi.fn((registered: typeof listener) => {
             listener = registered;
           }),
         },
@@ -47,7 +50,11 @@ describe('Chrome message router', () => {
     const result = listener(message, sender, sendResponse);
 
     expect(result).toBe(true);
-    expect(handlers[destination]).toHaveBeenCalledWith(message, sender, sendResponse);
+    expect(handlers[destination]).toHaveBeenCalledWith(
+      message,
+      sender,
+      sendResponse,
+    );
     for (const [name, handler] of Object.entries(handlers)) {
       expect(handler).toHaveBeenCalledTimes(name === destination ? 1 : 0);
     }

@@ -19,7 +19,11 @@ export function StandardBlockList(props: StandardBlockListProps) {
               <strong>{block.hostname}</strong>
               <small>{cooldownLabel}</small>
             </span>
-            <Button variant="text" disabled={isLoading} onClick={() => void removeBlock(block)}>
+            <Button
+              variant="text"
+              disabled={isLoading}
+              onClick={() => void removeBlock(block)}
+            >
               Remover
             </Button>
           </div>
@@ -38,7 +42,9 @@ export function StandardBlockList(props: StandardBlockListProps) {
                 step="0.5"
                 placeholder="Usar geral"
                 defaultValue={
-                  block.cooldownMilliseconds ? block.cooldownMilliseconds / 3_600_000 : ''
+                  block.cooldownMilliseconds
+                    ? block.cooldownMilliseconds / 3_600_000
+                    : ''
                 }
               />
               <Button variant="secondary" type="submit" disabled={isLoading}>

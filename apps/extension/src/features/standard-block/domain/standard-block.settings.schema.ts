@@ -1,5 +1,8 @@
 import { z } from 'zod';
-import { MAXIMUM_COOLDOWN_MS, MINIMUM_COOLDOWN_MS } from './standard-block.constants';
+import {
+  MAXIMUM_COOLDOWN_MS,
+  MINIMUM_COOLDOWN_MS,
+} from './standard-block.constants';
 
 export const cooldownMillisecondsSchema = z
   .number()

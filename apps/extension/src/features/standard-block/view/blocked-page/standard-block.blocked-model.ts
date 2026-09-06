@@ -10,42 +10,44 @@ import type {
 } from '@/features/standard-block/domain/standard-block.types';
 
 export function useStandardBlockBlockedModel() {
-  const hostname = new URLSearchParams(window.location.search).get('hostname') ?? '';
+  const hostname =
+    new URLSearchParams(window.location.search).get('hostname') ?? '';
   const [attemptedHostname, setAttemptedHostname] = useState('');
   const [snapshot, setSnapshot] = useState<StandardBlockSnapshot>();
   const [feedback, setFeedback] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    async function loadStatus(): Promise<void> {
+      if (!hostname) {
+        setFeedback('Não foi possível identificar o domínio bloqueado.');
+        setIsLoading(false);
+        return;
+      }
+      setIsLoading(true);
+      const [response, contextResponse] = await Promise.all([
+        send({ type: STANDARD_BLOCK_MESSAGE_TYPE.status, hostname }),
+        send({ type: STANDARD_BLOCK_MESSAGE_TYPE.context }),
+      ]);
+      if (response.ok && 'snapshot' in response) {
+        setSnapshot(response.snapshot);
+        setFeedback('');
+      } else
+        setFeedback(response.ok ? 'Resposta inesperada.' : response.message);
+      if (
+        contextResponse.ok &&
+        'context' in contextResponse &&
+        contextResponse.context?.hostname === hostname
+      ) {
+        const attempted = contextResponse.context.attemptedHostname;
+        if (attempted !== hostname && attempted.endsWith(`.${hostname}`))
+          setAttemptedHostname(attempted);
+      }
+      setIsLoading(false);
+    }
+
     void loadStatus();
   }, [hostname]);
-
-  async function loadStatus() {
-    if (!hostname) {
-      setFeedback('Não foi possível identificar o domínio bloqueado.');
-      setIsLoading(false);
-      return;
-    }
-    setIsLoading(true);
-    const [response, contextResponse] = await Promise.all([
-      send({ type: STANDARD_BLOCK_MESSAGE_TYPE.status, hostname }),
-      send({ type: STANDARD_BLOCK_MESSAGE_TYPE.context }),
-    ]);
-    if (response.ok && 'snapshot' in response) {
-      setSnapshot(response.snapshot);
-      setFeedback('');
-    } else setFeedback(response.ok ? 'Resposta inesperada.' : response.message);
-    if (
-      contextResponse.ok &&
-      'context' in contextResponse &&
-      contextResponse.context?.hostname === hostname
-    ) {
-      const attempted = contextResponse.context.attemptedHostname;
-      if (attempted !== hostname && attempted.endsWith(`.${hostname}`))
-        setAttemptedHostname(attempted);
-    }
-    setIsLoading(false);
-  }
 
   async function allowSubdomain() {
     if (!attemptedHostname) return;
@@ -90,12 +92,20 @@ export function useStandardBlockBlockedModel() {
   };
 }
 
-async function send(request: StandardBlockRequest): Promise<StandardBlockResponse> {
+async function send(
+  request: StandardBlockRequest,
+): Promise<StandardBlockResponse> {
   try {
-    const response = await chrome.runtime.sendMessage<StandardBlockRequest, StandardBlockResponse>(
-      request,
+    const response = await chrome.runtime.sendMessage<
+      StandardBlockRequest,
+      StandardBlockResponse
+    >(request);
+    return (
+      response ?? {
+        ok: false,
+        message: 'A extensão não respondeu. Recarregue esta página.',
+      }
     );
-    return response ?? { ok: false, message: 'A extensão não respondeu. Recarregue esta página.' };
   } catch {
     return { ok: false, message: 'Não foi possível comunicar com a extensão.' };
   }

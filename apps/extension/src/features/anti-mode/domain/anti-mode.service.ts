@@ -1,6 +1,9 @@
 import { parseHostname } from '@/shared/web-address/domain';
 import type { Clock } from '@/shared/current-time/domain';
-import { MAXIMUM_ANTI_DURATION_MS, MINIMUM_ANTI_DURATION_MS } from './anti-mode.constants';
+import {
+  MAXIMUM_ANTI_DURATION_MS,
+  MINIMUM_ANTI_DURATION_MS,
+} from './anti-mode.constants';
 import type { AntiModeRepository } from './anti-mode.repository';
 import type { AntiModeRuleManager } from './anti-mode.rule-manager';
 import type {
@@ -10,8 +13,14 @@ import type {
   AntiModeConfig,
   AntiModeId,
 } from './anti-mode.types';
-import { ANTI_PORN_DOMAINS, ANTI_PORN_WARNING_DOMAINS } from '@/features/anti-porn';
-import { ANTI_BET_DOMAINS, ANTI_BET_WARNING_DOMAINS } from '@/features/anti-bet';
+import {
+  ANTI_PORN_DOMAINS,
+  ANTI_PORN_WARNING_DOMAINS,
+} from '@/features/anti-porn';
+import {
+  ANTI_BET_DOMAINS,
+  ANTI_BET_WARNING_DOMAINS,
+} from '@/features/anti-bet';
 
 const DEFAULT_ANTI_DOMAINS = {
   'anti-porn': ANTI_PORN_DOMAINS,
@@ -51,10 +60,11 @@ export class AntiModeService {
   async activate(input: ActivateAntiModeInput): Promise<AntiModeConfig[]> {
     const configs = await this.list();
     const index = configs.findIndex((config) => config.id === input.mode);
-    const current = configs[index] as AntiModeConfig;
+    const current = configs[index]!;
     if (
       current.enabled &&
-      (current.permanent || (current.commitmentEndsAt ?? Infinity) > this.clock.now())
+      (current.permanent ||
+        (current.commitmentEndsAt ?? Infinity) > this.clock.now())
     ) {
       throw new AntiModeCommitmentError();
     }
@@ -64,7 +74,10 @@ export class AntiModeService {
     const now = this.clock.now();
     const duration = input.permanent
       ? undefined
-      : convertAntiDuration(input.durationValue ?? 31, input.durationUnit ?? 'days');
+      : convertAntiDuration(
+          input.durationValue ?? 31,
+          input.durationUnit ?? 'days',
+        );
 
     configs[index] = {
       ...current,
@@ -73,8 +86,11 @@ export class AntiModeService {
       createdAt: now,
       commitmentEndsAt: duration === undefined ? undefined : now + duration,
       goals: imported?.goals.length ? imported.goals : cleanList(input.goals),
-      hobbies: imported?.hobbies.length ? imported.hobbies : cleanList(input.hobbies),
-      philosophicalKnowledge: imported?.philosophicalKnowledge ?? input.philosophicalKnowledge,
+      hobbies: imported?.hobbies.length
+        ? imported.hobbies
+        : cleanList(input.hobbies),
+      philosophicalKnowledge:
+        imported?.philosophicalKnowledge ?? input.philosophicalKnowledge,
     };
     await this.persist(configs);
     return configs;
@@ -83,8 +99,11 @@ export class AntiModeService {
   async deactivate(mode: AntiModeId): Promise<AntiModeConfig[]> {
     const configs = await this.list();
     const index = configs.findIndex((config) => config.id === mode);
-    const config = configs[index] as AntiModeConfig;
-    if (config.permanent || (config.commitmentEndsAt ?? Infinity) > this.clock.now()) {
+    const config = configs[index]!;
+    if (
+      config.permanent ||
+      (config.commitmentEndsAt ?? Infinity) > this.clock.now()
+    ) {
       throw new AntiModeCommitmentError();
     }
     configs[index] = { ...config, enabled: false };
@@ -96,7 +115,7 @@ export class AntiModeService {
     const hostname = parseHostname(input);
     const configs = await this.list();
     const index = configs.findIndex((config) => config.id === mode);
-    const config = configs[index] as AntiModeConfig;
+    const config = configs[index]!;
     configs[index] = {
       ...config,
       domains: [...new Set([...config.domains, hostname])],
@@ -113,7 +132,7 @@ export class AntiModeService {
     const hostname = parseHostname(input);
     const configs = await this.list();
     const index = configs.findIndex((config) => config.id === mode);
-    const config = configs[index] as AntiModeConfig;
+    const config = configs[index]!;
     if (!config.enabled) {
       throw new Error('Este modo anti não está ativo.');
     }
@@ -123,7 +142,8 @@ export class AntiModeService {
     const activeUntil = this.clock.now() + minutes * 60_000;
     for (let configIndex = 0; configIndex < configs.length; configIndex += 1) {
       const candidate = configs[configIndex];
-      if (!candidate?.enabled || !candidate.warningDomains.includes(hostname)) continue;
+      if (!candidate?.enabled || !candidate.warningDomains.includes(hostname))
+        continue;
       configs[configIndex] = {
         ...candidate,
         accessUntilByHostname: {
@@ -137,7 +157,9 @@ export class AntiModeService {
   }
 
   synchronize(): Promise<void> {
-    return this.list().then((configs) => this.ruleManager.replaceAll(configs, this.clock.now()));
+    return this.list().then((configs) =>
+      this.ruleManager.replaceAll(configs, this.clock.now()),
+    );
   }
 
   private async persist(configs: AntiModeConfig[]): Promise<void> {
@@ -152,11 +174,18 @@ export class AntiModeService {
   }
 }
 
-export function convertAntiDuration(value: number, unit: AntiDurationUnit): number {
+export function convertAntiDuration(
+  value: number,
+  unit: AntiDurationUnit,
+): number {
   if (!Number.isFinite(value) || value <= 0) throw new AntiModeDurationError();
-  const days = unit === 'days' ? value : unit === 'months' ? value * 31 : value * 366;
+  const days =
+    unit === 'days' ? value : unit === 'months' ? value * 31 : value * 366;
   const milliseconds = days * 24 * 60 * 60 * 1000;
-  if (milliseconds < MINIMUM_ANTI_DURATION_MS || milliseconds > MAXIMUM_ANTI_DURATION_MS) {
+  if (
+    milliseconds < MINIMUM_ANTI_DURATION_MS ||
+    milliseconds > MAXIMUM_ANTI_DURATION_MS
+  ) {
     throw new AntiModeDurationError();
   }
   return milliseconds;
@@ -180,5 +209,7 @@ function ensureModes(configs: AntiModeConfig[]): AntiModeConfig[] {
 }
 
 function cleanList(values: string[]): string[] {
-  return [...new Set(values.map((value) => value.trim()).filter(Boolean))].slice(0, 40);
+  return [
+    ...new Set(values.map((value) => value.trim()).filter(Boolean)),
+  ].slice(0, 40);
 }

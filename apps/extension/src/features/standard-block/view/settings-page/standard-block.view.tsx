@@ -27,8 +27,13 @@ export function StandardBlockView(props: StandardBlockModel) {
         <div class={styles.emptyState}>
           <img src={blockPillIcon} alt="" />
           <h3>Nenhum site em pausa ainda</h3>
-          <p>Comece pelo site em que você mais se perde. Dá para mudar ou remover quando quiser.</p>
-          <small>Se a decisão não deve ser desfeita, use a aba Decisões permanentes.</small>
+          <p>
+            Comece pelo site em que você mais se perde. Dá para mudar ou remover
+            quando quiser.
+          </p>
+          <small>
+            Se a decisão não deve ser desfeita, use a aba Decisões permanentes.
+          </small>
         </div>
       ) : (
         <StandardBlockList {...props} />
@@ -39,7 +44,7 @@ export function StandardBlockView(props: StandardBlockModel) {
           <h3>Novo bloqueio flexível</h3>
           <p>Você poderá liberar 15 minutos por ciclo quando precisar.</p>
         </header>
-        <form class={styles.form} onSubmit={addBlock}>
+        <form class={styles.form} onSubmit={(event) => void addBlock(event)}>
           <label for="hostname">Endereço</label>
           <input
             id="hostname"
@@ -56,7 +61,10 @@ export function StandardBlockView(props: StandardBlockModel) {
             Criar bloqueio
           </Button>
         </form>
-        <form class={styles.cooldownForm} onSubmit={saveGlobalCooldown}>
+        <form
+          class={styles.cooldownForm}
+          onSubmit={(event) => void saveGlobalCooldown(event)}
+        >
           <label for="global-cooldown">Espera entre liberações</label>
           <div>
             <input
@@ -66,7 +74,9 @@ export function StandardBlockView(props: StandardBlockModel) {
               max="17568"
               step="0.5"
               value={globalCooldownHours}
-              onInput={(event) => setGlobalCooldownHours(event.currentTarget.value)}
+              onInput={(event) =>
+                setGlobalCooldownHours(event.currentTarget.value)
+              }
               required
             />
             <span>horas</span>

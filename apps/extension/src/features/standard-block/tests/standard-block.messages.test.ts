@@ -3,7 +3,9 @@ import { parseStandardBlockRequest } from '@/features/standard-block/application
 
 describe('standard block messages', () => {
   it('accepts the blocked-tab context request', () => {
-    expect(parseStandardBlockRequest({ type: 'standard-blocking/context' })).toEqual({
+    expect(
+      parseStandardBlockRequest({ type: 'standard-blocking/context' }),
+    ).toEqual({
       type: 'standard-blocking/context',
     });
   });

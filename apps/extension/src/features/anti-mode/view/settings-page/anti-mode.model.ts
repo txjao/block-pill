@@ -67,8 +67,15 @@ export function useAntiModeModel() {
     setIsLoading(false);
   }
 
-  function updateDraft<K extends keyof Draft>(mode: AntiModeId, key: K, value: Draft[K]): void {
-    setDrafts((current) => ({ ...current, [mode]: { ...current[mode], [key]: value } }));
+  function updateDraft<K extends keyof Draft>(
+    mode: AntiModeId,
+    key: K,
+    value: Draft[K],
+  ): void {
+    setDrafts((current) => ({
+      ...current,
+      [mode]: { ...current[mode], [key]: value },
+    }));
   }
 
   async function activate(mode: AntiModeId): Promise<void> {
@@ -158,7 +165,9 @@ export type AntiModeModel = ReturnType<typeof useAntiModeModel>;
 
 async function send(request: AntiModeRequest): Promise<AntiModeResponse> {
   try {
-    return await chrome.runtime.sendMessage<AntiModeRequest, AntiModeResponse>(request);
+    return await chrome.runtime.sendMessage<AntiModeRequest, AntiModeResponse>(
+      request,
+    );
   } catch {
     return { ok: false, message: 'Não foi possível comunicar com a extensão.' };
   }

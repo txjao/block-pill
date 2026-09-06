@@ -11,4 +11,6 @@ export const permanentBlockRequestSchema = z.discriminatedUnion('type', [
 ]);
 
 export type PermanentBlockRequest = z.input<typeof permanentBlockRequestSchema>;
-export type ParsedPermanentBlockRequest = z.output<typeof permanentBlockRequestSchema>;
+export type ParsedPermanentBlockRequest = z.output<
+  typeof permanentBlockRequestSchema
+>;

@@ -10,7 +10,10 @@ export function AntiInsights({
   events: ActivityDashboardModel['events'];
   summaries: ActivityDashboardModel['summaries'];
 }) {
-  const { commonFeelings, reflections } = createAntiInsightData(events, summaries);
+  const { commonFeelings, reflections } = createAntiInsightData(
+    events,
+    summaries,
+  );
 
   return (
     <div class={styles.insights}>
@@ -50,6 +53,9 @@ export function AntiInsights({
 
 function formatDate(value?: number) {
   return value
-    ? new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short', timeStyle: 'short' }).format(value)
+    ? new Intl.DateTimeFormat('pt-BR', {
+        dateStyle: 'short',
+        timeStyle: 'short',
+      }).format(value)
     : 'Sem registro';
 }

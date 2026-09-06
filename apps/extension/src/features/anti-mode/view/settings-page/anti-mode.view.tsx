@@ -19,12 +19,15 @@ const copy = {
     title: 'Anti-aposta',
     description:
       'Crie distância de bets, cassinos e estímulos que incentivam decisões financeiras por impulso.',
-    domainHelp: 'Adicione casas de aposta ou páginas promocionais que você encontrou.',
+    domainHelp:
+      'Adicione casas de aposta ou páginas promocionais que você encontrou.',
     count: 'proteção inicial e sites adicionados',
   },
 } as const;
 
-export function AntiModeView(props: AntiModeModel & { selectedMode?: AntiModeId }) {
+export function AntiModeView(
+  props: AntiModeModel & { selectedMode?: AntiModeId },
+) {
   const {
     configs,
     drafts,
@@ -47,7 +50,9 @@ export function AntiModeView(props: AntiModeModel & { selectedMode?: AntiModeId 
   const draft = drafts[mode];
   const active = config?.enabled ?? false;
   const canDeactivate =
-    active && !config?.permanent && (config?.commitmentEndsAt ?? Infinity) <= Date.now();
+    active &&
+    !config?.permanent &&
+    (config?.commitmentEndsAt ?? Infinity) <= Date.now();
 
   return (
     <section class={styles.section} aria-labelledby="anti-title">
@@ -56,8 +61,8 @@ export function AntiModeView(props: AntiModeModel & { selectedMode?: AntiModeId 
         <div>
           <h1 id="anti-title">{copy[mode].title}</h1>
           <p>
-            Um compromisso com prazo. Enquanto ele durar, a configuração não pode ser desfeita por
-            impulso.
+            Um compromisso com prazo. Enquanto ele durar, a configuração não
+            pode ser desfeita por impulso.
           </p>
         </div>
       </header>
@@ -65,8 +70,12 @@ export function AntiModeView(props: AntiModeModel & { selectedMode?: AntiModeId 
       {!incognitoAllowed && (
         <div class={styles.permissionAlert} role="alert">
           <span>
-            <strong>Janelas anônimas podem passar por cima do compromisso.</strong>
-            <p>É necessário permitir o funcionamento da extensão nesse contexto.</p>
+            <strong>
+              Janelas anônimas podem passar por cima do compromisso.
+            </strong>
+            <p>
+              É necessário permitir o funcionamento da extensão nesse contexto.
+            </p>
           </span>
           <Button variant="dark" onClick={() => void openIncognitoSettings()}>
             Permitir
@@ -84,9 +93,15 @@ export function AntiModeView(props: AntiModeModel & { selectedMode?: AntiModeId 
         </span>
         <Toggle
           checked={active}
-          disabled={isLoading || (!incognitoAllowed && !active) || (active && !canDeactivate)}
+          disabled={
+            isLoading ||
+            (!incognitoAllowed && !active) ||
+            (active && !canDeactivate)
+          }
           label={active ? 'Modo ativo' : 'Ativar modo'}
-          description={active ? 'O compromisso está protegido.' : 'Revise antes de ativar.'}
+          description={
+            active ? 'O compromisso está protegido.' : 'Revise antes de ativar.'
+          }
           onCheckedChange={(checked) =>
             checked ? void activate(mode) : setPendingDeactivate(mode)
           }
@@ -102,7 +117,10 @@ export function AntiModeView(props: AntiModeModel & { selectedMode?: AntiModeId 
         updateDraft={updateDraft}
       />
 
-      <form class={styles.domainForm} onSubmit={(event) => void addDomain(mode, event)}>
+      <form
+        class={styles.domainForm}
+        onSubmit={(event) => void addDomain(mode, event)}
+      >
         <label for={`${mode}-domain`}>Adicionar site à proteção</label>
         <p>{copy[mode].domainHelp}</p>
         <div>
@@ -111,7 +129,9 @@ export function AntiModeView(props: AntiModeModel & { selectedMode?: AntiModeId 
             inputMode="url"
             placeholder="exemplo.com"
             value={draft.hostname}
-            onInput={(event) => updateDraft(mode, 'hostname', event.currentTarget.value)}
+            onInput={(event) =>
+              updateDraft(mode, 'hostname', event.currentTarget.value)
+            }
             required
           />
           <Button type="submit" disabled={isLoading}>
@@ -121,7 +141,9 @@ export function AntiModeView(props: AntiModeModel & { selectedMode?: AntiModeId 
       </form>
 
       <details class={styles.domains}>
-        <summary>{config?.domains.length ?? 0} sites adicionados manualmente</summary>
+        <summary>
+          {config?.domains.length ?? 0} sites adicionados manualmente
+        </summary>
         <ul>
           {config?.domains.map((domain) => (
             <li key={domain}>{domain}</li>
@@ -132,18 +154,21 @@ export function AntiModeView(props: AntiModeModel & { selectedMode?: AntiModeId 
       <section class={styles.explanation}>
         <h2>O que é o modo anti?</h2>
         <p>
-          O modo anti ajuda você a manter distância de conteúdos ou atividades que deseja evitar. Ao
-          ativá-lo, você assume um compromisso por um período definido — ou sem prazo — e os sites
-          relacionados ficam bloqueados durante esse tempo.
+          O modo anti ajuda você a manter distância de conteúdos ou atividades
+          que deseja evitar. Ao ativá-lo, você assume um compromisso por um
+          período definido — ou sem prazo — e os sites relacionados ficam
+          bloqueados durante esse tempo.
         </p>
         <p>
-          A proposta não é punir nem vigiar você, mas criar uma pausa entre o impulso e a decisão.
-          Caso precise acessar um site bloqueado, será necessário solicitar uma liberação
-          temporária, tornando o acesso mais consciente.
+          A proposta não é punir nem vigiar você, mas criar uma pausa entre o
+          impulso e a decisão. Caso precise acessar um site bloqueado, será
+          necessário solicitar uma liberação temporária, tornando o acesso mais
+          consciente.
         </p>
         <p>
-          Existem modos específicos, como anti-pornografia e anti-aposta. Toda a proteção funciona
-          localmente no seu navegador, respeitando sua privacidade e mantendo você no controle.
+          Existem modos específicos, como anti-pornografia e anti-aposta. Toda a
+          proteção funciona localmente no seu navegador, respeitando sua
+          privacidade e mantendo você no controle.
         </p>
       </section>
 

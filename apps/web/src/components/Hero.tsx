@@ -15,8 +15,8 @@ export function Hero() {
             Interrompa o impulso. <em>Não a sua autonomia.</em>
           </h1>
           <p>
-            Block Pill cria uma pausa consciente entre você e os sites que capturam sua atenção.
-            Local, aberta e sem vigilância.
+            Block Pill cria uma pausa consciente entre você e os sites que
+            capturam sua atenção. Local, aberta e sem vigilância.
           </p>
           <div className="hero-actions">
             <InteractiveHoverButton
@@ -26,7 +26,10 @@ export function Hero() {
               target="_blank"
               rel="noreferrer"
             />
-            <a className="text-link motion-link motion-link--vertical" href="#como">
+            <a
+              className="text-link motion-link motion-link--vertical"
+              href="#como"
+            >
               Entender a pausa <span aria-hidden="true">↓</span>
             </a>
           </div>

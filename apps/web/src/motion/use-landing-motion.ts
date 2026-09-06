@@ -11,12 +11,15 @@ export function useLandingMotion(scope: RefObject<HTMLDivElement | null>) {
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
       const hero = scope.current?.querySelector<HTMLElement>('.hero');
-      const impulse = scope.current?.querySelector<HTMLElement>('[data-impulse]');
-      const barrier = scope.current?.querySelector<HTMLElement>('[data-barrier]');
+      const impulse =
+        scope.current?.querySelector<HTMLElement>('[data-impulse]');
+      const barrier =
+        scope.current?.querySelector<HTMLElement>('[data-barrier]');
       const choice = scope.current?.querySelector<HTMLElement>('[data-choice]');
       if (!hero || !impulse || !barrier || !choice) return;
 
-      const distanceToBarrier = () => barrier.offsetLeft - impulse.offsetLeft - impulse.offsetWidth;
+      const distanceToBarrier = () =>
+        barrier.offsetLeft - impulse.offsetLeft - impulse.offsetWidth;
       const timeline = gsap.timeline({
         defaults: { ease: 'none' },
         scrollTrigger: {
@@ -29,7 +32,11 @@ export function useLandingMotion(scope: RefObject<HTMLDivElement | null>) {
       });
 
       timeline
-        .fromTo(impulse, { x: 0, opacity: 1 }, { x: distanceToBarrier, duration: 0.68 })
+        .fromTo(
+          impulse,
+          { x: 0, opacity: 1 },
+          { x: distanceToBarrier, duration: 0.68 },
+        )
         .fromTo(
           barrier,
           { rotate: 17, scaleY: 1 },
@@ -48,7 +55,7 @@ export function useLandingMotion(scope: RefObject<HTMLDivElement | null>) {
         .to(impulse, { opacity: 0, duration: 0.12 });
 
       const refresh = () => ScrollTrigger.refresh();
-      document.fonts.ready.then(refresh);
+      void document.fonts.ready.then(refresh);
       window.addEventListener('resize', refresh, { passive: true });
 
       return () => {

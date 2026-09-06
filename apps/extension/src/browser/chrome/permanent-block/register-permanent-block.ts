@@ -1,5 +1,8 @@
 import type { ChromeBrowserContext } from '@/browser/chrome/context';
-import { invalidMessageResponse, type ChromeMessageHandler } from '@/browser/chrome/message-router';
+import {
+  invalidMessageResponse,
+  type ChromeMessageHandler,
+} from '@/browser/chrome/message-router';
 import {
   PERMANENT_BLOCK_MESSAGE_TYPE,
   handlePermanentBlockRequest,
@@ -9,7 +12,9 @@ import {
 } from '@/features/permanent-block';
 import { matchesHostname, parseHostname } from '@/shared/web-address/domain';
 
-export function registerPermanentBlock(context: ChromeBrowserContext): ChromeMessageHandler {
+export function registerPermanentBlock(
+  context: ChromeBrowserContext,
+): ChromeMessageHandler {
   chrome.runtime.onInstalled.addListener(() => {
     void synchronizePermanentBlock(context);
   });
@@ -50,7 +55,10 @@ async function handlePermanentRequest(
   );
 
   if (standard) await context.standardBlock.remove(hostname);
-  const response = await handlePermanentBlockRequest(context.permanentBlock, request);
+  const response = await handlePermanentBlockRequest(
+    context.permanentBlock,
+    request,
+  );
 
   if (response.ok) {
     await context.activity.record({
@@ -60,17 +68,25 @@ async function handlePermanentRequest(
       path: '/',
     });
   } else if (standard) {
-    await context.standardBlock.add(standard.hostname, standard.cooldownMilliseconds);
+    await context.standardBlock.add(
+      standard.hostname,
+      standard.cooldownMilliseconds,
+    );
   }
 
   return response;
 }
 
-async function synchronizePermanentBlock(context: ChromeBrowserContext): Promise<void> {
+async function synchronizePermanentBlock(
+  context: ChromeBrowserContext,
+): Promise<void> {
   try {
     await context.permanentBlock.synchronize();
   } catch (error) {
-    console.error('Não foi possível sincronizar os bloqueios permanentes.', error);
+    console.error(
+      'Não foi possível sincronizar os bloqueios permanentes.',
+      error,
+    );
   }
 }
 

@@ -3,7 +3,11 @@ import { hostnameSchema } from '@/shared/web-address/domain';
 
 export const antiModeIdSchema = z.enum(['anti-porn', 'anti-bet']);
 export const antiDurationUnitSchema = z.enum(['days', 'months', 'years']);
-export const antiAccessMinutesSchema = z.union([z.literal(1), z.literal(5), z.literal(15)]);
+export const antiAccessMinutesSchema = z.union([
+  z.literal(1),
+  z.literal(5),
+  z.literal(15),
+]);
 export const antiGoalSchema = z.string().trim().min(1).max(240);
 export const antiHobbySchema = z.string().trim().min(1).max(160);
 
@@ -29,5 +33,7 @@ export const antiModeConfigSchema = z.object({
   philosophicalKnowledge: z.boolean().default(false),
   domains: z.array(hostnameSchema).max(5_000).default([]),
   warningDomains: z.array(hostnameSchema).max(1_000).default([]),
-  accessUntilByHostname: z.record(z.string(), z.number().finite().nonnegative()).default({}),
+  accessUntilByHostname: z
+    .record(z.string(), z.number().finite().nonnegative())
+    .default({}),
 });

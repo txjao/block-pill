@@ -33,7 +33,10 @@ export function ActivityModeCard(props: ActivityModeCardProps) {
             variant="text"
             type="button"
             onClick={() =>
-              requestDeletion({ label: `todos os registros de ${sourceLabel(source)}`, source })
+              requestDeletion({
+                label: `todos os registros de ${sourceLabel(source)}`,
+                source,
+              })
             }
           >
             Limpar registros
@@ -62,7 +65,9 @@ export function ActivityModeCard(props: ActivityModeCardProps) {
             <li key={summary.key}>
               <div>
                 <strong>{summary.hostname}</strong>
-                <small>Última tentativa: {formatDate(summary.lastAttemptAt)}</small>
+                <small>
+                  Última tentativa: {formatDate(summary.lastAttemptAt)}
+                </small>
               </div>
               <div class={styles.domainMetrics}>
                 <span>{summary.attempts} tentativas</span>
@@ -86,11 +91,15 @@ export function ActivityModeCard(props: ActivityModeCardProps) {
         </ul>
       ) : (
         <p class={styles.emptyState}>
-          {isLoading ? 'Carregando atividade…' : 'Nenhuma atividade registrada neste modo.'}
+          {isLoading
+            ? 'Carregando atividade…'
+            : 'Nenhuma atividade registrada neste modo.'}
         </p>
       )}
 
-      {source.startsWith('anti') && <AntiInsights events={modeEvents} summaries={modeSummaries} />}
+      {source.startsWith('anti') && (
+        <AntiInsights events={modeEvents} summaries={modeSummaries} />
+      )}
     </article>
   );
 }
@@ -115,15 +124,22 @@ function modeTitle(source: ActivitySource) {
 
 function modeDescription(source: ActivitySource) {
   return {
-    standard: 'Veja onde uma pequena fricção ajudou a interromper o automático.',
-    permanent: 'Acompanhe as tentativas barradas pelas decisões que você tornou definitivas.',
-    'anti-porn': 'Observe gatilhos e sentimentos sem julgamento para reconhecer padrões.',
-    'anti-bet': 'Entenda momentos de impulso e preserve distância de decisões financeiras rápidas.',
+    standard:
+      'Veja onde uma pequena fricção ajudou a interromper o automático.',
+    permanent:
+      'Acompanhe as tentativas barradas pelas decisões que você tornou definitivas.',
+    'anti-porn':
+      'Observe gatilhos e sentimentos sem julgamento para reconhecer padrões.',
+    'anti-bet':
+      'Entenda momentos de impulso e preserve distância de decisões financeiras rápidas.',
   }[source];
 }
 
 function formatDate(value?: number) {
   return value
-    ? new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short', timeStyle: 'short' }).format(value)
+    ? new Intl.DateTimeFormat('pt-BR', {
+        dateStyle: 'short',
+        timeStyle: 'short',
+      }).format(value)
     : 'Sem registro';
 }

@@ -30,8 +30,8 @@ export function PermanentBlockView(props: PermanentBlockModel) {
           <img src={blockPillIcon} alt="" />
           <h3>Nenhum bloqueio permanente ainda</h3>
           <p>
-            Reserve esta lista para o que você já decidiu. Depois de criado, não sai por este
-            painel.
+            Reserve esta lista para o que você já decidiu. Depois de criado, não
+            sai por este painel.
           </p>
           <small>Para uma decisão ajustável, use a aba Pausas flexíveis.</small>
         </div>
@@ -46,10 +46,12 @@ export function PermanentBlockView(props: PermanentBlockModel) {
         </ul>
       )}
 
-      <form class={styles.formCard} onSubmit={addBlock}>
+      <form class={styles.formCard} onSubmit={(event) => void addBlock(event)}>
         <header>
           <h3>Novo bloqueio permanente</h3>
-          <p>Não há liberação por minutos. Só sai daqui reinstalando a extensão.</p>
+          <p>
+            Não há liberação por minutos. Só sai daqui reinstalando a extensão.
+          </p>
         </header>
         <label class={styles.fieldLabel} for="permanent-hostname">
           Endereço
@@ -69,9 +71,16 @@ export function PermanentBlockView(props: PermanentBlockModel) {
             checked={acknowledged}
             onChange={(event) => setAcknowledged(event.currentTarget.checked)}
           />
-          <span>Entendo que este bloqueio não pode ser desfeito por este painel.</span>
+          <span>
+            Entendo que este bloqueio não pode ser desfeito por este painel.
+          </span>
         </label>
-        <Button variant="dark" type="submit" loading={isLoading} disabled={!acknowledged}>
+        <Button
+          variant="dark"
+          type="submit"
+          loading={isLoading}
+          disabled={!acknowledged}
+        >
           Bloquear em definitivo
         </Button>
         <small>

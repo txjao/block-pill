@@ -106,7 +106,8 @@
 }
 
 .interactive-hover-button:focus-visible {
-  outline: 3px solid color-mix(in srgb, var(--interactive-button-primary) 42%, transparent);
+  outline: 3px solid
+    color-mix(in srgb, var(--interactive-button-primary) 42%, transparent);
   outline-offset: 3px;
 }
 

@@ -5,13 +5,19 @@ export {
   INCOGNITO_MESSAGE_PREFIX,
   INCOGNITO_MESSAGE_TYPE,
 } from './application/anti-mode.messages.constants';
-export { handleAntiModeRequest, parseAntiModeRequest } from './application/anti-mode.messages';
+export {
+  handleAntiModeRequest,
+  parseAntiModeRequest,
+} from './application/anti-mode.messages';
 export type {
   AntiModeRequest,
   AntiModeResponse,
   ParsedAntiModeRequest,
 } from './application/anti-mode.messages';
-export { ANTI_MODE_ACCESS_ALARM_PREFIX, ANTI_DURATION_PRESET_DAYS } from './domain/anti-mode.constants';
+export {
+  ANTI_MODE_ACCESS_ALARM_PREFIX,
+  ANTI_DURATION_PRESET_DAYS,
+} from './domain/anti-mode.constants';
 export {
   AntiModeCommitmentError,
   AntiModeDurationError,

@@ -32,10 +32,28 @@ describe('activity service', () => {
   it('exclui registros sem remover outros domínios', async () => {
     const repository = new Repository();
     repository.events = [
-      { id: '1', source: 'standard', kind: 'attempt', hostname: 'a.com', path: '/', at: 1 },
-      { id: '2', source: 'standard', kind: 'attempt', hostname: 'b.com', path: '/', at: 2 },
+      {
+        id: '1',
+        source: 'standard',
+        kind: 'attempt',
+        hostname: 'a.com',
+        path: '/',
+        at: 1,
+      },
+      {
+        id: '2',
+        source: 'standard',
+        kind: 'attempt',
+        hostname: 'b.com',
+        path: '/',
+        at: 2,
+      },
     ];
-    const service = new ActivityService(repository, { now: () => 3 }, () => '3');
+    const service = new ActivityService(
+      repository,
+      { now: () => 3 },
+      () => '3',
+    );
     await service.remove('standard', 'a.com');
     expect(repository.events.map((event) => event.hostname)).toEqual(['b.com']);
   });
@@ -43,14 +61,41 @@ describe('activity service', () => {
   it('permite excluir por modo e todo o histórico', async () => {
     const repository = new Repository();
     repository.events = [
-      { id: '1', source: 'anti-porn', kind: 'attempt', hostname: 'a.com', path: '/', at: 1 },
-      { id: '2', source: 'anti-porn', kind: 'reflection', hostname: 'b.com', path: '/', at: 2 },
-      { id: '3', source: 'permanent', kind: 'attempt', hostname: 'c.com', path: '/', at: 3 },
+      {
+        id: '1',
+        source: 'anti-porn',
+        kind: 'attempt',
+        hostname: 'a.com',
+        path: '/',
+        at: 1,
+      },
+      {
+        id: '2',
+        source: 'anti-porn',
+        kind: 'reflection',
+        hostname: 'b.com',
+        path: '/',
+        at: 2,
+      },
+      {
+        id: '3',
+        source: 'permanent',
+        kind: 'attempt',
+        hostname: 'c.com',
+        path: '/',
+        at: 3,
+      },
     ];
-    const service = new ActivityService(repository, { now: () => 4 }, () => '4');
+    const service = new ActivityService(
+      repository,
+      { now: () => 4 },
+      () => '4',
+    );
 
     await service.remove('anti-porn');
-    expect(repository.events.map((event) => event.source)).toEqual(['permanent']);
+    expect(repository.events.map((event) => event.source)).toEqual([
+      'permanent',
+    ]);
 
     await service.remove();
     expect(repository.events).toEqual([]);

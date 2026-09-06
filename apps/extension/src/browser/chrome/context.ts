@@ -47,8 +47,10 @@ export function createChromeBrowserContext(): ChromeBrowserContext {
     ),
   );
 
-  const activity = new ActivityService(new ChromeActivityRepository(), systemClock, () =>
-    crypto.randomUUID(),
+  const activity = new ActivityService(
+    new ChromeActivityRepository(),
+    systemClock,
+    () => crypto.randomUUID(),
   );
 
   const antiMode = new AntiModeController(
@@ -59,5 +61,11 @@ export function createChromeBrowserContext(): ChromeBrowserContext {
     ),
   );
 
-  return { activity, antiMode, clock: systemClock, permanentBlock, standardBlock };
+  return {
+    activity,
+    antiMode,
+    clock: systemClock,
+    permanentBlock,
+    standardBlock,
+  };
 }

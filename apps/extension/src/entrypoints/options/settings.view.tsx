@@ -48,7 +48,9 @@ export function SettingsView(props: SettingsModel) {
               {item.id === 'anti' && section === 'anti' && (
                 <div class={styles.submenu}>
                   <button
-                    class={selectedMode === 'anti-porn' ? styles.submenuActive : ''}
+                    class={
+                      selectedMode === 'anti-porn' ? styles.submenuActive : ''
+                    }
                     type="button"
                     onClick={() => selectMode('anti-porn')}
                   >
@@ -56,7 +58,9 @@ export function SettingsView(props: SettingsModel) {
                     <small>configurar</small>
                   </button>
                   <button
-                    class={selectedMode === 'anti-bet' ? styles.submenuActive : ''}
+                    class={
+                      selectedMode === 'anti-bet' ? styles.submenuActive : ''
+                    }
                     type="button"
                     onClick={() => selectMode('anti-bet')}
                   >
@@ -79,14 +83,25 @@ export function SettingsView(props: SettingsModel) {
           <>
             <header class={styles.pageHeader}>
               <h1>Bloqueios</h1>
-              <p>Crie pausas flexíveis ou registre decisões que você não quer renegociar.</p>
+              <p>
+                Crie pausas flexíveis ou registre decisões que você não quer
+                renegociar.
+              </p>
             </header>
             <Tabs
               value={blocksTab}
               onValueChange={setBlocksTab}
               items={[
-                { value: 'flexible', label: 'Pausas flexíveis', count: standardCount },
-                { value: 'permanent', label: 'Decisões permanentes', count: permanentCount },
+                {
+                  value: 'flexible',
+                  label: 'Pausas flexíveis',
+                  count: standardCount,
+                },
+                {
+                  value: 'permanent',
+                  label: 'Decisões permanentes',
+                  count: permanentCount,
+                },
               ]}
               note={
                 blocksTab === 'flexible'

@@ -16,17 +16,24 @@ export function Tabs<T extends string>({
   onValueChange,
 }: {
   value: T;
-  items: Array<TabItem<T>>;
+  items: TabItem<T>[];
   note?: ComponentChildren;
   children: ComponentChildren;
   onValueChange: (value: T) => void;
 }) {
   return (
-    <RadixTabs.Root value={value} onValueChange={(next) => onValueChange(next as T)}>
+    <RadixTabs.Root
+      value={value}
+      onValueChange={(next) => onValueChange(next as T)}
+    >
       <div class={styles.header}>
         <RadixTabs.List className={styles.list} aria-label="Alternar conteúdo">
           {items.map((item) => (
-            <RadixTabs.Trigger className={styles.trigger} value={item.value} key={item.value}>
+            <RadixTabs.Trigger
+              className={styles.trigger}
+              value={item.value}
+              key={item.value}
+            >
               {item.label}
               {item.count !== undefined && <span> · {item.count}</span>}
             </RadixTabs.Trigger>
@@ -39,7 +46,13 @@ export function Tabs<T extends string>({
   );
 }
 
-export function TabsContent({ value, children }: { value: string; children: ComponentChildren }) {
+export function TabsContent({
+  value,
+  children,
+}: {
+  value: string;
+  children: ComponentChildren;
+}) {
   return (
     <RadixTabs.Content className={styles.content} value={value} forceMount>
       {children}

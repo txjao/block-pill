@@ -13,7 +13,10 @@ describe('permanent block messages', () => {
 
   it('rejects an invalid hostname', () => {
     expect(
-      parsePermanentBlockRequest({ type: 'permanent-block/add', hostname: 'localhost' }),
+      parsePermanentBlockRequest({
+        type: 'permanent-block/add',
+        hostname: 'localhost',
+      }),
     ).toBeUndefined();
   });
 });

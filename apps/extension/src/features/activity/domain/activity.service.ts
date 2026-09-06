@@ -1,6 +1,10 @@
 import type { Clock } from '@/shared/current-time/domain';
 import type { ActivityRepository } from './activity.repository';
-import type { ActivityEvent, ActivityEventInput, ActivitySource } from './activity.types';
+import type {
+  ActivityEvent,
+  ActivityEventInput,
+  ActivitySource,
+} from './activity.types';
 
 const MAX_EVENTS = 5_000;
 
@@ -56,5 +60,5 @@ export class ActivityService {
 
 function sanitizePath(path: string): string {
   const normalized = path.startsWith('/') ? path : `/${path}`;
-  return normalized.split('?')[0]?.split('#')[0]?.slice(0, 2048) || '/';
+  return normalized.split('?')[0]?.split('#')[0]?.slice(0, 2048) ?? '/';
 }

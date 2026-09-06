@@ -12,13 +12,17 @@ const block = {
 
 describe('standard block model', () => {
   it('uses the global cooldown when the domain has no override', () => {
-    expect(createStandardBlockRows([block], '12')[0]?.cooldownLabel).toBe('espera geral de 12 h');
+    expect(createStandardBlockRows([block], '12')[0]?.cooldownLabel).toBe(
+      'espera geral de 12 h',
+    );
   });
 
   it('shows a domain-specific cooldown in hours', () => {
     expect(
-      createStandardBlockRows([{ ...block, cooldownMilliseconds: 7_200_000 }], '12')[0]
-        ?.cooldownLabel,
+      createStandardBlockRows(
+        [{ ...block, cooldownMilliseconds: 7_200_000 }],
+        '12',
+      )[0]?.cooldownLabel,
     ).toBe('espera própria de 2 h');
   });
 });

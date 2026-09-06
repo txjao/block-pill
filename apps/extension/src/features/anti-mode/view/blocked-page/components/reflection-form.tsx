@@ -22,7 +22,10 @@ export function ReflectionForm(props: ReflectionFormProps) {
   return (
     <div class={styles.reflectionForm}>
       <h2>Como você está se sentindo?</h2>
-      <p>Registrar é opcional e ajuda você a reconhecer padrões. Os dados ficam neste navegador.</p>
+      <p>
+        Registrar é opcional e ajuda você a reconhecer padrões. Os dados ficam
+        neste navegador.
+      </p>
       <div class={styles.feelingGrid}>
         {FEELINGS.map(([feeling, emoji]) => (
           <label
@@ -42,7 +45,9 @@ export function ReflectionForm(props: ReflectionFormProps) {
           </label>
         ))}
       </div>
-      <label for="reflection-reason">Quer registrar o que motivou esta tentativa?</label>
+      <label for="reflection-reason">
+        Quer registrar o que motivou esta tentativa?
+      </label>
       <textarea
         id="reflection-reason"
         value={reason}
@@ -50,7 +55,11 @@ export function ReflectionForm(props: ReflectionFormProps) {
         maxLength={4000}
         placeholder="Escreva apenas se isso ajudar você a entender o momento."
       />
-      <Button variant="secondary" type="button" onClick={() => void saveReflection()}>
+      <Button
+        variant="secondary"
+        type="button"
+        onClick={() => void saveReflection()}
+      >
         Salvar reflexão neste navegador
       </Button>
     </div>

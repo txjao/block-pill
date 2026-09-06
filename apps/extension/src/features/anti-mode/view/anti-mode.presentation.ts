@@ -8,7 +8,10 @@ export function formatCommitmentLabel(config: AntiModeConfig): string {
     : `Protegido até ${new Intl.DateTimeFormat('pt-BR', { dateStyle: 'long', timeStyle: 'short' }).format(config.commitmentEndsAt)}`;
 }
 
-export function getRecommendationText(need: AntiModeNeed, hobbies: string[]): string | undefined {
+export function getRecommendationText(
+  need: AntiModeNeed,
+  hobbies: string[],
+): string | undefined {
   if (need === 'information') return undefined;
   if (need === 'entertainment') {
     return 'Que tal algo fora da tela: caminhar, ler, cozinhar, conversar ou praticar um esporte?';

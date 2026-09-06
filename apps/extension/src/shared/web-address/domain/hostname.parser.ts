@@ -27,9 +27,14 @@ export function parseHostname(input: string): Hostname {
 
   const labels = hostname.split('.');
 
-  const isValidLabel = (label: string) => /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/.test(label);
+  const isValidLabel = (label: string) =>
+    /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/.test(label);
 
-  if (hostname.length > 253 || labels.length < 2 || labels.some((label) => !isValidLabel(label))) {
+  if (
+    hostname.length > 253 ||
+    labels.length < 2 ||
+    labels.some((label) => !isValidLabel(label))
+  ) {
     throw new InvalidHostnameError();
   }
 

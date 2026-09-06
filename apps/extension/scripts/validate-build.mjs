@@ -33,7 +33,9 @@ if (missingFiles.length > 0) {
 }
 
 if (manifest.background?.service_worker?.endsWith('.ts')) {
-  throw new Error('O service worker do build não pode apontar para TypeScript.');
+  throw new Error(
+    'O service worker do build não pode apontar para TypeScript.',
+  );
 }
 
 console.log(`Build validado: ${referencedFiles.size} recursos encontrados.`);

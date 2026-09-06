@@ -31,11 +31,15 @@ export function useStandardBlockModel() {
     if (response.ok && 'blocks' in response) {
       setBlocks(response.blocks);
       if ('settings' in response) {
-        setGlobalCooldownHours(String(response.settings.globalCooldownMilliseconds / 3_600_000));
+        setGlobalCooldownHours(
+          String(response.settings.globalCooldownMilliseconds / 3_600_000),
+        );
       }
       setFeedback('');
     } else {
-      setFeedback(response.ok ? 'Resposta inesperada da extensão.' : response.message);
+      setFeedback(
+        response.ok ? 'Resposta inesperada da extensão.' : response.message,
+      );
     }
 
     setIsLoading(false);
@@ -55,7 +59,9 @@ export function useStandardBlockModel() {
       setHostname('');
       setFeedback('Domínio bloqueado.');
     } else {
-      setFeedback(response.ok ? 'Resposta inesperada da extensão.' : response.message);
+      setFeedback(
+        response.ok ? 'Resposta inesperada da extensão.' : response.message,
+      );
     }
 
     setIsLoading(false);
@@ -72,13 +78,17 @@ export function useStandardBlockModel() {
       setBlocks(response.blocks);
       setFeedback('Domínio removido dos bloqueios padrão.');
     } else {
-      setFeedback(response.ok ? 'Resposta inesperada da extensão.' : response.message);
+      setFeedback(
+        response.ok ? 'Resposta inesperada da extensão.' : response.message,
+      );
     }
 
     setIsLoading(false);
   }
 
-  async function saveGlobalCooldown(event: JSX.TargetedSubmitEvent<HTMLFormElement>) {
+  async function saveGlobalCooldown(
+    event: JSX.TargetedSubmitEvent<HTMLFormElement>,
+  ) {
     event.preventDefault();
     setIsLoading(true);
     const response = await sendStandardBlockMessage({
@@ -88,7 +98,10 @@ export function useStandardBlockModel() {
     if (response.ok && 'settings' in response) {
       setBlocks(response.blocks);
       setFeedback('Cooldown global atualizado.');
-    } else setFeedback(response.ok ? 'Resposta inesperada da extensão.' : response.message);
+    } else
+      setFeedback(
+        response.ok ? 'Resposta inesperada da extensão.' : response.message,
+      );
     setIsLoading(false);
   }
 
@@ -98,7 +111,7 @@ export function useStandardBlockModel() {
   ) {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
-    const value = String(form.get('cooldownHours') ?? '').trim();
+    const value = readFormText(form, 'cooldownHours').trim();
     setIsLoading(true);
     const response = await sendStandardBlockMessage({
       type: STANDARD_BLOCK_MESSAGE_TYPE.updateDomainCooldown,
@@ -108,9 +121,14 @@ export function useStandardBlockModel() {
     if (response.ok && 'blocks' in response) {
       setBlocks(response.blocks);
       setFeedback(
-        value ? 'Cooldown específico atualizado.' : 'O domínio voltou a usar o cooldown global.',
+        value
+          ? 'Cooldown específico atualizado.'
+          : 'O domínio voltou a usar o cooldown global.',
       );
-    } else setFeedback(response.ok ? 'Resposta inesperada da extensão.' : response.message);
+    } else
+      setFeedback(
+        response.ok ? 'Resposta inesperada da extensão.' : response.message,
+      );
     setIsLoading(false);
   }
 
@@ -120,7 +138,7 @@ export function useStandardBlockModel() {
   ) {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
-    const subdomain = String(form.get('subdomain') ?? '');
+    const subdomain = readFormText(form, 'subdomain');
     setIsLoading(true);
     const response = await sendStandardBlockMessage({
       type: STANDARD_BLOCK_MESSAGE_TYPE.addSubdomainException,
@@ -130,8 +148,13 @@ export function useStandardBlockModel() {
     if (response.ok && 'blocks' in response) {
       setBlocks(response.blocks);
       event.currentTarget.reset();
-      setFeedback('Subdomínio liberado. O domínio principal continua bloqueado.');
-    } else setFeedback(response.ok ? 'Resposta inesperada da extensão.' : response.message);
+      setFeedback(
+        'Subdomínio liberado. O domínio principal continua bloqueado.',
+      );
+    } else
+      setFeedback(
+        response.ok ? 'Resposta inesperada da extensão.' : response.message,
+      );
     setIsLoading(false);
   }
 
@@ -154,7 +177,10 @@ export function useStandardBlockModel() {
 
 export type StandardBlockModel = ReturnType<typeof useStandardBlockModel>;
 
-export function createStandardBlockRows(blocks: StandardBlock[], globalCooldownHours: string) {
+export function createStandardBlockRows(
+  blocks: StandardBlock[],
+  globalCooldownHours: string,
+) {
   return blocks.map((block) => ({
     block,
     cooldownLabel: block.cooldownMilliseconds
@@ -163,13 +189,19 @@ export function createStandardBlockRows(blocks: StandardBlock[], globalCooldownH
   }));
 }
 
+function readFormText(form: FormData, field: string): string {
+  const value = form.get(field);
+  return typeof value === 'string' ? value : '';
+}
+
 async function sendStandardBlockMessage(
   request: StandardBlockRequest,
 ): Promise<StandardBlockResponse> {
   try {
-    const response = await chrome.runtime.sendMessage<StandardBlockRequest, StandardBlockResponse>(
-      request,
-    );
+    const response = await chrome.runtime.sendMessage<
+      StandardBlockRequest,
+      StandardBlockResponse
+    >(request);
 
     if (response && typeof response.ok === 'boolean') {
       return response;

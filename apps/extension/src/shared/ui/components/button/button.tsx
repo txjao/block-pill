@@ -1,7 +1,8 @@
 import type { ComponentChildren, JSX } from 'preact';
 import styles from './button.module.css';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'dark' | 'destructive' | 'text';
+export type ButtonVariant =
+  'primary' | 'secondary' | 'dark' | 'destructive' | 'text';
 export type ButtonSize = 'compact' | 'default';
 
 export interface ButtonProps extends JSX.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -29,15 +30,17 @@ export function Button({
     fluid ? styles.fluid : '',
     className,
   ]
-    .filter(Boolean)
+    .filter(
+      (value): value is string => typeof value === 'string' && value.length > 0,
+    )
     .join(' ');
 
   return (
     <button
       {...buttonProps}
       class={classes}
-      disabled={disabled || loading}
-      aria-busy={loading || undefined}
+      disabled={loading ? true : disabled}
+      aria-busy={loading ? true : undefined}
     >
       {loading ? 'Aguarde…' : children}
     </button>

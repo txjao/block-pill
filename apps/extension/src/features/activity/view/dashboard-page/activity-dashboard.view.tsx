@@ -6,7 +6,12 @@ import styles from './activity-dashboard.module.css';
 import { ActivityDeletionDialog } from './components/activity-deletion-dialog';
 import { ActivityModeCard } from './components/activity-mode-card';
 
-const sources: ActivitySource[] = ['standard', 'permanent', 'anti-porn', 'anti-bet'];
+const sources: ActivitySource[] = [
+  'standard',
+  'permanent',
+  'anti-porn',
+  'anti-bet',
+];
 
 export function ActivityDashboardView(props: ActivityDashboardModel) {
   const { events, feedback, requestDeletion } = props;
@@ -18,8 +23,8 @@ export function ActivityDashboardView(props: ActivityDashboardModel) {
           <Badge variant="accent">Somente neste navegador</Badge>
           <h2 id="dashboard-title">Atividade por modo</h2>
           <p>
-            Cada proteção tem seu próprio contexto. Os registros abaixo nunca saem do seu
-            dispositivo.
+            Cada proteção tem seu próprio contexto. Os registros abaixo nunca
+            saem do seu dispositivo.
           </p>
         </div>
       </div>

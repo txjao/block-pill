@@ -3,7 +3,9 @@ import { standardBlockSchema } from '@/features/standard-block/domain/standard-b
 
 describe('standard block schema', () => {
   it('migra um registro legado com os padrões da nova regra', () => {
-    expect(standardBlockSchema.parse({ hostname: 'youtube.com', ruleId: 1 })).toEqual({
+    expect(
+      standardBlockSchema.parse({ hostname: 'youtube.com', ruleId: 1 }),
+    ).toEqual({
       hostname: 'youtube.com',
       ruleId: 1,
       createdAt: 0,

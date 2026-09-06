@@ -31,7 +31,9 @@ export function AlertDialog({
       <RadixAlertDialog.Portal>
         <RadixAlertDialog.Overlay className={styles.overlay} />
         <RadixAlertDialog.Content className={styles.content}>
-          <RadixAlertDialog.Title className={styles.title}>{title}</RadixAlertDialog.Title>
+          <RadixAlertDialog.Title className={styles.title}>
+            {title}
+          </RadixAlertDialog.Title>
           <RadixAlertDialog.Description className={styles.description}>
             {description}
           </RadixAlertDialog.Description>

@@ -56,15 +56,21 @@ export async function handleStandardBlockRequest(
     } else if (request.type === STANDARD_BLOCK_MESSAGE_TYPE.updateSettings) {
       return {
         ok: true,
-        settings: await controller.updateSettings(request.globalCooldownMilliseconds),
+        settings: await controller.updateSettings(
+          request.globalCooldownMilliseconds,
+        ),
         blocks: await controller.list(),
       };
-    } else if (request.type === STANDARD_BLOCK_MESSAGE_TYPE.updateDomainCooldown) {
+    } else if (
+      request.type === STANDARD_BLOCK_MESSAGE_TYPE.updateDomainCooldown
+    ) {
       await controller.setDomainCooldown(
         request.hostname,
         request.cooldownMilliseconds ?? undefined,
       );
-    } else if (request.type === STANDARD_BLOCK_MESSAGE_TYPE.addSubdomainException) {
+    } else if (
+      request.type === STANDARD_BLOCK_MESSAGE_TYPE.addSubdomainException
+    ) {
       await controller.addAllowedSubdomain(request.hostname, request.subdomain);
     } else if (request.type === STANDARD_BLOCK_MESSAGE_TYPE.settings) {
       return { ok: true, settings, blocks: await controller.list() };
@@ -74,7 +80,10 @@ export async function handleStandardBlockRequest(
   } catch (error) {
     return {
       ok: false,
-      message: error instanceof Error ? error.message : 'Não foi possível atualizar os bloqueios.',
+      message:
+        error instanceof Error
+          ? error.message
+          : 'Não foi possível atualizar os bloqueios.',
     };
   }
 }

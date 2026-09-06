@@ -17,7 +17,10 @@ function createBlock(overrides: Partial<StandardBlock> = {}): StandardBlock {
 describe('standard block rule manager for Chrome', () => {
   it('redireciona o domínio e seus subdomínios', () => {
     expect(
-      createStandardBlockRule(createBlock(), (path) => `chrome-extension://test/${path}`),
+      createStandardBlockRule(
+        createBlock(),
+        (path) => `chrome-extension://test/${path}`,
+      ),
     ).toEqual({
       id: 7,
       priority: 1,
@@ -40,6 +43,8 @@ describe('standard block rule manager for Chrome', () => {
       (path) => `chrome-extension://test/${path}`,
     );
 
-    expect(rule.condition.excludedRequestDomains).toEqual(['music.youtube.com']);
+    expect(rule.condition.excludedRequestDomains).toEqual([
+      'music.youtube.com',
+    ]);
   });
 });

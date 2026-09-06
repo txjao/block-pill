@@ -45,16 +45,24 @@ export class StandardBlockController {
     minutes: TemporaryAccessMinutes,
     globalCooldownMilliseconds?: number,
   ): Promise<StandardBlockSnapshot> {
-    return this.service.grantTemporaryAccess(hostname, minutes, globalCooldownMilliseconds);
+    return this.service.grantTemporaryAccess(
+      hostname,
+      minutes,
+      globalCooldownMilliseconds,
+    );
   }
 
   getSettings(): Promise<StandardBlockSettings> {
     return this.settingsRepository.get();
   }
 
-  async updateSettings(globalCooldownMilliseconds: number): Promise<StandardBlockSettings> {
+  async updateSettings(
+    globalCooldownMilliseconds: number,
+  ): Promise<StandardBlockSettings> {
     const settings = {
-      globalCooldownMilliseconds: validateCooldownMilliseconds(globalCooldownMilliseconds),
+      globalCooldownMilliseconds: validateCooldownMilliseconds(
+        globalCooldownMilliseconds,
+      ),
     };
     await this.settingsRepository.set(settings);
     return settings;

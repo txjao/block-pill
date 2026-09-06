@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'preact/hooks';
-import { ACTIVITY_MESSAGE_TYPE, sendActivityRequest } from '@/features/activity';
+import {
+  ACTIVITY_MESSAGE_TYPE,
+  sendActivityRequest,
+} from '@/features/activity';
 import { ANTI_MODE_MESSAGE_TYPE } from '@/features/anti-mode/application/anti-mode.messages.constants';
 import type {
   AntiModeRequest,
@@ -19,21 +22,24 @@ export function useAntiModeBlockedModel() {
   const [config, setConfig] = useState<AntiModeConfig>();
   const [feelings, setFeelings] = useState<string[]>([]);
   const [reason, setReason] = useState('');
-  const [need, setNeed] = useState<'entertainment' | 'information' | 'impulse'>('impulse');
+  const [need, setNeed] = useState<'entertainment' | 'information' | 'impulse'>(
+    'impulse',
+  );
   const [feedback, setFeedback] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    async function load(): Promise<void> {
+      const response = await send({ type: ANTI_MODE_MESSAGE_TYPE.list });
+      if (response.ok && 'configs' in response) {
+        setConfig(response.configs.find((item) => item.id === mode));
+      } else
+        setFeedback(response.ok ? 'Resposta inesperada.' : response.message);
+      setIsLoading(false);
+    }
+
     void load();
   }, [mode, hostname]);
-
-  async function load(): Promise<void> {
-    const response = await send({ type: ANTI_MODE_MESSAGE_TYPE.list });
-    if (response.ok && 'configs' in response) {
-      setConfig(response.configs.find((item) => item.id === mode));
-    } else setFeedback(response.ok ? 'Resposta inesperada.' : response.message);
-    setIsLoading(false);
-  }
 
   function toggleFeeling(feeling: string): void {
     setFeelings((current) =>
@@ -54,7 +60,9 @@ export function useAntiModeBlockedModel() {
       feelings,
       reason,
     });
-    setFeedback(response.ok ? 'Relato salvo somente neste navegador.' : response.message);
+    setFeedback(
+      response.ok ? 'Relato salvo somente neste navegador.' : response.message,
+    );
   }
 
   async function requestAccess(minutes: AntiAccessMinutes): Promise<void> {
@@ -110,7 +118,9 @@ export type AntiModeBlockedModel = ReturnType<typeof useAntiModeBlockedModel>;
 
 async function send(request: AntiModeRequest): Promise<AntiModeResponse> {
   try {
-    return await chrome.runtime.sendMessage<AntiModeRequest, AntiModeResponse>(request);
+    return await chrome.runtime.sendMessage<AntiModeRequest, AntiModeResponse>(
+      request,
+    );
   } catch {
     return { ok: false, message: 'Não foi possível comunicar com a extensão.' };
   }

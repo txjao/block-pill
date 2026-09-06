@@ -24,4 +24,6 @@ export interface AntiModeConfig {
   accessUntilByHostname: Record<string, number>;
 }
 
-export type ActivateAntiModeInput = z.output<typeof activateAntiModeInputSchema>;
+export type ActivateAntiModeInput = z.output<
+  typeof activateAntiModeInputSchema
+>;

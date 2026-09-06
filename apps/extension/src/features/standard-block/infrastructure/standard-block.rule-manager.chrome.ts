@@ -41,7 +41,9 @@ export class ChromeStandardBlockRuleManager implements StandardBlockRuleManager 
     const standardRuleIds = dynamicRules
       .map((rule) => rule.id)
       .filter(
-        (ruleId) => ruleId >= STANDARD_BLOCK_RULE_ID_START && ruleId <= STANDARD_BLOCK_RULE_ID_END,
+        (ruleId) =>
+          ruleId >= STANDARD_BLOCK_RULE_ID_START &&
+          ruleId <= STANDARD_BLOCK_RULE_ID_END,
       );
 
     await chrome.declarativeNetRequest.updateDynamicRules({

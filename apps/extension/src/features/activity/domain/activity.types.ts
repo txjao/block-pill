@@ -7,7 +7,9 @@ import type {
 
 export type ActivitySource = z.output<typeof activitySourceSchema>;
 export type ActivityKind = z.output<typeof activityKindSchema>;
-export type ActivityDurationMinutes = z.output<typeof activityDurationMinutesSchema>;
+export type ActivityDurationMinutes = z.output<
+  typeof activityDurationMinutesSchema
+>;
 
 export interface ActivityEvent {
   id: string;
@@ -21,4 +23,4 @@ export interface ActivityEvent {
   reason?: string;
 }
 
-export interface ActivityEventInput extends Omit<ActivityEvent, 'id' | 'at'> {}
+export type ActivityEventInput = Omit<ActivityEvent, 'id' | 'at'>;

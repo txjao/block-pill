@@ -12,7 +12,9 @@ export interface PopupMockData {
 const allowedStates = new Set<PopupState>(['outside', 'stimulating', 'paused']);
 
 export function createPopupMock(): PopupMockData {
-  const preview = new URLSearchParams(window.location.search).get('preview') as PopupState | null;
+  const preview = new URLSearchParams(window.location.search).get(
+    'preview',
+  ) as PopupState | null;
   const state = preview && allowedStates.has(preview) ? preview : 'outside';
 
   return {

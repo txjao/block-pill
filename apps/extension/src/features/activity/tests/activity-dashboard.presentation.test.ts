@@ -57,6 +57,10 @@ describe('activity dashboard presentation', () => {
     );
 
     expect(result.commonFeelings[0]).toEqual(['ansiedade', 3]);
-    expect(result.reflections.map((event) => event.id)).toEqual(['4', '3', '2']);
+    expect(result.reflections.map((event) => event.id)).toEqual([
+      '4',
+      '3',
+      '2',
+    ]);
   });
 });

@@ -244,6 +244,22 @@ O domínio não depende de Chrome, Preact, `window` ou `document`. As adaptaçõ
 Chrome implementam contratos declarados pelo domínio, permitindo testes com
 implementações em memória.
 
+## Formatação e análise estática
+
+O estilo do código não é definido manualmente por cada feature. O workspace usa
+o comportamento padrão do Prettier, mantendo apenas aspas simples como decisão
+local. Isso inclui indentação de dois espaços, ponto e vírgula, vírgula final e
+quebra automática de linhas.
+
+O ESLint usa os presets recomendados e estilísticos com informação de tipos do
+typescript-eslint, as regras fundamentais de Hooks e a configuração de
+compatibilidade com o Prettier. O comando `pnpm check` verifica formatação, lint,
+tipos, testes e builds.
+
+As aplicações continuam compilando com TypeScript 7. Como essa versão ainda não
+expõe a API consumida pelo typescript-eslint, a raiz mantém o pacote oficial de
+compatibilidade TypeScript 6 exclusivamente para a análise estática.
+
 `apps/extension/src/shared` contém apenas capacidades reutilizadas por mais de um
 slice. Cada capacidade explicita suas próprias responsabilidades:
 

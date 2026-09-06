@@ -1,5 +1,8 @@
 import type { ChromeBrowserContext } from '@/browser/chrome/context';
-import { invalidMessageResponse, type ChromeMessageHandler } from '@/browser/chrome/message-router';
+import {
+  invalidMessageResponse,
+  type ChromeMessageHandler,
+} from '@/browser/chrome/message-router';
 import {
   ANTI_MODE_ACCESS_ALARM_PREFIX,
   ANTI_MODE_MESSAGE_TYPE,
@@ -13,7 +16,9 @@ import { matchesHostname, parseHostname } from '@/shared/web-address/domain';
 
 const INCOGNITO_CONTROL_STORAGE_KEY = 'incognitoControl';
 
-export function registerAntiMode(context: ChromeBrowserContext): ChromeMessageHandler {
+export function registerAntiMode(
+  context: ChromeBrowserContext,
+): ChromeMessageHandler {
   chrome.runtime.onInstalled.addListener(() => {
     void synchronizeAntiMode(context);
   });
@@ -56,10 +61,13 @@ async function handleAntiRequest(
   context: ChromeBrowserContext,
   request: ParsedAntiModeRequest,
 ): Promise<AntiModeResponse> {
-  if (request.type === INCOGNITO_MESSAGE_TYPE.status) return getIncognitoStatus(context);
+  if (request.type === INCOGNITO_MESSAGE_TYPE.status)
+    return getIncognitoStatus(context);
 
   if (request.type === INCOGNITO_MESSAGE_TYPE.openSettings) {
-    await chrome.tabs.create({ url: `chrome://extensions/?id=${chrome.runtime.id}` });
+    await chrome.tabs.create({
+      url: `chrome://extensions/?id=${chrome.runtime.id}`,
+    });
     return getIncognitoStatus(context);
   }
 
@@ -71,11 +79,15 @@ async function handleAntiRequest(
     return setIncognitoControl(context, request.blocked);
   }
 
-  if (request.type === ANTI_MODE_MESSAGE_TYPE.activate && !(await isIncognitoAllowed())) {
+  if (
+    request.type === ANTI_MODE_MESSAGE_TYPE.activate &&
+    !(await isIncognitoAllowed())
+  ) {
     return {
       ok: false,
       permissionRequired: true,
-      message: 'O acesso ao modo anônimo é estritamente necessário para ativar um modo anti.',
+      message:
+        'O acesso ao modo anônimo é estritamente necessário para ativar um modo anti.',
     };
   }
 
@@ -86,29 +98,38 @@ async function handleAntiRequest(
     'configs' in response &&
     response.activeUntil !== undefined
   ) {
-    await chrome.alarms.create(createAntiAccessAlarmName(request.mode, request.hostname), {
-      when: response.activeUntil,
-    });
+    await chrome.alarms.create(
+      createAntiAccessAlarmName(request.mode, request.hostname),
+      {
+        when: response.activeUntil,
+      },
+    );
   }
 
   return response;
 }
 
-async function synchronizeAntiMode(context: ChromeBrowserContext): Promise<void> {
+async function synchronizeAntiMode(
+  context: ChromeBrowserContext,
+): Promise<void> {
   try {
     await context.antiMode.synchronize();
     const configs = await context.antiMode.list();
 
     await Promise.all(
       configs.flatMap((config) =>
-        Object.entries(config.accessUntilByHostname).flatMap(([hostname, activeUntil]) =>
-          activeUntil > context.clock.now()
-            ? [
-                chrome.alarms.create(createAntiAccessAlarmName(config.id, hostname), {
-                  when: activeUntil,
-                }),
-              ]
-            : [],
+        Object.entries(config.accessUntilByHostname).flatMap(
+          ([hostname, activeUntil]) =>
+            activeUntil > context.clock.now()
+              ? [
+                  chrome.alarms.create(
+                    createAntiAccessAlarmName(config.id, hostname),
+                    {
+                      when: activeUntil,
+                    },
+                  ),
+                ]
+              : [],
         ),
       ),
     );
@@ -134,10 +155,13 @@ async function recordAntiModeNavigation(
   for (const config of configs) {
     if (!config.enabled) continue;
 
-    const matched = [...config.domains, ...config.warningDomains].find((domain) =>
-      matchesHostname(value, domain),
+    const matched = [...config.domains, ...config.warningDomains].find(
+      (domain) => matchesHostname(value, domain),
     );
-    if (matched && (config.accessUntilByHostname[matched] ?? 0) <= context.clock.now()) {
+    if (
+      matched &&
+      (config.accessUntilByHostname[matched] ?? 0) <= context.clock.now()
+    ) {
       await context.activity.record({
         source: config.id,
         kind: 'attempt',
@@ -148,7 +172,9 @@ async function recordAntiModeNavigation(
   }
 }
 
-async function getIncognitoStatus(context: ChromeBrowserContext): Promise<AntiModeResponse> {
+async function getIncognitoStatus(
+  context: ChromeBrowserContext,
+): Promise<AntiModeResponse> {
   const [incognitoAllowed, settings, configs] = await Promise.all([
     isIncognitoAllowed(),
     getIncognitoSettings(),
@@ -157,7 +183,8 @@ async function getIncognitoStatus(context: ChromeBrowserContext): Promise<AntiMo
   const lockedByAntiMode = configs.some(
     (config) =>
       config.enabled &&
-      (config.permanent || (config.commitmentEndsAt ?? Infinity) > context.clock.now()),
+      (config.permanent ||
+        (config.commitmentEndsAt ?? Infinity) > context.clock.now()),
   );
 
   return {
@@ -165,7 +192,8 @@ async function getIncognitoStatus(context: ChromeBrowserContext): Promise<AntiMo
     incognitoAllowed,
     blocked:
       lockedByAntiMode ||
-      (settings.blocked && (settings.suspendedUntil ?? 0) <= context.clock.now()),
+      (settings.blocked &&
+        (settings.suspendedUntil ?? 0) <= context.clock.now()),
     controlEnabled: settings.blocked,
     suspendedUntil: settings.suspendedUntil,
     lockedByAntiMode,
@@ -177,10 +205,16 @@ async function setIncognitoControl(
   blocked: boolean,
 ): Promise<AntiModeResponse> {
   const status = await getIncognitoStatus(context);
-  if (!blocked && status.ok && 'lockedByAntiMode' in status && status.lockedByAntiMode) {
+  if (
+    !blocked &&
+    status.ok &&
+    'lockedByAntiMode' in status &&
+    status.lockedByAntiMode
+  ) {
     return {
       ok: false,
-      message: 'A proteção anônima não pode ser desativada durante um compromisso anti ativo.',
+      message:
+        'A proteção anônima não pode ser desativada durante um compromisso anti ativo.',
     };
   }
 
@@ -198,7 +232,8 @@ async function suspendIncognitoControl(
   if (status.ok && 'lockedByAntiMode' in status && status.lockedByAntiMode) {
     return {
       ok: false,
-      message: 'O controle anônimo não pode ser suspenso durante um compromisso anti ativo.',
+      message:
+        'O controle anônimo não pode ser suspenso durante um compromisso anti ativo.',
     };
   }
 
@@ -223,7 +258,10 @@ async function closeIncognitoWindowWhenProtected(
   }
 }
 
-async function expireAntiAccess(context: ChromeBrowserContext, alarmName: string): Promise<void> {
+async function expireAntiAccess(
+  context: ChromeBrowserContext,
+  alarmName: string,
+): Promise<void> {
   const value = alarmName.slice(ANTI_MODE_ACCESS_ALARM_PREFIX.length);
   const separator = value.indexOf(':');
   if (separator < 0) return;
@@ -237,7 +275,7 @@ async function expireAntiAccess(context: ChromeBrowserContext, alarmName: string
     tabs
       .filter((tab) => tab.id && matchesHostname(tab.url, hostname))
       .map((tab) =>
-        chrome.tabs.update(tab.id as number, {
+        chrome.tabs.update(tab.id, {
           url: chrome.runtime.getURL(
             `src/entrypoints/blocked/index.html?mode=${mode}&kind=warning&hostname=${encodeURIComponent(hostname)}`,
           ),
@@ -251,16 +289,24 @@ function createAntiAccessAlarmName(mode: string, hostname: string): string {
 }
 
 function isIncognitoAllowed(): Promise<boolean> {
-  return new Promise((resolve) => chrome.extension.isAllowedIncognitoAccess(resolve));
+  return new Promise((resolve) =>
+    chrome.extension.isAllowedIncognitoAccess(resolve),
+  );
 }
 
-async function getIncognitoSettings(): Promise<{ blocked: boolean; suspendedUntil?: number }> {
+async function getIncognitoSettings(): Promise<{
+  blocked: boolean;
+  suspendedUntil?: number;
+}> {
   const stored = await chrome.storage.local.get(INCOGNITO_CONTROL_STORAGE_KEY);
   const value = stored[INCOGNITO_CONTROL_STORAGE_KEY] as
     { blocked?: unknown; suspendedUntil?: unknown } | undefined;
 
   return {
     blocked: value?.blocked !== false,
-    suspendedUntil: typeof value?.suspendedUntil === 'number' ? value.suspendedUntil : undefined,
+    suspendedUntil:
+      typeof value?.suspendedUntil === 'number'
+        ? value.suspendedUntil
+        : undefined,
   };
 }

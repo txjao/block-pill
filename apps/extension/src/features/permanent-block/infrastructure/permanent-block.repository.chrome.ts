@@ -18,7 +18,10 @@ export class ChromePermanentBlockRepository implements PermanentBlockRepository 
     for (const candidate of value) {
       const result = permanentBlockSchema.safeParse(candidate);
       if (!result.success) continue;
-      if (hostnames.has(result.data.hostname) || ruleIds.has(result.data.ruleId)) {
+      if (
+        hostnames.has(result.data.hostname) ||
+        ruleIds.has(result.data.ruleId)
+      ) {
         continue;
       }
 
@@ -27,7 +30,9 @@ export class ChromePermanentBlockRepository implements PermanentBlockRepository 
       blocks.push(result.data);
     }
 
-    return blocks.sort((left, right) => left.hostname.localeCompare(right.hostname));
+    return blocks.sort((left, right) =>
+      left.hostname.localeCompare(right.hostname),
+    );
   }
 
   async setAll(blocks: PermanentBlock[]): Promise<void> {

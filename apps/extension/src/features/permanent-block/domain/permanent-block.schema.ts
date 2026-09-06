@@ -7,6 +7,10 @@ import {
 
 export const permanentBlockSchema = z.object({
   hostname: hostnameSchema,
-  ruleId: z.number().int().min(PERMANENT_BLOCK_RULE_ID_START).max(PERMANENT_BLOCK_RULE_ID_END),
+  ruleId: z
+    .number()
+    .int()
+    .min(PERMANENT_BLOCK_RULE_ID_START)
+    .max(PERMANENT_BLOCK_RULE_ID_END),
   createdAt: z.number().finite().nonnegative(),
 });

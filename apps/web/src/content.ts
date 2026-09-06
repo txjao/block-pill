@@ -22,13 +22,31 @@ export const storySteps = [
     'O endereço é simplificado',
     'A extensão normaliza o endereço para aplicar a regra ao domínio correto.',
   ],
-  ['A escolha fica local', 'Sua lista permanece armazenada no próprio navegador.'],
-  ['A regra persiste', 'O Chrome mantém o redirecionamento ativo entre sessões.'],
-  ['O automático para', 'No próximo acesso, o impulso encontra a pausa que você definiu.'],
-  ['O controle continua seu', 'Quando quiser, você pode remover o domínio e desfazer a regra.'],
+  [
+    'A escolha fica local',
+    'Sua lista permanece armazenada no próprio navegador.',
+  ],
+  [
+    'A regra persiste',
+    'O Chrome mantém o redirecionamento ativo entre sessões.',
+  ],
+  [
+    'O automático para',
+    'No próximo acesso, o impulso encontra a pausa que você definiu.',
+  ],
+  [
+    'O controle continua seu',
+    'Quando quiser, você pode remover o domínio e desfazer a regra.',
+  ],
 ] as const;
 export const ideas = [
   ['Pausas temporárias', 'Desbloqueios conscientes, com tempo e contexto.'],
-  ['Novas formas de fricção', 'Intervenções graduais sem transformar foco em punição.'],
-  ['Mais navegadores', 'Compatibilidade sem comprometer privacidade ou simplicidade.'],
+  [
+    'Novas formas de fricção',
+    'Intervenções graduais sem transformar foco em punição.',
+  ],
+  [
+    'Mais navegadores',
+    'Compatibilidade sem comprometer privacidade ou simplicidade.',
+  ],
 ] as const;

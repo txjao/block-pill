@@ -1,7 +1,8 @@
 import type { ComponentChildren } from 'preact';
 import styles from './badge.module.css';
 
-export type BadgeVariant = 'neutral' | 'accent' | 'success' | 'warning' | 'danger' | 'outline';
+export type BadgeVariant =
+  'neutral' | 'accent' | 'success' | 'warning' | 'danger' | 'outline';
 
 export function Badge({
   children,

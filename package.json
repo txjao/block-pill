@@ -7,13 +7,14 @@
   "scripts": {
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "lint": "eslint . --max-warnings 0",
     "dev:web": "pnpm --filter @block-pill/web dev",
     "dev:extension": "pnpm --filter @block-pill/extension dev",
     "build": "pnpm -r build",
     "build:web": "pnpm --filter @block-pill/web build",
     "build:extension": "pnpm --filter @block-pill/extension build",
     "test": "pnpm --filter @block-pill/extension test",
-    "check": "pnpm -r check"
+    "check": "pnpm format:check && pnpm lint && pnpm -r check"
   },
   "repository": {
     "type": "git",
@@ -32,7 +33,14 @@
   "homepage": "https://github.com/txjao/block-pill#readme",
   "packageManager": "pnpm@11.7.0",
   "devDependencies": {
-    "prettier": "^3.7.4"
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.10.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "globals": "^17.12.0",
+    "prettier": "^3.7.4",
+    "typescript": "npm:@typescript/typescript6@^6.0.2",
+    "typescript-eslint": "^8.69.0"
   },
   "engines": {
     "node": ">=20.19.0"

@@ -1,6 +1,9 @@
 import { parseHostname } from './hostname.parser';
 
-export function matchesHostname(value: string | undefined, hostname: string): boolean {
+export function matchesHostname(
+  value: string | undefined,
+  hostname: string,
+): boolean {
   if (!value) return false;
 
   try {

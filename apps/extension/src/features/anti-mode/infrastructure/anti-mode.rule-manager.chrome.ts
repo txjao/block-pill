@@ -1,4 +1,7 @@
-import { ANTI_RULE_ID_END, ANTI_RULE_ID_START } from '@/features/anti-mode/domain/anti-mode.constants';
+import {
+  ANTI_RULE_ID_END,
+  ANTI_RULE_ID_START,
+} from '@/features/anti-mode/domain/anti-mode.constants';
 import type { AntiModeRuleManager } from '@/features/anti-mode/domain/anti-mode.rule-manager';
 import type { AntiModeConfig } from '@/features/anti-mode/domain/anti-mode.types';
 

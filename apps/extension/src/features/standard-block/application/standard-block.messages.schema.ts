@@ -6,9 +6,18 @@ import { STANDARD_BLOCK_MESSAGE_TYPE } from './standard-block.messages.constants
 
 export const standardBlockRequestSchema = z.discriminatedUnion('type', [
   z.object({ type: z.literal(STANDARD_BLOCK_MESSAGE_TYPE.list) }),
-  z.object({ type: z.literal(STANDARD_BLOCK_MESSAGE_TYPE.add), hostname: hostnameSchema }),
-  z.object({ type: z.literal(STANDARD_BLOCK_MESSAGE_TYPE.remove), hostname: hostnameSchema }),
-  z.object({ type: z.literal(STANDARD_BLOCK_MESSAGE_TYPE.status), hostname: hostnameSchema }),
+  z.object({
+    type: z.literal(STANDARD_BLOCK_MESSAGE_TYPE.add),
+    hostname: hostnameSchema,
+  }),
+  z.object({
+    type: z.literal(STANDARD_BLOCK_MESSAGE_TYPE.remove),
+    hostname: hostnameSchema,
+  }),
+  z.object({
+    type: z.literal(STANDARD_BLOCK_MESSAGE_TYPE.status),
+    hostname: hostnameSchema,
+  }),
   z.object({ type: z.literal(STANDARD_BLOCK_MESSAGE_TYPE.context) }),
   z.object({
     type: z.literal(STANDARD_BLOCK_MESSAGE_TYPE.requestAccess),
@@ -33,4 +42,6 @@ export const standardBlockRequestSchema = z.discriminatedUnion('type', [
 ]);
 
 export type StandardBlockRequest = z.input<typeof standardBlockRequestSchema>;
-export type ParsedStandardBlockRequest = z.output<typeof standardBlockRequestSchema>;
+export type ParsedStandardBlockRequest = z.output<
+  typeof standardBlockRequestSchema
+>;

@@ -34,7 +34,9 @@ describe('anti mode', () => {
     expect(convertAntiDuration(1, 'days')).toBe(86_400_000);
     expect(convertAntiDuration(2, 'months')).toBe(62 * 86_400_000);
     expect(convertAntiDuration(2, 'years')).toBe(732 * 86_400_000);
-    expect(() => convertAntiDuration(733, 'days')).toThrow(AntiModeDurationError);
+    expect(() => convertAntiDuration(733, 'days')).toThrow(
+      AntiModeDurationError,
+    );
   });
 
   it('ativa os dois modos de forma independente e importa apenas o perfil', async () => {
@@ -59,11 +61,15 @@ describe('anti mode', () => {
       philosophicalKnowledge: false,
       importFrom: 'anti-porn',
     });
-    expect(configs.find((item) => item.id === 'anti-porn')?.commitmentEndsAt).toBe(
-      1_000 + 31 * 86_400_000,
+    expect(
+      configs.find((item) => item.id === 'anti-porn')?.commitmentEndsAt,
+    ).toBe(1_000 + 31 * 86_400_000);
+    expect(configs.find((item) => item.id === 'anti-bet')?.goals).toEqual([
+      'família',
+    ]);
+    expect(configs.find((item) => item.id === 'anti-bet')?.domains).toContain(
+      'bet365.com',
     );
-    expect(configs.find((item) => item.id === 'anti-bet')?.goals).toEqual(['família']);
-    expect(configs.find((item) => item.id === 'anti-bet')?.domains).toContain('bet365.com');
   });
 
   it('impede desativação durante o compromisso', async () => {
@@ -77,7 +83,9 @@ describe('anti mode', () => {
       hobbies: [],
       philosophicalKnowledge: false,
     });
-    await expect(service.deactivate('anti-porn')).rejects.toBeInstanceOf(AntiModeCommitmentError);
+    await expect(service.deactivate('anti-porn')).rejects.toBeInstanceOf(
+      AntiModeCommitmentError,
+    );
   });
 
   it('libera somente domínios de gatilho por 1, 5 ou 15 minutos', async () => {
@@ -93,8 +101,8 @@ describe('anti mode', () => {
     });
     const result = await service.grantAccess('anti-porn', 'x.com', 5);
     expect(result.activeUntil).toBe(301_000);
-    await expect(service.grantAccess('anti-porn', 'pornhub.com', 5)).rejects.toThrow(
-      'não permite liberação',
-    );
+    await expect(
+      service.grantAccess('anti-porn', 'pornhub.com', 5),
+    ).rejects.toThrow('não permite liberação');
   });
 });

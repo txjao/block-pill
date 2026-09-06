@@ -1,5 +1,8 @@
 import { ACTIVITY_MESSAGE_PREFIX } from '@/features/activity';
-import { ANTI_MODE_MESSAGE_PREFIX, INCOGNITO_MESSAGE_PREFIX } from '@/features/anti-mode';
+import {
+  ANTI_MODE_MESSAGE_PREFIX,
+  INCOGNITO_MESSAGE_PREFIX,
+} from '@/features/anti-mode';
 import { PERMANENT_BLOCK_MESSAGE_PREFIX } from '@/features/permanent-block';
 import { STANDARD_BLOCK_MESSAGE_PREFIX } from '@/features/standard-block';
 
@@ -16,7 +19,9 @@ export interface ChromeMessageHandlers {
   standardBlock: ChromeMessageHandler;
 }
 
-export function registerChromeMessageRouter(handlers: ChromeMessageHandlers): void {
+export function registerChromeMessageRouter(
+  handlers: ChromeMessageHandlers,
+): void {
   chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     switch (getMessagePrefix(message)) {
       case STANDARD_BLOCK_MESSAGE_PREFIX:
@@ -39,7 +44,8 @@ export function invalidMessageResponse(): { ok: false; message: string } {
 }
 
 function getMessagePrefix(message: unknown): string | undefined {
-  if (typeof message !== 'object' || message === null || !('type' in message)) return undefined;
+  if (typeof message !== 'object' || message === null || !('type' in message))
+    return undefined;
   if (typeof message.type !== 'string') return undefined;
 
   const separator = message.type.indexOf('/');

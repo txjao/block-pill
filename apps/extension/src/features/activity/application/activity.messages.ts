@@ -1,13 +1,21 @@
 import type { ActivityService } from '@/features/activity/domain/activity.service';
 import type { ActivityEvent } from '@/features/activity/domain/activity.types';
 import { ACTIVITY_MESSAGE_TYPE } from './activity.messages.constants';
-import { activityRequestSchema, type ParsedActivityRequest } from './activity.messages.schema';
+import {
+  activityRequestSchema,
+  type ParsedActivityRequest,
+} from './activity.messages.schema';
 
-export type { ActivityRequest, ParsedActivityRequest } from './activity.messages.schema';
+export type {
+  ActivityRequest,
+  ParsedActivityRequest,
+} from './activity.messages.schema';
 export type ActivityResponse =
   { ok: true; events: ActivityEvent[] } | { ok: false; message: string };
 
-export function parseActivityRequest(message: unknown): ParsedActivityRequest | undefined {
+export function parseActivityRequest(
+  message: unknown,
+): ParsedActivityRequest | undefined {
   const result = activityRequestSchema.safeParse(message);
   return result.success ? result.data : undefined;
 }
@@ -27,7 +35,10 @@ export async function handleActivityRequest(
   } catch (error) {
     return {
       ok: false,
-      message: error instanceof Error ? error.message : 'Não foi possível atualizar o histórico.',
+      message:
+        error instanceof Error
+          ? error.message
+          : 'Não foi possível atualizar o histórico.',
     };
   }
 }

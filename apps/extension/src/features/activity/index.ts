@@ -2,7 +2,10 @@ export {
   ACTIVITY_MESSAGE_PREFIX,
   ACTIVITY_MESSAGE_TYPE,
 } from './application/activity.messages.constants';
-export { handleActivityRequest, parseActivityRequest } from './application/activity.messages';
+export {
+  handleActivityRequest,
+  parseActivityRequest,
+} from './application/activity.messages';
 export type {
   ActivityRequest,
   ActivityResponse,

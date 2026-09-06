@@ -44,7 +44,12 @@ export function PopupView(props: PopupModel) {
           <Button fluid disabled title="Integração dinâmica pendente">
             Pausar 15 min
           </Button>
-          <Button fluid variant="dark" disabled title="Integração dinâmica pendente">
+          <Button
+            fluid
+            variant="dark"
+            disabled
+            title="Integração dinâmica pendente"
+          >
             Bloquear em definitivo
           </Button>
         </div>
@@ -99,7 +104,11 @@ export function PopupView(props: PopupModel) {
         <strong>{isLoading ? 'Consultando esta aba…' : hostname}</strong>
         <Badge variant="outline">fora da lista</Badge>
       </div>
-      <Button fluid variant="secondary" onClick={() => void openDocumentation()}>
+      <Button
+        fluid
+        variant="secondary"
+        onClick={() => void openDocumentation()}
+      >
         Adicionar aos estimulantes
       </Button>
       <dl class={styles.summary}>
@@ -120,7 +129,11 @@ export function PopupView(props: PopupModel) {
         <Button fluid onClick={() => void openOptions('blocking')}>
           Gerenciar bloqueios
         </Button>
-        <Button fluid variant="secondary" onClick={() => void openOptions('anti')}>
+        <Button
+          fluid
+          variant="secondary"
+          onClick={() => void openOptions('anti')}
+        >
           Modos anti
         </Button>
       </div>

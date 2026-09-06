@@ -1,10 +1,16 @@
-import type { AntiModeConfig, AntiModeId } from '@/features/anti-mode/domain/anti-mode.types';
+import type {
+  AntiModeConfig,
+  AntiModeId,
+} from '@/features/anti-mode/domain/anti-mode.types';
 import { Toggle } from '@/shared/ui/components/toggle';
 import type { AntiModeModel } from '@/features/anti-mode/view/settings-page/anti-mode.model';
 import styles from '@/features/anti-mode/view/settings-page/anti-mode.module.css';
 import { formatCommitmentLabel } from '@/features/anti-mode/view/anti-mode.presentation';
 
-type ConfigurationProps = Pick<AntiModeModel, 'configs' | 'drafts' | 'updateDraft'> & {
+type ConfigurationProps = Pick<
+  AntiModeModel,
+  'configs' | 'drafts' | 'updateDraft'
+> & {
   mode: AntiModeId;
   config?: AntiModeConfig;
   active: boolean;
@@ -36,7 +42,9 @@ export function AntiModeConfiguration(props: ConfigurationProps) {
       <div class={styles.formGrid}>
         <div class={styles.fieldGroup}>
           <label for={`${mode}-duration`}>Duração do compromisso</label>
-          <p>Durante esse período o modo não poderá ser desligado por impulso.</p>
+          <p>
+            Durante esse período o modo não poderá ser desligado por impulso.
+          </p>
           <div class={styles.durationRow}>
             <input
               id={`${mode}-duration`}
@@ -44,7 +52,9 @@ export function AntiModeConfiguration(props: ConfigurationProps) {
               min="1"
               value={draft.durationValue}
               disabled={draft.permanent}
-              onInput={(event) => updateDraft(mode, 'durationValue', event.currentTarget.value)}
+              onInput={(event) =>
+                updateDraft(mode, 'durationValue', event.currentTarget.value)
+              }
             />
             <select
               value={draft.durationUnit}
@@ -75,7 +85,9 @@ export function AntiModeConfiguration(props: ConfigurationProps) {
           </span>
           <textarea
             value={draft.goals}
-            onInput={(event) => updateDraft(mode, 'goals', event.currentTarget.value)}
+            onInput={(event) =>
+              updateDraft(mode, 'goals', event.currentTarget.value)
+            }
             placeholder="Relacionamentos, presença, tranquilidade, planos…"
           />
         </label>
@@ -85,7 +97,9 @@ export function AntiModeConfiguration(props: ConfigurationProps) {
           </span>
           <textarea
             value={draft.hobbies}
-            onInput={(event) => updateDraft(mode, 'hobbies', event.currentTarget.value)}
+            onInput={(event) =>
+              updateDraft(mode, 'hobbies', event.currentTarget.value)
+            }
             placeholder="Caminhar, ler, cozinhar, conversar, treinar…"
           />
         </label>
@@ -94,17 +108,26 @@ export function AntiModeConfiguration(props: ConfigurationProps) {
             type="checkbox"
             checked={draft.philosophicalKnowledge}
             onChange={(event) =>
-              updateDraft(mode, 'philosophicalKnowledge', event.currentTarget.checked)
+              updateDraft(
+                mode,
+                'philosophicalKnowledge',
+                event.currentTarget.checked,
+              )
             }
           />
           Mostrar reflexões filosóficas nos momentos de pausa
         </label>
-        {configs.some((item) => item.id !== mode && (item.goals.length || item.hobbies.length)) && (
+        {configs.some(
+          (item) =>
+            item.id !== mode && (item.goals.length || item.hobbies.length),
+        ) && (
           <label class={styles.checkbox}>
             <input
               type="checkbox"
               checked={draft.importProfile}
-              onChange={(event) => updateDraft(mode, 'importProfile', event.currentTarget.checked)}
+              onChange={(event) =>
+                updateDraft(mode, 'importProfile', event.currentTarget.checked)
+              }
             />
             Reutilizar objetivos e alternativas do outro modo
           </label>

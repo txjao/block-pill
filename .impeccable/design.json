@@ -128,23 +128,48 @@
         "role": "tertiary",
         "displayName": "Texto de Sucesso",
         "canonical": "#075C25",
-        "tonalRamp": ["#02250E", "#043C17", "#075C25", "#147A45", "#48A66D", "#93D4AB", "#E7F8EC"]
+        "tonalRamp": [
+          "#02250E",
+          "#043C17",
+          "#075C25",
+          "#147A45",
+          "#48A66D",
+          "#93D4AB",
+          "#E7F8EC"
+        ]
       },
       "warning-text": {
         "role": "tertiary",
         "displayName": "Texto de Aviso",
         "canonical": "#6A4100",
-        "tonalRamp": ["#2C1B00", "#4A2E00", "#6A4100", "#95610B", "#C58D2B", "#E9C477", "#FFF2CE"]
+        "tonalRamp": [
+          "#2C1B00",
+          "#4A2E00",
+          "#6A4100",
+          "#95610B",
+          "#C58D2B",
+          "#E9C477",
+          "#FFF2CE"
+        ]
       }
     },
     "typographyMeta": {
-      "display": { "displayName": "Display direto", "purpose": "Hero e títulos de seção." },
-      "body": { "displayName": "Corpo legível", "purpose": "Explicações e conteúdo de apoio." },
+      "display": {
+        "displayName": "Display direto",
+        "purpose": "Hero e títulos de seção."
+      },
+      "body": {
+        "displayName": "Corpo legível",
+        "purpose": "Explicações e conteúdo de apoio."
+      },
       "interface": {
         "displayName": "Interface",
         "purpose": "Conteúdo operacional entre 14px e 16px."
       },
-      "label": { "displayName": "Rótulo", "purpose": "Metadados e badges com mínimo de 12px." }
+      "label": {
+        "displayName": "Rótulo",
+        "purpose": "Metadados e badges com mínimo de 12px."
+      }
     },
     "shadows": [
       {

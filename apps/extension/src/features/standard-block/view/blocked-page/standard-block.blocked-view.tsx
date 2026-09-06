@@ -3,7 +3,9 @@ import { Button } from '@/shared/ui/components/button';
 import { InteractiveHoverButton } from '@/shared/ui/components/interactive-hover-button';
 import styles from './standard-block.blocked.module.css';
 
-type StandardBlockBlockedModel = ReturnType<typeof useStandardBlockBlockedModel>;
+type StandardBlockBlockedModel = ReturnType<
+  typeof useStandardBlockBlockedModel
+>;
 const docsUrl =
   'https://github.com/txjao/block-pill/blob/main/docs/BLOCKING_RULES.md#exceções-de-subdomínio';
 
@@ -18,7 +20,10 @@ export function StandardBlockBlockedView(props: StandardBlockBlockedModel) {
     allowSubdomain,
   } = props;
 
-  if (!snapshot) return <p role={feedback ? 'alert' : undefined}>{feedback || 'Carregando…'}</p>;
+  if (!snapshot)
+    return (
+      <p role={feedback ? 'alert' : undefined}>{feedback || 'Carregando…'}</p>
+    );
 
   if (attemptedHostname) {
     return (
@@ -29,11 +34,12 @@ export function StandardBlockBlockedView(props: StandardBlockBlockedModel) {
         <span class={styles.eyebrow}>Uma exceção possível</span>
         <h1 id="blocked-title">Opa! Este subdomínio veio junto.</h1>
         <p>
-          Você bloqueou <strong>{hostname}</strong>, então <strong>{attemptedHostname}</strong>{' '}
-          também entrou na pausa.
+          Você bloqueou <strong>{hostname}</strong>, então{' '}
+          <strong>{attemptedHostname}</strong> também entrou na pausa.
         </p>
         <p>
-          Se ele for uma ferramenta que você realmente utiliza, libere somente este endereço abaixo.
+          Se ele for uma ferramenta que você realmente utiliza, libere somente
+          este endereço abaixo.
         </p>
         <div class={styles.accessActions}>
           <InteractiveHoverButton
@@ -42,7 +48,12 @@ export function StandardBlockBlockedView(props: StandardBlockBlockedModel) {
             loading={isLoading}
             onClick={() => void allowSubdomain()}
           />
-          <a class={styles.textLink} href={docsUrl} target="_blank" rel="noreferrer">
+          <a
+            class={styles.textLink}
+            href={docsUrl}
+            target="_blank"
+            rel="noreferrer"
+          >
             Entender mais
           </a>
         </div>
@@ -57,9 +68,12 @@ export function StandardBlockBlockedView(props: StandardBlockBlockedModel) {
         <span class={styles.eyebrow}>Pausa em andamento</span>
         <h1 id="blocked-title">Seu tempo acabou.</h1>
         <p>
-          O acesso a <strong>{hostname}</strong> volta em {formatRemaining(snapshot.availableAt)}.
+          O acesso a <strong>{hostname}</strong> volta em{' '}
+          {formatRemaining(snapshot.availableAt)}.
         </p>
-        <p class={styles.supportCopy}>Use esta pausa para retomar o que você queria fazer.</p>
+        <p class={styles.supportCopy}>
+          Use esta pausa para retomar o que você queria fazer.
+        </p>
       </section>
     );
   }
@@ -80,7 +94,10 @@ export function StandardBlockBlockedView(props: StandardBlockBlockedModel) {
       <p>
         <strong>Todo mundo merece 15 minutinhos de descanso!</strong>
       </p>
-      <p>Você ainda tem {snapshot.remainingMinutes} minutos disponíveis neste ciclo.</p>
+      <p>
+        Você ainda tem {snapshot.remainingMinutes} minutos disponíveis neste
+        ciclo.
+      </p>
       <div class={styles.accessActions} aria-label="Escolha o tempo de acesso">
         {([1, 5, 15] as const).map((minutes) => (
           <Button

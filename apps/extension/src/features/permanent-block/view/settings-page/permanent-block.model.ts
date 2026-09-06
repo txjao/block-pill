@@ -24,7 +24,9 @@ export function usePermanentBlockModel() {
     setIsLoading(false);
   }
 
-  async function addBlock(event: JSX.TargetedSubmitEvent<HTMLFormElement>): Promise<void> {
+  async function addBlock(
+    event: JSX.TargetedSubmitEvent<HTMLFormElement>,
+  ): Promise<void> {
     event.preventDefault();
     if (!acknowledged) return;
     setIsLoading(true);
@@ -56,9 +58,14 @@ export function usePermanentBlockModel() {
   };
 }
 
-async function send(request: PermanentBlockRequest): Promise<PermanentBlockResponse> {
+async function send(
+  request: PermanentBlockRequest,
+): Promise<PermanentBlockResponse> {
   try {
-    return await chrome.runtime.sendMessage<PermanentBlockRequest, PermanentBlockResponse>(request);
+    return await chrome.runtime.sendMessage<
+      PermanentBlockRequest,
+      PermanentBlockResponse
+    >(request);
   } catch {
     return { ok: false, message: 'Não foi possível comunicar com a extensão.' };
   }

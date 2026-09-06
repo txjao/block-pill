@@ -44,7 +44,9 @@ export class ChromeStandardBlockRepository implements StandardBlockRepository {
       blocks.push(block);
     }
 
-    return blocks.sort((left, right) => left.hostname.localeCompare(right.hostname));
+    return blocks.sort((left, right) =>
+      left.hostname.localeCompare(right.hostname),
+    );
   }
 
   async setAll(blocks: StandardBlock[]): Promise<void> {

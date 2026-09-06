@@ -1,5 +1,8 @@
 import type { ChromeBrowserContext } from '@/browser/chrome/context';
-import { invalidMessageResponse, type ChromeMessageHandler } from '@/browser/chrome/message-router';
+import {
+  invalidMessageResponse,
+  type ChromeMessageHandler,
+} from '@/browser/chrome/message-router';
 import {
   STANDARD_ACCESS_ALARM_PREFIX,
   STANDARD_BLOCK_MESSAGE_TYPE,
@@ -13,7 +16,9 @@ import { matchesHostname, parseHostname } from '@/shared/web-address/domain';
 
 const STANDARD_BLOCK_CONTEXT_KEY_PREFIX = 'standard-block-context:';
 
-export function registerStandardBlock(context: ChromeBrowserContext): ChromeMessageHandler {
+export function registerStandardBlock(
+  context: ChromeBrowserContext,
+): ChromeMessageHandler {
   chrome.runtime.onInstalled.addListener(() => {
     void synchronizeStandardBlock(context);
   });
@@ -41,7 +46,9 @@ export function registerStandardBlock(context: ChromeBrowserContext): ChromeMess
       return false;
     }
 
-    void respondToStandardBlockMessage(context, request, sender.tab?.id).then(sendResponse);
+    void respondToStandardBlockMessage(context, request, sender.tab?.id).then(
+      sendResponse,
+    );
     return true;
   };
 }
@@ -63,9 +70,12 @@ async function respondToStandardBlockMessage(
     'snapshot' in response &&
     response.snapshot.activeUntil !== undefined
   ) {
-    await chrome.alarms.create(createStandardAccessAlarmName(response.snapshot.hostname), {
-      when: response.snapshot.activeUntil,
-    });
+    await chrome.alarms.create(
+      createStandardAccessAlarmName(response.snapshot.hostname),
+      {
+        when: response.snapshot.activeUntil,
+      },
+    );
     await context.activity.record({
       source: 'standard',
       kind: 'access-granted',
@@ -111,18 +121,24 @@ async function handleStandardRequest(
   return handleStandardBlockRequest(context.standardBlock, request);
 }
 
-async function synchronizeStandardBlock(context: ChromeBrowserContext): Promise<void> {
+async function synchronizeStandardBlock(
+  context: ChromeBrowserContext,
+): Promise<void> {
   try {
     await context.standardBlock.synchronize();
     const blocks = await context.standardBlock.list();
 
     await Promise.all(
       blocks.flatMap((block) =>
-        block.temporaryAccess.activeUntil && block.temporaryAccess.activeUntil > context.clock.now()
+        block.temporaryAccess.activeUntil &&
+        block.temporaryAccess.activeUntil > context.clock.now()
           ? [
-              chrome.alarms.create(createStandardAccessAlarmName(block.hostname), {
-                when: block.temporaryAccess.activeUntil,
-              }),
+              chrome.alarms.create(
+                createStandardAccessAlarmName(block.hostname),
+                {
+                  when: block.temporaryAccess.activeUntil,
+                },
+              ),
             ]
           : [],
       ),
@@ -186,11 +202,17 @@ async function getStandardBlockContext(
   if (!value || typeof value !== 'object') return undefined;
 
   const context = value as Record<string, unknown>;
-  if (typeof context.hostname !== 'string' || typeof context.attemptedHostname !== 'string') {
+  if (
+    typeof context.hostname !== 'string' ||
+    typeof context.attemptedHostname !== 'string'
+  ) {
     return undefined;
   }
 
-  return { hostname: context.hostname, attemptedHostname: context.attemptedHostname };
+  return {
+    hostname: context.hostname,
+    attemptedHostname: context.attemptedHostname,
+  };
 }
 
 async function expireStandardAccess(
@@ -202,11 +224,13 @@ async function expireStandardAccess(
   try {
     await context.standardBlock.synchronize();
     const tabs = await chrome.tabs.query({});
-    const affectedTabs = tabs.filter((tab) => tab.id && matchesHostname(tab.url, hostname));
+    const affectedTabs = tabs.filter(
+      (tab) => tab.id && matchesHostname(tab.url, hostname),
+    );
 
     await Promise.all(
       affectedTabs.map((tab) =>
-        chrome.tabs.update(tab.id as number, {
+        chrome.tabs.update(tab.id, {
           url: chrome.runtime.getURL(
             `src/entrypoints/blocked/index.html?mode=standard&hostname=${encodeURIComponent(hostname)}`,
           ),

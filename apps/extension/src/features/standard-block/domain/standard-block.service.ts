@@ -92,7 +92,9 @@ export class StandardBlockService {
   async list(): Promise<StandardBlock[]> {
     await this.mutation;
     const now = this.clock.now();
-    return (await this.repository.getAll()).map((block) => normalizeBlockState(block, now));
+    return (await this.repository.getAll()).map((block) =>
+      normalizeBlockState(block, now),
+    );
   }
 
   add(input: string, cooldownMilliseconds?: number): Promise<StandardBlock> {
@@ -139,13 +141,17 @@ export class StandardBlockService {
     });
   }
 
-  setDomainCooldown(input: string, cooldownMilliseconds?: number): Promise<StandardBlock> {
+  setDomainCooldown(
+    input: string,
+    cooldownMilliseconds?: number,
+  ): Promise<StandardBlock> {
     return this.enqueue(async () => {
       const hostname = parseHostname(input);
       const current = await this.repository.getAll();
       const index = current.findIndex((block) => block.hostname === hostname);
       if (index < 0 || !current[index]) throw new StandardBlockNotFoundError();
-      if (cooldownMilliseconds !== undefined) validateCooldownMilliseconds(cooldownMilliseconds);
+      if (cooldownMilliseconds !== undefined)
+        validateCooldownMilliseconds(cooldownMilliseconds);
       const updatedBlock = { ...current[index], cooldownMilliseconds };
       const updated = [...current];
       updated[index] = updatedBlock;
@@ -154,19 +160,26 @@ export class StandardBlockService {
     });
   }
 
-  addAllowedSubdomain(input: string, subdomainInput: string): Promise<StandardBlock> {
+  addAllowedSubdomain(
+    input: string,
+    subdomainInput: string,
+  ): Promise<StandardBlock> {
     return this.enqueue(async () => {
       const hostname = parseHostname(input);
       const subdomain = parseHostname(subdomainInput);
       if (subdomain === hostname || !subdomain.endsWith(`.${hostname}`)) {
-        throw new Error('A exceção precisa ser um subdomínio do domínio bloqueado.');
+        throw new Error(
+          'A exceção precisa ser um subdomínio do domínio bloqueado.',
+        );
       }
       const current = await this.repository.getAll();
       const index = current.findIndex((block) => block.hostname === hostname);
       if (index < 0 || !current[index]) throw new StandardBlockNotFoundError();
       const updatedBlock = {
         ...current[index],
-        allowedSubdomains: [...new Set([...current[index].allowedSubdomains, subdomain])],
+        allowedSubdomains: [
+          ...new Set([...current[index].allowedSubdomains, subdomain]),
+        ],
       };
       const updated = [...current];
       updated[index] = updatedBlock;
@@ -198,7 +211,9 @@ export class StandardBlockService {
     return this.enqueue(async () => {
       const hostname = parseHostname(input);
       const current = await this.repository.getAll();
-      const blockIndex = current.findIndex((candidate) => candidate.hostname === hostname);
+      const blockIndex = current.findIndex(
+        (candidate) => candidate.hostname === hostname,
+      );
 
       if (blockIndex < 0) {
         throw new StandardBlockNotFoundError();
@@ -258,7 +273,9 @@ export class StandardBlockService {
     await this.repository.setAll(updated);
 
     try {
-      await this.ruleManager.replaceAll(getEnforcedStandardBlocks(updated, now));
+      await this.ruleManager.replaceAll(
+        getEnforcedStandardBlocks(updated, now),
+      );
     } catch (error) {
       await this.repository.setAll(previous);
       throw error;
@@ -267,7 +284,11 @@ export class StandardBlockService {
 }
 
 export function validateCooldownMilliseconds(value: number): number {
-  if (!Number.isFinite(value) || value < MINIMUM_COOLDOWN_MS || value > MAXIMUM_COOLDOWN_MS) {
+  if (
+    !Number.isFinite(value) ||
+    value < MINIMUM_COOLDOWN_MS ||
+    value > MAXIMUM_COOLDOWN_MS
+  ) {
     throw new InvalidCooldownError();
   }
 
@@ -278,7 +299,9 @@ export function resolveCooldownMilliseconds(
   globalCooldownMilliseconds: number,
   domainCooldownMilliseconds?: number,
 ): number {
-  return validateCooldownMilliseconds(domainCooldownMilliseconds ?? globalCooldownMilliseconds);
+  return validateCooldownMilliseconds(
+    domainCooldownMilliseconds ?? globalCooldownMilliseconds,
+  );
 }
 
 export function grantTemporaryAccess(
@@ -300,11 +323,15 @@ export function grantTemporaryAccess(
     throw new TemporaryAccessAlreadyActiveError();
   }
 
-  if (normalized.cooldownUntil !== undefined && normalized.cooldownUntil > now) {
+  if (
+    normalized.cooldownUntil !== undefined &&
+    normalized.cooldownUntil > now
+  ) {
     throw new TemporaryAccessCooldownError(normalized.cooldownUntil);
   }
 
-  const remainingMinutes = TEMPORARY_ACCESS_BUDGET_MINUTES - normalized.usedMinutes;
+  const remainingMinutes =
+    TEMPORARY_ACCESS_BUDGET_MINUTES - normalized.usedMinutes;
 
   if (requestedMinutes > remainingMinutes) {
     throw new TemporaryAccessBudgetError();
@@ -358,7 +385,9 @@ export function createStandardBlockSnapshot(
     status: 'available',
     usedMinutes: state.usedMinutes,
     remainingMinutes,
-    enabledDurations: TEMPORARY_ACCESS_MINUTES.filter((minutes) => minutes <= remainingMinutes),
+    enabledDurations: TEMPORARY_ACCESS_MINUTES.filter(
+      (minutes) => minutes <= remainingMinutes,
+    ),
   };
 }
 
@@ -380,7 +409,10 @@ export function normalizeTemporaryAccessState(
   return { ...state };
 }
 
-export function getEnforcedStandardBlocks(blocks: StandardBlock[], now: number): StandardBlock[] {
+export function getEnforcedStandardBlocks(
+  blocks: StandardBlock[],
+  now: number,
+): StandardBlock[] {
   return blocks.filter((block) => {
     const state = normalizeTemporaryAccessState(block.temporaryAccess, now);
     return state.activeUntil === undefined;
