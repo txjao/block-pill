@@ -1,5 +1,5 @@
 import { useState } from 'preact/hooks';
-import type { AntiModeId } from '../../features/anti-mode';
+import type { AntiModeId } from '@/features/anti-mode';
 
 export type SettingsSection = 'blocking' | 'anti' | 'activity';
 export type BlocksTab = 'flexible' | 'permanent';

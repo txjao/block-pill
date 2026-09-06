@@ -1,5 +1,5 @@
-import { renderPage } from '../../shared/ui/render-page';
+import { renderPage } from '@/shared/ui/rendering';
 import { PopupPage } from './popup.page';
-import '../../shared/ui/styles/foundations.css';
+import '@/shared/ui/styles/globals.css';
 
 renderPage(<PopupPage />);

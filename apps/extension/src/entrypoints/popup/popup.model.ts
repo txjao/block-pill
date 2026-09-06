@@ -1,5 +1,9 @@
 import { useEffect, useState } from 'preact/hooks';
-import type { AntiModeRequest, AntiModeResponse } from '../../features/anti-mode';
+import {
+  INCOGNITO_MESSAGE_TYPE,
+  type AntiModeRequest,
+  type AntiModeResponse,
+} from '@/features/anti-mode';
 import { createPopupMock } from './popup.mock';
 
 const documentationUrl = 'https://github.com/txjao/block-pill/blob/main/docs/BLOCKING_RULES.md';
@@ -25,7 +29,7 @@ export function usePopupModel() {
         if (url.hostname) setHostname(url.hostname);
       }
 
-      const response = await send({ type: 'incognito/status' });
+      const response = await send({ type: INCOGNITO_MESSAGE_TYPE.status });
       if (response.ok && 'incognitoAllowed' in response) {
         setIncognitoAllowed(response.incognitoAllowed);
         setIncognitoStatus(formatIncognitoStatus(response));

@@ -1,8 +1,8 @@
 import type { usePopupModel } from './popup.model';
-import { Badge } from '../../shared/ui/components/badge/badge';
-import { Brand } from '../../shared/ui/components/brand/brand';
-import { Button } from '../../shared/ui/components/button/button';
-import { Tooltip } from '../../shared/ui/components/tooltip/tooltip';
+import { Badge } from '@/shared/ui/components/badge';
+import { Brand } from '@/shared/ui/components/brand';
+import { Button } from '@/shared/ui/components/button';
+import { Tooltip } from '@/shared/ui/components/tooltip';
 import styles from './popup.module.css';
 
 type PopupModel = ReturnType<typeof usePopupModel>;

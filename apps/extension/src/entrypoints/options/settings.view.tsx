@@ -1,10 +1,10 @@
 import type { useSettingsModel } from './settings.model';
-import { ActivityDashboardPage } from '../../features/activity';
-import { AntiModePage } from '../../features/anti-mode';
-import { PermanentBlockPage } from '../../features/permanent-block';
-import { StandardBlockPage } from '../../features/standard-block';
-import { Brand } from '../../shared/ui/components/brand/brand';
-import { Tabs, TabsContent } from '../../shared/ui/components/tabs/tabs';
+import { ActivityDashboardPage } from '@/features/activity';
+import { AntiModePage } from '@/features/anti-mode';
+import { PermanentBlockPage } from '@/features/permanent-block';
+import { StandardBlockPage } from '@/features/standard-block';
+import { Brand } from '@/shared/ui/components/brand';
+import { Tabs, TabsContent } from '@/shared/ui/components/tabs';
 import styles from './settings.module.css';
 
 type SettingsModel = ReturnType<typeof useSettingsModel>;

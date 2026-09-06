@@ -1,9 +1,5 @@
-import { renderPage } from '../../shared/ui/render-page';
+import { renderPage } from '@/shared/ui/rendering';
 import { SettingsPage } from './settings.page';
-import '../../shared/ui/base.css';
-import '../../shared/ui/design-system.css';
-import '../../shared/ui/feature-overrides.css';
-import '../../shared/ui/anti-dashboard.css';
-import '../../shared/ui/styles/foundations.css';
+import '@/shared/ui/styles/globals.css';
 
 renderPage(<SettingsPage />);
