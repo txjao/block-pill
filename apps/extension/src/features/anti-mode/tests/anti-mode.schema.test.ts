@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { antiModeConfigSchema } from '../domain/anti-mode.schema';
+import { antiModeConfigSchema } from '@/features/anti-mode/domain/anti-mode.schema';
 
 describe('anti mode schema', () => {
   it('preserves defaults required by stored legacy configs', () => {

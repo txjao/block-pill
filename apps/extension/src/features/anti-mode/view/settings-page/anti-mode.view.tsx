@@ -1,12 +1,11 @@
-import type { AntiModeConfig, AntiModeId } from '../domain/anti-mode.types';
-import type { useAntiModeModel } from './anti-mode.model';
-import { AlertDialog } from '../../../shared/ui/components/dialog/alert-dialog';
-import { Badge } from '../../../shared/ui/components/badge/badge';
-import { Button } from '../../../shared/ui/components/button/button';
-import { Toggle } from '../../../shared/ui/components/toggle/toggle';
+import type { AntiModeId } from '@/features/anti-mode/domain/anti-mode.types';
+import type { AntiModeModel } from './anti-mode.model';
+import { AlertDialog } from '@/shared/ui/components/alert-dialog';
+import { Badge } from '@/shared/ui/components/badge';
+import { Button } from '@/shared/ui/components/button';
+import { Toggle } from '@/shared/ui/components/toggle';
 import styles from './anti-mode.module.css';
-
-type AntiModeModel = ReturnType<typeof useAntiModeModel>;
+import { AntiModeConfiguration } from './components/anti-mode-configuration';
 
 const copy = {
   'anti-porn': {
@@ -94,97 +93,14 @@ export function AntiModeView(props: AntiModeModel & { selectedMode?: AntiModeId 
         />
       </div>
 
-      {active && config ? (
-        <ActiveMode config={config} />
-      ) : (
-        <div class={styles.configuration}>
-          <header>
-            <strong>Configurar este modo</strong>
-            <small>Passo 1 de 2 · revise antes de ativar</small>
-          </header>
-          <div class={styles.formGrid}>
-            <div class={styles.fieldGroup}>
-              <label for={`${mode}-duration`}>Duração do compromisso</label>
-              <p>Durante esse período o modo não poderá ser desligado por impulso.</p>
-              <div class={styles.durationRow}>
-                <input
-                  id={`${mode}-duration`}
-                  type="number"
-                  min="1"
-                  value={draft.durationValue}
-                  disabled={draft.permanent}
-                  onInput={(event) => updateDraft(mode, 'durationValue', event.currentTarget.value)}
-                />
-                <select
-                  value={draft.durationUnit}
-                  disabled={draft.permanent}
-                  onChange={(event) =>
-                    updateDraft(
-                      mode,
-                      'durationUnit',
-                      event.currentTarget.value as 'days' | 'months' | 'years',
-                    )
-                  }
-                >
-                  <option value="days">dias</option>
-                  <option value="months">meses</option>
-                  <option value="years">anos</option>
-                </select>
-              </div>
-            </div>
-            <Toggle
-              checked={draft.permanent}
-              label="Compromisso sem prazo"
-              description="A configuração não poderá ser removida pelo painel."
-              onCheckedChange={(checked) => updateDraft(mode, 'permanent', checked)}
-            />
-            <label class={styles.fieldGroup}>
-              <span>
-                Por que isso importa para você? <small>opcional</small>
-              </span>
-              <textarea
-                value={draft.goals}
-                onInput={(event) => updateDraft(mode, 'goals', event.currentTarget.value)}
-                placeholder="Relacionamentos, presença, tranquilidade, planos…"
-              />
-            </label>
-            <label class={styles.fieldGroup}>
-              <span>
-                Alternativas que fazem bem <small>opcional</small>
-              </span>
-              <textarea
-                value={draft.hobbies}
-                onInput={(event) => updateDraft(mode, 'hobbies', event.currentTarget.value)}
-                placeholder="Caminhar, ler, cozinhar, conversar, treinar…"
-              />
-            </label>
-            <label class={styles.checkbox}>
-              <input
-                type="checkbox"
-                checked={draft.philosophicalKnowledge}
-                onChange={(event) =>
-                  updateDraft(mode, 'philosophicalKnowledge', event.currentTarget.checked)
-                }
-              />
-              Mostrar reflexões filosóficas nos momentos de pausa
-            </label>
-            {configs.some(
-              (item) => item.id !== mode && (item.goals.length || item.hobbies.length),
-            ) && (
-              <label class={styles.checkbox}>
-                <input
-                  type="checkbox"
-                  checked={draft.importProfile}
-                  onChange={(event) =>
-                    updateDraft(mode, 'importProfile', event.currentTarget.checked)
-                  }
-                />
-                Reutilizar objetivos e alternativas do outro modo
-              </label>
-            )}
-          </div>
-        </div>
-      )}
+      <AntiModeConfiguration
+        mode={mode}
+        config={config}
+        active={active}
+        configs={configs}
+        drafts={drafts}
+        updateDraft={updateDraft}
+      />
 
       <form class={styles.domainForm} onSubmit={(event) => void addDomain(mode, event)}>
         <label for={`${mode}-domain`}>Adicionar site à proteção</label>
@@ -257,22 +173,5 @@ export function AntiModeView(props: AntiModeModel & { selectedMode?: AntiModeId 
         </p>
       )}
     </section>
-  );
-}
-
-function ActiveMode({ config }: { config: AntiModeConfig }) {
-  return (
-    <div class={styles.activeCommitment}>
-      <strong>
-        {config.permanent
-          ? 'Compromisso sem prazo definido'
-          : `Protegido até ${new Intl.DateTimeFormat('pt-BR', { dateStyle: 'long', timeStyle: 'short' }).format(config.commitmentEndsAt)}`}
-      </strong>
-      <p>
-        {config.goals.length
-          ? `Você escolheu este modo por: ${config.goals.join(', ')}`
-          : 'Seu compromisso está ativo.'}
-      </p>
-    </div>
   );
 }

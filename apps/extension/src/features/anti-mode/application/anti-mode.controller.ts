@@ -1,9 +1,9 @@
-import type { AntiModeService } from '../domain/anti-mode.service';
+import type { AntiModeService } from '@/features/anti-mode/domain/anti-mode.service';
 import type {
   ActivateAntiModeInput,
   AntiAccessMinutes,
   AntiModeId,
-} from '../domain/anti-mode.types';
+} from '@/features/anti-mode/domain/anti-mode.types';
 
 export class AntiModeController {
   constructor(private readonly service: AntiModeService) {}

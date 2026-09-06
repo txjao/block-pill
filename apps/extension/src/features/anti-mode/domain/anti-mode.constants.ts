@@ -5,4 +5,4 @@ export const DEFAULT_ANTI_DURATION_DAYS = 31;
 export const MINIMUM_ANTI_DURATION_MS = 24 * 60 * 60 * 1000;
 export const MAXIMUM_ANTI_DURATION_MS = 732 * 24 * 60 * 60 * 1000;
 export const ANTI_ACCESS_MINUTES = [1, 5, 15] as const;
-export const ANTI_ACCESS_ALARM_PREFIX = 'anti-mode-access:';
+export const ANTI_MODE_ACCESS_ALARM_PREFIX = 'anti-mode-access:';

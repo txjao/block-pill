@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { createAntiModeRules } from '../infrastructure/anti-mode.rule-manager.chrome';
-import type { AntiModeConfig } from '../domain/anti-mode.types';
+import { createAntiModeRules } from '@/features/anti-mode/infrastructure/anti-mode.rule-manager.chrome';
+import type { AntiModeConfig } from '@/features/anti-mode/domain/anti-mode.types';
 
 const config: AntiModeConfig = {
   id: 'anti-porn',

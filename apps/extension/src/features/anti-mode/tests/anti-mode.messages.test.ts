@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { parseAntiModeRequest } from '../application/anti-mode.messages';
+import { parseAntiModeRequest } from '@/features/anti-mode/application/anti-mode.messages';
 
 describe('anti mode messages', () => {
   it('normalizes activation goals and hobbies with domain schemas', () => {

@@ -1,6 +1,6 @@
-import { ANTI_RULE_ID_END, ANTI_RULE_ID_START } from '../domain/anti-mode.constants';
-import type { AntiModeRuleManager } from '../domain/anti-mode.rule-manager';
-import type { AntiModeConfig } from '../domain/anti-mode.types';
+import { ANTI_RULE_ID_END, ANTI_RULE_ID_START } from '@/features/anti-mode/domain/anti-mode.constants';
+import type { AntiModeRuleManager } from '@/features/anti-mode/domain/anti-mode.rule-manager';
+import type { AntiModeConfig } from '@/features/anti-mode/domain/anti-mode.types';
 
 const BLOCKED_PAGE_PATH = 'src/entrypoints/blocked/index.html';
 

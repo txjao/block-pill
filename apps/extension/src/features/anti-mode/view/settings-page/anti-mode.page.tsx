@@ -1,4 +1,4 @@
-import type { AntiModeId } from '../domain/anti-mode.types';
+import type { AntiModeId } from '@/features/anti-mode/domain/anti-mode.types';
 import { useAntiModeModel } from './anti-mode.model';
 import { AntiModeView } from './anti-mode.view';
 

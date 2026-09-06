@@ -1,7 +1,15 @@
 import { useEffect, useState } from 'preact/hooks';
-import { sendActivityRequest } from '../../activity';
-import type { AntiModeRequest, AntiModeResponse } from '../application/anti-mode.messages';
-import type { AntiAccessMinutes, AntiModeConfig, AntiModeId } from '../domain/anti-mode.types';
+import { ACTIVITY_MESSAGE_TYPE, sendActivityRequest } from '@/features/activity';
+import { ANTI_MODE_MESSAGE_TYPE } from '@/features/anti-mode/application/anti-mode.messages.constants';
+import type {
+  AntiModeRequest,
+  AntiModeResponse,
+} from '@/features/anti-mode/application/anti-mode.messages';
+import type {
+  AntiAccessMinutes,
+  AntiModeConfig,
+  AntiModeId,
+} from '@/features/anti-mode/domain/anti-mode.types';
 
 export function useAntiModeBlockedModel() {
   const parameters = new URLSearchParams(window.location.search);
@@ -20,7 +28,7 @@ export function useAntiModeBlockedModel() {
   }, [mode, hostname]);
 
   async function load(): Promise<void> {
-    const response = await send({ type: 'anti-mode/list' });
+    const response = await send({ type: ANTI_MODE_MESSAGE_TYPE.list });
     if (response.ok && 'configs' in response) {
       setConfig(response.configs.find((item) => item.id === mode));
     } else setFeedback(response.ok ? 'Resposta inesperada.' : response.message);
@@ -38,7 +46,7 @@ export function useAntiModeBlockedModel() {
   async function saveReflection(): Promise<void> {
     if (!hostname) return;
     const response = await sendActivityRequest({
-      type: 'activity/record',
+      type: ACTIVITY_MESSAGE_TYPE.record,
       source: mode,
       kind: 'reflection',
       hostname,
@@ -51,7 +59,12 @@ export function useAntiModeBlockedModel() {
 
   async function requestAccess(minutes: AntiAccessMinutes): Promise<void> {
     setIsLoading(true);
-    const response = await send({ type: 'anti-mode/grant-access', mode, hostname, minutes });
+    const response = await send({
+      type: ANTI_MODE_MESSAGE_TYPE.grantAccess,
+      mode,
+      hostname,
+      minutes,
+    });
     if (response.ok && 'configs' in response) {
       const matchingModes = response.configs.filter(
         (item) => item.enabled && item.warningDomains.includes(hostname),
@@ -59,7 +72,7 @@ export function useAntiModeBlockedModel() {
       await Promise.all(
         matchingModes.map((item) =>
           sendActivityRequest({
-            type: 'activity/record',
+            type: ACTIVITY_MESSAGE_TYPE.record,
             source: item.id,
             kind: 'access-granted',
             hostname,
@@ -92,6 +105,8 @@ export function useAntiModeBlockedModel() {
     requestAccess,
   };
 }
+
+export type AntiModeBlockedModel = ReturnType<typeof useAntiModeBlockedModel>;
 
 async function send(request: AntiModeRequest): Promise<AntiModeResponse> {
   try {

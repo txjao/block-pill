@@ -1,30 +1,36 @@
 import { z } from 'zod';
-import { hostnameSchema } from '../../../shared/site/hostname.schema';
+import { hostnameSchema } from '@/shared/web-address/domain';
 import {
   activateAntiModeInputSchema,
   antiAccessMinutesSchema,
   antiModeIdSchema,
-} from '../domain/anti-mode.schema';
+} from '@/features/anti-mode/domain/anti-mode.schema';
+import { ANTI_MODE_MESSAGE_TYPE, INCOGNITO_MESSAGE_TYPE } from './anti-mode.messages.constants';
 
 export const antiModeRequestSchema = z.discriminatedUnion('type', [
-  z.object({ type: z.literal('anti-mode/list') }),
-  z.object({ type: z.literal('anti-mode/activate') }).extend(activateAntiModeInputSchema.shape),
-  z.object({ type: z.literal('anti-mode/deactivate'), mode: antiModeIdSchema }),
+  z.object({ type: z.literal(ANTI_MODE_MESSAGE_TYPE.list) }),
+  z
+    .object({ type: z.literal(ANTI_MODE_MESSAGE_TYPE.activate) })
+    .extend(activateAntiModeInputSchema.shape),
+  z.object({ type: z.literal(ANTI_MODE_MESSAGE_TYPE.deactivate), mode: antiModeIdSchema }),
   z.object({
-    type: z.literal('anti-mode/add-domain'),
+    type: z.literal(ANTI_MODE_MESSAGE_TYPE.addDomain),
     mode: antiModeIdSchema,
     hostname: hostnameSchema,
   }),
   z.object({
-    type: z.literal('anti-mode/grant-access'),
+    type: z.literal(ANTI_MODE_MESSAGE_TYPE.grantAccess),
     mode: antiModeIdSchema,
     hostname: hostnameSchema,
     minutes: antiAccessMinutesSchema,
   }),
-  z.object({ type: z.literal('incognito/status') }),
-  z.object({ type: z.literal('incognito/open-settings') }),
-  z.object({ type: z.literal('incognito/set-control'), blocked: z.boolean() }),
-  z.object({ type: z.literal('incognito/suspend'), minutes: antiAccessMinutesSchema }),
+  z.object({ type: z.literal(INCOGNITO_MESSAGE_TYPE.status) }),
+  z.object({ type: z.literal(INCOGNITO_MESSAGE_TYPE.openSettings) }),
+  z.object({ type: z.literal(INCOGNITO_MESSAGE_TYPE.setControl), blocked: z.boolean() }),
+  z.object({
+    type: z.literal(INCOGNITO_MESSAGE_TYPE.suspend),
+    minutes: antiAccessMinutesSchema,
+  }),
 ]);
 
 export type AntiModeRequest = z.input<typeof antiModeRequestSchema>;

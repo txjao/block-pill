@@ -1,0 +1,170 @@
+.page {
+  width: min(100% - 32px, 1040px);
+  margin: 0 auto;
+  padding: 32px 0;
+}
+
+.interruption {
+  margin-top: 48px;
+  padding-top: 28px;
+  border-top: 8px solid var(--color-action);
+}
+
+.interruption h1 {
+  margin: 0;
+  max-width: 18ch;
+  font-size: clamp(2.2rem, 7vw, 4.5rem);
+  line-height: 0.98;
+  letter-spacing: -0.04em;
+}
+
+.interruption h2 {
+  margin: 0;
+}
+
+.interruption p {
+  margin: 16px 0 0;
+  color: var(--color-text-muted);
+  line-height: 1.55;
+}
+
+.eyebrow {
+  color: var(--color-danger);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.supportCopy {
+  max-width: 65ch;
+  color: var(--color-text-muted);
+}
+
+.needSection,
+.reflectionForm,
+.searchAlternative,
+.warningAccess,
+.explicitBlock,
+.recommendation {
+  margin-top: 24px;
+  padding: 20px;
+  border: 1px solid var(--color-border-medium);
+  border-radius: var(--radius-surface);
+}
+
+.needSelector,
+.accessActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.selected.selected,
+.feelingOption.selected {
+  color: var(--color-text);
+  border-color: var(--color-action);
+  background: var(--color-danger-surface);
+}
+
+.reflectionForm {
+  display: grid;
+  gap: 14px;
+}
+
+.feelingGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.feelingOption {
+  display: flex;
+  min-height: 70px;
+  align-items: center;
+  gap: 9px;
+  padding: 10px;
+  border: 1px solid var(--color-border-medium);
+  border-radius: var(--radius-surface);
+  cursor: pointer;
+}
+
+.feelingOption:hover,
+.feelingOption:focus-within {
+  border-color: var(--color-action);
+  background: var(--color-danger-surface);
+}
+
+.feelingEmoji {
+  font-size: 1.55rem;
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+.searchAlternative {
+  background: var(--color-canvas);
+}
+
+.searchAlternative p {
+  margin-top: 5px;
+}
+
+.searchAlternative input,
+.reflectionForm textarea {
+  width: 100%;
+  min-width: 0;
+  min-height: 46px;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border-control);
+  border-radius: var(--radius-control);
+  color: var(--color-text);
+  background: var(--color-surface);
+}
+
+.reflectionForm textarea {
+  min-height: 92px;
+  resize: vertical;
+}
+
+.formRow {
+  display: flex;
+  gap: 8px;
+}
+
+.interruption blockquote {
+  max-width: 68ch;
+  margin: 28px 0;
+  padding: 20px 0;
+  border-block: 1px solid var(--color-border-medium);
+  font-size: 1.2rem;
+}
+
+.explicitBlock p {
+  margin-top: 8px;
+}
+
+@media (max-width: 760px) {
+  .page {
+    width: min(100% - 24px, 1040px);
+    padding-top: 20px;
+  }
+
+  .feelingGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .formRow {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { hostnameSchema } from '../../../shared/site/hostname.schema';
+import { hostnameSchema } from '@/shared/web-address/domain';
 
 export const antiModeIdSchema = z.enum(['anti-porn', 'anti-bet']);
 export const antiDurationUnitSchema = z.enum(['days', 'months', 'years']);

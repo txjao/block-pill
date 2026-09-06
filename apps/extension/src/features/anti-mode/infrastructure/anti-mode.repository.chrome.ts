@@ -1,6 +1,6 @@
-import { antiModeConfigSchema } from '../domain/anti-mode.schema';
-import type { AntiModeRepository } from '../domain/anti-mode.repository';
-import type { AntiModeConfig } from '../domain/anti-mode.types';
+import { antiModeConfigSchema } from '@/features/anti-mode/domain/anti-mode.schema';
+import type { AntiModeRepository } from '@/features/anti-mode/domain/anti-mode.repository';
+import type { AntiModeConfig } from '@/features/anti-mode/domain/anti-mode.types';
 
 const STORAGE_KEY = 'antiModes';
 

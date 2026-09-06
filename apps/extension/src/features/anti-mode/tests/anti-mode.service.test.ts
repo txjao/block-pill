@@ -1,14 +1,14 @@
 import { describe, expect, it } from 'vitest';
-import type { Clock } from '../../../shared/time/clock';
-import type { AntiModeRepository } from '../domain/anti-mode.repository';
-import type { AntiModeRuleManager } from '../domain/anti-mode.rule-manager';
+import type { Clock } from '@/shared/current-time/domain';
+import type { AntiModeRepository } from '@/features/anti-mode/domain/anti-mode.repository';
+import type { AntiModeRuleManager } from '@/features/anti-mode/domain/anti-mode.rule-manager';
 import {
   AntiModeCommitmentError,
   AntiModeDurationError,
   AntiModeService,
   convertAntiDuration,
-} from '../domain/anti-mode.service';
-import type { AntiModeConfig } from '../domain/anti-mode.types';
+} from '@/features/anti-mode/domain/anti-mode.service';
+import type { AntiModeConfig } from '@/features/anti-mode/domain/anti-mode.types';
 
 class Repository implements AntiModeRepository {
   configs: AntiModeConfig[] = [];

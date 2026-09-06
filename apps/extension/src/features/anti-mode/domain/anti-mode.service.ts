@@ -1,5 +1,5 @@
-import { parseHostname } from '../../../shared/site/hostname';
-import type { Clock } from '../../../shared/time/clock';
+import { parseHostname } from '@/shared/web-address/domain';
+import type { Clock } from '@/shared/current-time/domain';
 import { MAXIMUM_ANTI_DURATION_MS, MINIMUM_ANTI_DURATION_MS } from './anti-mode.constants';
 import type { AntiModeRepository } from './anti-mode.repository';
 import type { AntiModeRuleManager } from './anti-mode.rule-manager';
@@ -10,8 +10,8 @@ import type {
   AntiModeConfig,
   AntiModeId,
 } from './anti-mode.types';
-import { ANTI_PORN_DOMAINS, ANTI_PORN_WARNING_DOMAINS } from '../../anti-porn';
-import { ANTI_BET_DOMAINS, ANTI_BET_WARNING_DOMAINS } from '../../anti-bet';
+import { ANTI_PORN_DOMAINS, ANTI_PORN_WARNING_DOMAINS } from '@/features/anti-porn';
+import { ANTI_BET_DOMAINS, ANTI_BET_WARNING_DOMAINS } from '@/features/anti-bet';
 
 const DEFAULT_ANTI_DOMAINS = {
   'anti-porn': ANTI_PORN_DOMAINS,

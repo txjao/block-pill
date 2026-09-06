@@ -1,7 +1,18 @@
 import { useEffect, useState } from 'preact/hooks';
 import type { JSX } from 'preact';
-import type { AntiModeRequest, AntiModeResponse } from '../application/anti-mode.messages';
-import type { AntiDurationUnit, AntiModeConfig, AntiModeId } from '../domain/anti-mode.types';
+import type {
+  AntiModeRequest,
+  AntiModeResponse,
+} from '@/features/anti-mode/application/anti-mode.messages';
+import {
+  ANTI_MODE_MESSAGE_TYPE,
+  INCOGNITO_MESSAGE_TYPE,
+} from '@/features/anti-mode/application/anti-mode.messages.constants';
+import type {
+  AntiDurationUnit,
+  AntiModeConfig,
+  AntiModeId,
+} from '@/features/anti-mode/domain/anti-mode.types';
 
 interface Draft {
   durationValue: string;
@@ -47,8 +58,8 @@ export function useAntiModeModel() {
   async function load(): Promise<void> {
     setIsLoading(true);
     const [modes, incognito] = await Promise.all([
-      send({ type: 'anti-mode/list' }),
-      send({ type: 'incognito/status' }),
+      send({ type: ANTI_MODE_MESSAGE_TYPE.list }),
+      send({ type: INCOGNITO_MESSAGE_TYPE.status }),
     ]);
     if (modes.ok && 'configs' in modes) setConfigs(modes.configs);
     if (incognito.ok && 'incognitoAllowed' in incognito)
@@ -65,7 +76,7 @@ export function useAntiModeModel() {
     setIsLoading(true);
     const other: AntiModeId = mode === 'anti-porn' ? 'anti-bet' : 'anti-porn';
     const response = await send({
-      type: 'anti-mode/activate',
+      type: ANTI_MODE_MESSAGE_TYPE.activate,
       mode,
       permanent: draft.permanent,
       durationValue: draft.permanent ? undefined : Number(draft.durationValue),
@@ -85,7 +96,7 @@ export function useAntiModeModel() {
     event.preventDefault();
     setIsLoading(true);
     const response = await send({
-      type: 'anti-mode/add-domain',
+      type: ANTI_MODE_MESSAGE_TYPE.addDomain,
       mode,
       hostname: drafts[mode].hostname,
     });
@@ -100,7 +111,10 @@ export function useAntiModeModel() {
   async function confirmDeactivate(): Promise<void> {
     if (!pendingDeactivate) return;
     setIsLoading(true);
-    const response = await send({ type: 'anti-mode/deactivate', mode: pendingDeactivate });
+    const response = await send({
+      type: ANTI_MODE_MESSAGE_TYPE.deactivate,
+      mode: pendingDeactivate,
+    });
     if (response.ok && 'configs' in response) {
       setConfigs(response.configs);
       setPendingDeactivate(undefined);
@@ -111,7 +125,7 @@ export function useAntiModeModel() {
   }
 
   async function openIncognitoSettings(): Promise<void> {
-    await send({ type: 'incognito/open-settings' });
+    await send({ type: INCOGNITO_MESSAGE_TYPE.openSettings });
   }
 
   function consumeConfigs(response: AntiModeResponse, message: string): void {
@@ -139,6 +153,8 @@ export function useAntiModeModel() {
     openIncognitoSettings,
   };
 }
+
+export type AntiModeModel = ReturnType<typeof useAntiModeModel>;
 
 async function send(request: AntiModeRequest): Promise<AntiModeResponse> {
   try {
