@@ -130,6 +130,12 @@ Page -> Model -> mensagens/controller
 - `standard-block.model.ts` mantém estado e traduz ações da interface;
 - `standard-block.view.tsx` renderiza as propriedades recebidas.
 
+A `Page` também é a fronteira entre a tela e o ambiente. Ela lê parâmetros
+imutáveis, implementa operações que dependem de `chrome`, `window`, `history`
+ou do relógio e injeta essas funções no `Model`. O `Model` pode então ser
+testado com funções falsas, sem simular o navegador inteiro. A integração da
+`Page` é validada separadamente.
+
 A própria View deriva o tipo de suas propriedades do Model:
 
 ```ts
@@ -172,9 +178,9 @@ view/
     └── feature.blocked.module.css
 ```
 
-Diretórios `components/` só existem quando há componentes extraídos. Uma
-superfície estática pequena pode ter apenas uma Page; não são criados Model e
-View vazios para satisfazer a árvore.
+Diretórios `components/` só existem quando há componentes extraídos. Toda tela
+mantém `Page`, `Model` e `View`: mesmo uma superfície estática recebe seus dados
+pela `Page` e os entrega à `View` por meio do `Model`.
 
 ## Entrypoints
 
@@ -189,10 +195,13 @@ Arquivos CSS dos entrypoints ficam em `styles/`; componentes extraídos ficam em
 `components/`.
 
 Valores do ambiente que permanecem imutáveis durante a vida da página, como um
-parâmetro da URL de uma página isolada da extensão, são lidos uma vez no escopo
-do módulo da `Page`. A `Page` injeta esses valores no `Model` por meio de um
-objeto. Assim, o `Model` sabe interpretar o valor sem precisar saber como ele
-foi obtido e sem acessar diretamente `window.location`:
+parâmetro da URL de uma página isolada da extensão, são lidos uma vez pela
+`Page`. Entrypoints exclusivos podem fazer essa leitura no escopo do módulo.
+Pages reexportadas por uma feature usam inicialização memoizada, pois seu módulo
+também pode ser carregado em testes ou no background, onde `window` não existe.
+A `Page` injeta o valor no `Model` por meio de um objeto. Assim, o `Model` sabe
+interpretá-lo sem precisar saber como foi obtido nem acessar diretamente
+`window.location`:
 
 ```ts
 const mode = new URLSearchParams(window.location.search).get('mode');
@@ -206,6 +215,11 @@ export function BlockedPage() {
 Se um valor puder mudar sem recarregar a página, ele não deve seguir essa regra:
 a `Page` precisa observar a fonte da mudança e fornecer o valor atualizado ao
 `Model`.
+
+Settings é uma SPA dentro de seu próprio entrypoint. O parâmetro `section` serve
+somente para Popup abrir uma seção inicial específica. A `Page` lê e remove o
+parâmetro da URL; a partir daí, o `Model` controla qual seção é montada ou
+desmontada sem sincronizar a navegação interna com a URL.
 
 ```text
 entrypoints/
@@ -285,13 +299,22 @@ Qualquer proposta de carregamento dinâmico deve registrar:
 ```text
 entrypoint -> browser/chrome -> feature/application
 browser/chrome -> feature/infrastructure -> feature/domain
-feature/view -> feature/application
+feature/Page -> APIs do ambiente + feature/Model
+feature/Model -> contratos de feature/application
+feature/View -> propriedades produzidas pelo Model
 feature/domain -> shared sem dependências de plataforma
 ```
 
 O domínio não depende de Chrome, Preact, `window` ou `document`. As adaptações
 Chrome implementam contratos declarados pelo domínio, permitindo testes com
 implementações em memória.
+
+Views não declaram dados auxiliares nem executam funções de apresentação. Textos
+estruturados, opções, cálculos, formatação e decisões chegam pelo Model; a View
+mantém apenas condicionais e iterações necessárias para produzir o JSX.
+
+Classes de erro ficam em `<domínio>.errors.ts`. Services importam e lançam essas
+classes, mas não as declaram no mesmo arquivo.
 
 ## Formatação e análise estática
 
