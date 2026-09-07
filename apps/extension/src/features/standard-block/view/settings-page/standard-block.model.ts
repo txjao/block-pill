@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'preact/hooks';
+import { useCallback, useEffect, useMemo, useState } from 'preact/hooks';
 import type { JSX } from 'preact';
 import type {
   StandardBlockRequest,
@@ -7,7 +7,15 @@ import type {
 import { STANDARD_BLOCK_MESSAGE_TYPE } from '@/features/standard-block/application/standard-block.messages.constants';
 import type { StandardBlock } from '@/features/standard-block/domain/standard-block.types';
 
-export function useStandardBlockModel() {
+export interface UseStandardBlockModelProps {
+  sendMessage: (
+    request: StandardBlockRequest,
+  ) => Promise<StandardBlockResponse>;
+}
+
+export function useStandardBlockModel({
+  sendMessage,
+}: UseStandardBlockModelProps) {
   const [blocks, setBlocks] = useState<StandardBlock[]>([]);
   const [hostname, setHostname] = useState('');
   const [feedback, setFeedback] = useState('');
@@ -18,13 +26,9 @@ export function useStandardBlockModel() {
     [blocks, globalCooldownHours],
   );
 
-  useEffect(() => {
-    void loadBlocks();
-  }, []);
-
-  async function loadBlocks() {
+  const loadBlocks = useCallback(async () => {
     setIsLoading(true);
-    const response = await sendStandardBlockMessage({
+    const response = await sendMessage({
       type: STANDARD_BLOCK_MESSAGE_TYPE.settings,
     });
 
@@ -43,13 +47,17 @@ export function useStandardBlockModel() {
     }
 
     setIsLoading(false);
-  }
+  }, [sendMessage]);
+
+  useEffect(() => {
+    void loadBlocks();
+  }, [loadBlocks]);
 
   async function addBlock(event: JSX.TargetedSubmitEvent<HTMLFormElement>) {
     event.preventDefault();
     setIsLoading(true);
 
-    const response = await sendStandardBlockMessage({
+    const response = await sendMessage({
       type: STANDARD_BLOCK_MESSAGE_TYPE.add,
       hostname,
     });
@@ -69,7 +77,7 @@ export function useStandardBlockModel() {
 
   async function removeBlock(block: StandardBlock) {
     setIsLoading(true);
-    const response = await sendStandardBlockMessage({
+    const response = await sendMessage({
       type: STANDARD_BLOCK_MESSAGE_TYPE.remove,
       hostname: block.hostname,
     });
@@ -91,7 +99,7 @@ export function useStandardBlockModel() {
   ) {
     event.preventDefault();
     setIsLoading(true);
-    const response = await sendStandardBlockMessage({
+    const response = await sendMessage({
       type: STANDARD_BLOCK_MESSAGE_TYPE.updateSettings,
       globalCooldownMilliseconds: Number(globalCooldownHours) * 3_600_000,
     });
@@ -113,7 +121,7 @@ export function useStandardBlockModel() {
     const form = new FormData(event.currentTarget);
     const value = readFormText(form, 'cooldownHours').trim();
     setIsLoading(true);
-    const response = await sendStandardBlockMessage({
+    const response = await sendMessage({
       type: STANDARD_BLOCK_MESSAGE_TYPE.updateDomainCooldown,
       hostname: block.hostname,
       cooldownMilliseconds: value ? Number(value) * 3_600_000 : null,
@@ -140,7 +148,7 @@ export function useStandardBlockModel() {
     const form = new FormData(event.currentTarget);
     const subdomain = readFormText(form, 'subdomain');
     setIsLoading(true);
-    const response = await sendStandardBlockMessage({
+    const response = await sendMessage({
       type: STANDARD_BLOCK_MESSAGE_TYPE.addSubdomainException,
       hostname: block.hostname,
       subdomain,
@@ -192,26 +200,4 @@ export function createStandardBlockRows(
 function readFormText(form: FormData, field: string): string {
   const value = form.get(field);
   return typeof value === 'string' ? value : '';
-}
-
-async function sendStandardBlockMessage(
-  request: StandardBlockRequest,
-): Promise<StandardBlockResponse> {
-  try {
-    const response = await chrome.runtime.sendMessage<
-      StandardBlockRequest,
-      StandardBlockResponse
-    >(request);
-
-    if (response && typeof response.ok === 'boolean') {
-      return response;
-    }
-
-    throw new Error('Resposta inválida do service worker.');
-  } catch {
-    return {
-      ok: false,
-      message: 'Não foi possível comunicar com a extensão. Tente novamente.',
-    };
-  }
 }

@@ -9,9 +9,26 @@ import type {
   TemporaryAccessMinutes,
 } from '@/features/standard-block/domain/standard-block.types';
 
-export function useStandardBlockBlockedModel() {
-  const hostname =
-    new URLSearchParams(window.location.search).get('hostname') ?? '';
+const accessDurations = [1, 5, 15] as const;
+const documentationUrl =
+  'https://github.com/txjao/block-pill/blob/main/docs/BLOCKING_RULES.md#exceções-de-subdomínio';
+
+export interface UseStandardBlockBlockedModelProps {
+  hostname: string | null;
+  navigate: (url: string) => void;
+  now: () => number;
+  sendMessage: (
+    request: StandardBlockRequest,
+  ) => Promise<StandardBlockResponse>;
+}
+
+export function useStandardBlockBlockedModel({
+  hostname: requestedHostname,
+  navigate,
+  now,
+  sendMessage,
+}: UseStandardBlockBlockedModelProps) {
+  const hostname = requestedHostname ?? '';
   const [attemptedHostname, setAttemptedHostname] = useState('');
   const [snapshot, setSnapshot] = useState<StandardBlockSnapshot>();
   const [feedback, setFeedback] = useState('');
@@ -26,8 +43,8 @@ export function useStandardBlockBlockedModel() {
       }
       setIsLoading(true);
       const [response, contextResponse] = await Promise.all([
-        send({ type: STANDARD_BLOCK_MESSAGE_TYPE.status, hostname }),
-        send({ type: STANDARD_BLOCK_MESSAGE_TYPE.context }),
+        sendMessage({ type: STANDARD_BLOCK_MESSAGE_TYPE.status, hostname }),
+        sendMessage({ type: STANDARD_BLOCK_MESSAGE_TYPE.context }),
       ]);
       if (response.ok && 'snapshot' in response) {
         setSnapshot(response.snapshot);
@@ -47,18 +64,18 @@ export function useStandardBlockBlockedModel() {
     }
 
     void loadStatus();
-  }, [hostname]);
+  }, [hostname, sendMessage]);
 
   async function allowSubdomain() {
     if (!attemptedHostname) return;
     setIsLoading(true);
-    const response = await send({
+    const response = await sendMessage({
       type: STANDARD_BLOCK_MESSAGE_TYPE.addSubdomainException,
       hostname,
       subdomain: attemptedHostname,
     });
     if (response.ok) {
-      window.location.assign(`https://${attemptedHostname}`);
+      navigate(`https://${attemptedHostname}`);
       return;
     }
     setFeedback(response.message);
@@ -67,14 +84,14 @@ export function useStandardBlockBlockedModel() {
 
   async function requestAccess(minutes: TemporaryAccessMinutes) {
     setIsLoading(true);
-    const response = await send({
+    const response = await sendMessage({
       type: STANDARD_BLOCK_MESSAGE_TYPE.requestAccess,
       hostname,
       minutes,
     });
     if (response.ok && 'snapshot' in response) {
       setSnapshot(response.snapshot);
-      window.location.assign(`https://${hostname}`);
+      navigate(`https://${hostname}`);
       return;
     }
     setFeedback(response.ok ? 'Resposta inesperada.' : response.message);
@@ -82,6 +99,12 @@ export function useStandardBlockBlockedModel() {
   }
 
   return {
+    accessDurations,
+    availableIn:
+      snapshot?.status === 'cooldown'
+        ? formatRemaining(snapshot.availableAt, now())
+        : undefined,
+    documentationUrl,
     hostname,
     attemptedHostname,
     snapshot,
@@ -92,21 +115,10 @@ export function useStandardBlockBlockedModel() {
   };
 }
 
-async function send(
-  request: StandardBlockRequest,
-): Promise<StandardBlockResponse> {
-  try {
-    const response = await chrome.runtime.sendMessage<
-      StandardBlockRequest,
-      StandardBlockResponse
-    >(request);
-    return (
-      response ?? {
-        ok: false,
-        message: 'A extensão não respondeu. Recarregue esta página.',
-      }
-    );
-  } catch {
-    return { ok: false, message: 'Não foi possível comunicar com a extensão.' };
-  }
+function formatRemaining(availableAt: number | undefined, currentTime: number) {
+  if (!availableAt) return 'alguns instantes';
+  const minutes = Math.ceil(Math.max(0, availableAt - currentTime) / 60_000);
+  if (minutes < 60) return `${minutes} min`;
+  const hours = Math.ceil(minutes / 60);
+  return hours < 48 ? `${hours} h` : `${Math.ceil(hours / 24)} dias`;
 }
