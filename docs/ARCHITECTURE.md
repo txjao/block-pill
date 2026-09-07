@@ -188,6 +188,25 @@ concentra estado e lógica, e `View` apenas renderiza as propriedades recebidas.
 Arquivos CSS dos entrypoints ficam em `styles/`; componentes extraídos ficam em
 `components/`.
 
+Valores do ambiente que permanecem imutáveis durante a vida da página, como um
+parâmetro da URL de uma página isolada da extensão, são lidos uma vez no escopo
+do módulo da `Page`. A `Page` injeta esses valores no `Model` por meio de um
+objeto. Assim, o `Model` sabe interpretar o valor sem precisar saber como ele
+foi obtido e sem acessar diretamente `window.location`:
+
+```ts
+const mode = new URLSearchParams(window.location.search).get('mode');
+
+export function BlockedPage() {
+  const model = useCreateBlockModel({ mode });
+  return <BlockedView {...model} />;
+}
+```
+
+Se um valor puder mudar sem recarregar a página, ele não deve seguir essa regra:
+a `Page` precisa observar a fonte da mudança e fornecer o valor atualizado ao
+`Model`.
+
 ```text
 entrypoints/
 ├── blocked/
