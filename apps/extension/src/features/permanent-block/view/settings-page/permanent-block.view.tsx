@@ -4,11 +4,10 @@ import blockPillIcon from '@workspace/shared/brand/icons/block-pill-transparent.
 import styles from './permanent-block.module.css';
 
 type PermanentBlockModel = ReturnType<typeof usePermanentBlockModel>;
-const documentationUrl =
-  'https://github.com/txjao/block-pill/blob/main/docs/BLOCKING_RULES.md#bloqueio-permanente';
 
 export function PermanentBlockView(props: PermanentBlockModel) {
   const {
+    documentationUrl,
     blocks,
     hostname,
     acknowledged,

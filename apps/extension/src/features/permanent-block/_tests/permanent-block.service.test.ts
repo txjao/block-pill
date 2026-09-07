@@ -3,10 +3,8 @@ import type { Clock } from '@/shared/current-time/domain';
 import { PERMANENT_BLOCK_RULE_ID_START } from '@/features/permanent-block/domain/permanent-block.constants';
 import type { PermanentBlockRepository } from '@/features/permanent-block/domain/permanent-block.repository';
 import type { PermanentBlockRuleManager } from '@/features/permanent-block/domain/permanent-block.rule-manager';
-import {
-  PermanentBlockAlreadyExistsError,
-  PermanentBlockService,
-} from '@/features/permanent-block/domain/permanent-block.service';
+import { PermanentBlockAlreadyExistsError } from '@/features/permanent-block/domain/permanent-block.errors';
+import { PermanentBlockService } from '@/features/permanent-block/domain/permanent-block.service';
 import type { PermanentBlock } from '@/features/permanent-block/domain/permanent-block.types';
 
 class MemoryRepository implements PermanentBlockRepository {

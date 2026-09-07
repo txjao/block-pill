@@ -19,8 +19,8 @@ export type { PermanentBlockRuleManager } from './domain/permanent-block.rule-ma
 export {
   PermanentBlockAlreadyExistsError,
   PermanentBlockLimitError,
-  PermanentBlockService,
-} from './domain/permanent-block.service';
+} from './domain/permanent-block.errors';
+export { PermanentBlockService } from './domain/permanent-block.service';
 export type { PermanentBlock } from './domain/permanent-block.types';
 export { ChromePermanentBlockRepository } from './infrastructure/permanent-block.repository.chrome';
 export { ChromePermanentBlockRuleManager } from './infrastructure/permanent-block.rule-manager.chrome';

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'preact/hooks';
+import { useCallback, useEffect, useState } from 'preact/hooks';
 import type { JSX } from 'preact';
 import type {
   PermanentBlockRequest,
@@ -7,22 +7,35 @@ import type {
 import { PERMANENT_BLOCK_MESSAGE_TYPE } from '@/features/permanent-block/application/permanent-block.messages.constants';
 import type { PermanentBlock } from '@/features/permanent-block/domain/permanent-block.types';
 
-export function usePermanentBlockModel() {
+const documentationUrl =
+  'https://github.com/txjao/block-pill/blob/main/docs/BLOCKING_RULES.md#bloqueio-permanente';
+
+export interface UsePermanentBlockModelProps {
+  sendMessage: (
+    request: PermanentBlockRequest,
+  ) => Promise<PermanentBlockResponse>;
+}
+
+export function usePermanentBlockModel({
+  sendMessage,
+}: UsePermanentBlockModelProps) {
   const [blocks, setBlocks] = useState<PermanentBlock[]>([]);
   const [hostname, setHostname] = useState('');
   const [acknowledged, setAcknowledged] = useState(false);
   const [feedback, setFeedback] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => void load(), []);
-
-  async function load(): Promise<void> {
+  const load = useCallback(async (): Promise<void> => {
     setIsLoading(true);
-    const response = await send({ type: PERMANENT_BLOCK_MESSAGE_TYPE.list });
+    const response = await sendMessage({
+      type: PERMANENT_BLOCK_MESSAGE_TYPE.list,
+    });
     if (response.ok) setBlocks(response.blocks);
     else setFeedback(response.message);
     setIsLoading(false);
-  }
+  }, [sendMessage]);
+
+  useEffect(() => void load(), [load]);
 
   async function addBlock(
     event: JSX.TargetedSubmitEvent<HTMLFormElement>,
@@ -30,7 +43,7 @@ export function usePermanentBlockModel() {
     event.preventDefault();
     if (!acknowledged) return;
     setIsLoading(true);
-    const response = await send({
+    const response = await sendMessage({
       type: PERMANENT_BLOCK_MESSAGE_TYPE.add,
       hostname: hostname.trim(),
     });
@@ -47,6 +60,7 @@ export function usePermanentBlockModel() {
   }
 
   return {
+    documentationUrl,
     blocks,
     hostname,
     acknowledged,
@@ -56,17 +70,4 @@ export function usePermanentBlockModel() {
     setAcknowledged,
     addBlock,
   };
-}
-
-async function send(
-  request: PermanentBlockRequest,
-): Promise<PermanentBlockResponse> {
-  try {
-    return await chrome.runtime.sendMessage<
-      PermanentBlockRequest,
-      PermanentBlockResponse
-    >(request);
-  } catch {
-    return { ok: false, message: 'Não foi possível comunicar com a extensão.' };
-  }
 }

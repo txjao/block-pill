@@ -4,23 +4,13 @@ import {
   PERMANENT_BLOCK_RULE_ID_END,
   PERMANENT_BLOCK_RULE_ID_START,
 } from './permanent-block.constants';
+import {
+  PermanentBlockAlreadyExistsError,
+  PermanentBlockLimitError,
+} from './permanent-block.errors';
 import type { PermanentBlockRepository } from './permanent-block.repository';
 import type { PermanentBlockRuleManager } from './permanent-block.rule-manager';
 import type { PermanentBlock } from './permanent-block.types';
-
-export class PermanentBlockAlreadyExistsError extends Error {
-  constructor() {
-    super('Este domínio já está bloqueado permanentemente.');
-    this.name = 'PermanentBlockAlreadyExistsError';
-  }
-}
-
-export class PermanentBlockLimitError extends Error {
-  constructor() {
-    super('O limite de bloqueios permanentes foi atingido.');
-    this.name = 'PermanentBlockLimitError';
-  }
-}
 
 export class PermanentBlockService {
   private mutation: Promise<void> = Promise.resolve();
