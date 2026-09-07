@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'preact/hooks';
+import { useCallback, useEffect, useState } from 'preact/hooks';
 import {
   INCOGNITO_MESSAGE_TYPE,
   type AntiModeRequest,
@@ -8,7 +8,21 @@ import {
 const documentationUrl =
   'https://github.com/txjao/block-pill/blob/main/docs/BLOCKING_RULES.md';
 
-export function usePopupModel() {
+export interface UsePopupModelProps {
+  closePopup: () => void;
+  createExtensionUrl: (path: string) => string;
+  openTab: (url: string) => Promise<void>;
+  queryActiveTabUrl: () => Promise<string | undefined>;
+  sendMessage: (request: AntiModeRequest) => Promise<AntiModeResponse>;
+}
+
+export function usePopupModel({
+  closePopup,
+  createExtensionUrl,
+  openTab,
+  queryActiveTabUrl,
+  sendMessage,
+}: UsePopupModelProps) {
   const [hostname, setHostname] = useState('site atual');
   const [incognitoAllowed, setIncognitoAllowed] = useState(true);
   const [incognitoStatus, setIncognitoStatus] = useState(
@@ -17,23 +31,18 @@ export function usePopupModel() {
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    void load();
-  }, []);
-
-  async function load(): Promise<void> {
+  const load = useCallback(async (): Promise<void> => {
     setIsLoading(true);
     try {
-      const [tab] = await chrome.tabs.query({
-        active: true,
-        currentWindow: true,
-      });
-      if (tab?.url) {
-        const url = new URL(tab.url);
+      const activeTabUrl = await queryActiveTabUrl();
+      if (activeTabUrl) {
+        const url = new URL(activeTabUrl);
         if (url.hostname) setHostname(url.hostname);
       }
 
-      const response = await send({ type: INCOGNITO_MESSAGE_TYPE.status });
+      const response = await sendMessage({
+        type: INCOGNITO_MESSAGE_TYPE.status,
+      });
       if (response.ok && 'incognitoAllowed' in response) {
         setIncognitoAllowed(response.incognitoAllowed);
         setIncognitoStatus(formatIncognitoStatus(response));
@@ -45,16 +54,20 @@ export function usePopupModel() {
     } finally {
       setIsLoading(false);
     }
-  }
+  }, [queryActiveTabUrl, sendMessage]);
+
+  useEffect(() => {
+    void load();
+  }, [load]);
 
   async function openSettings(section: 'blocking' | 'anti'): Promise<void> {
     try {
-      await chrome.tabs.create({
-        url: chrome.runtime.getURL(
+      await openTab(
+        createExtensionUrl(
           `src/entrypoints/settings/index.html?section=${section}`,
         ),
-      });
-      window.close();
+      );
+      closePopup();
     } catch {
       setErrorMessage('Não foi possível abrir as configurações.');
     }
@@ -62,8 +75,8 @@ export function usePopupModel() {
 
   async function openDocumentation(): Promise<void> {
     try {
-      await chrome.tabs.create({ url: documentationUrl });
-      window.close();
+      await openTab(documentationUrl);
+      closePopup();
     } catch {
       setErrorMessage('Não foi possível abrir a documentação.');
     }
@@ -94,17 +107,4 @@ function formatIncognitoStatus(
     return `pausada até ${time}`;
   }
   return 'proteção pronta';
-}
-
-async function send(request: AntiModeRequest): Promise<AntiModeResponse> {
-  try {
-    return await chrome.runtime.sendMessage<AntiModeRequest, AntiModeResponse>(
-      request,
-    );
-  } catch {
-    return {
-      ok: false,
-      message: 'Não foi possível consultar a proteção anônima.',
-    };
-  }
 }

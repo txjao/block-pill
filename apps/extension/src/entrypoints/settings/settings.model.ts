@@ -10,13 +10,18 @@ const settingsSections = [
   { id: 'activity', label: 'Atividade', hint: 'Registros locais' },
 ] as const;
 
-function initialSection(): SettingsSection {
-  const section = new URLSearchParams(window.location.search).get('section');
+export interface UseSettingsModelProps {
+  requestedSection: string | null;
+}
+
+function normalizeSection(section: string | null): SettingsSection {
   return section === 'anti' || section === 'activity' ? section : 'blocking';
 }
 
-export function useSettingsModel() {
-  const [section, setSection] = useState<SettingsSection>(initialSection);
+export function useSettingsModel({ requestedSection }: UseSettingsModelProps) {
+  const [section, setSection] = useState<SettingsSection>(() =>
+    normalizeSection(requestedSection),
+  );
   const [blocksTab, setBlocksTab] = useState<BlocksTab>('flexible');
   const [selectedMode, setSelectedMode] = useState<AntiModeId>('anti-porn');
   const [standardCount, setStandardCount] = useState(0);
@@ -24,7 +29,6 @@ export function useSettingsModel() {
 
   function selectSection(next: SettingsSection): void {
     setSection(next);
-    history.replaceState(null, '', `?section=${next}`);
   }
 
   function selectMode(mode: AntiModeId): void {

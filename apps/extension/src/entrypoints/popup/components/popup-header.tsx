@@ -1,5 +1,5 @@
 import { Brand } from '@/shared/ui/components/brand';
-import styles from '../styles/popup.module.css';
+import styles from '@/entrypoints/popup/styles/popup.module.css';
 
 interface PopupHeaderProps {
   onOpenSettings: () => void;
