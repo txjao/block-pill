@@ -4,13 +4,11 @@ import {
   type AntiModeRequest,
   type AntiModeResponse,
 } from '@/features/anti-mode';
-import { createPopupMock } from './popup.mock';
 
 const documentationUrl =
   'https://github.com/txjao/block-pill/blob/main/docs/BLOCKING_RULES.md';
 
 export function usePopupModel() {
-  const mock = createPopupMock();
   const [hostname, setHostname] = useState('site atual');
   const [incognitoAllowed, setIncognitoAllowed] = useState(true);
   const [incognitoStatus, setIncognitoStatus] = useState(
@@ -49,11 +47,11 @@ export function usePopupModel() {
     }
   }
 
-  async function openOptions(section: 'blocking' | 'anti'): Promise<void> {
+  async function openSettings(section: 'blocking' | 'anti'): Promise<void> {
     try {
       await chrome.tabs.create({
         url: chrome.runtime.getURL(
-          `src/entrypoints/options/index.html?section=${section}`,
+          `src/entrypoints/settings/index.html?section=${section}`,
         ),
       });
       window.close();
@@ -72,13 +70,12 @@ export function usePopupModel() {
   }
 
   return {
-    ...mock,
     hostname,
     incognitoAllowed,
     incognitoStatus,
     errorMessage,
     isLoading,
-    openOptions,
+    openSettings,
     openDocumentation,
   };
 }

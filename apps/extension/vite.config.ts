@@ -24,7 +24,7 @@ export default defineConfig({
       input: {
         background: resolve(projectRoot, 'src/entrypoints/background/index.ts'),
         popup: resolve(projectRoot, 'src/entrypoints/popup/index.html'),
-        options: resolve(projectRoot, 'src/entrypoints/options/index.html'),
+        settings: resolve(projectRoot, 'src/entrypoints/settings/index.html'),
         blocked: resolve(projectRoot, 'src/entrypoints/blocked/index.html'),
       },
       output: {

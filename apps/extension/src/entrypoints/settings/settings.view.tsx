@@ -5,18 +5,13 @@ import { PermanentBlockPage } from '@/features/permanent-block';
 import { StandardBlockPage } from '@/features/standard-block';
 import { Brand } from '@/shared/ui/components/brand';
 import { Tabs, TabsContent } from '@/shared/ui/components/tabs';
-import styles from './settings.module.css';
+import styles from './styles/settings.module.css';
 
 type SettingsModel = ReturnType<typeof useSettingsModel>;
 
-const sections = [
-  { id: 'blocking', label: 'Bloqueios', hint: 'Flexíveis e permanentes' },
-  { id: 'anti', label: 'Modos anti', hint: 'Compromissos de proteção' },
-  { id: 'activity', label: 'Atividade', hint: 'Registros locais' },
-] as const;
-
 export function SettingsView(props: SettingsModel) {
   const {
+    sections,
     section,
     blocksTab,
     selectedMode,
