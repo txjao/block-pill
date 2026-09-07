@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { hostnameSchema } from '@/shared/web-address/domain';
 import { temporaryAccessMinutesSchema } from '@/features/standard-block/domain/standard-block.schema';
-import { cooldownMillisecondsSchema } from '@/features/standard-block/domain/standard-block.settings.schema';
+import { cooldownMillisecondsSchema } from '@/features/standard-block/domain/standard-block-settings.schema';
 import { STANDARD_BLOCK_MESSAGE_TYPE } from './standard-block.messages.constants';
 
 export const standardBlockRequestSchema = z.discriminatedUnion('type', [

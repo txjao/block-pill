@@ -5,7 +5,7 @@ import {
   STANDARD_BLOCK_RULE_ID_START,
   TEMPORARY_ACCESS_BUDGET_MINUTES,
 } from './standard-block.constants';
-import { cooldownMillisecondsSchema } from './standard-block.settings.schema';
+import { cooldownMillisecondsSchema } from './standard-block-settings.schema';
 
 export const temporaryAccessMinutesSchema = z.union([
   z.literal(1),

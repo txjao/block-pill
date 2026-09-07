@@ -2,7 +2,7 @@ import {
   validateCooldownMilliseconds,
   type StandardBlockService,
 } from '@/features/standard-block/domain/standard-block.service';
-import type { StandardBlockSettingsRepository } from '@/features/standard-block/domain/standard-block.settings-repository';
+import type { StandardBlockSettingsRepository } from '@/features/standard-block/domain/standard-block-settings.repository';
 import type {
   StandardBlock,
   StandardBlockSnapshot,

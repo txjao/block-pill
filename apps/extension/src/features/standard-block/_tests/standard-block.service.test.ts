@@ -6,9 +6,9 @@ import type { StandardBlockRuleManager } from '@/features/standard-block/domain/
 import {
   InvalidCooldownError,
   StandardBlockAlreadyExistsError,
-  StandardBlockService,
   TemporaryAccessBudgetError,
-} from '@/features/standard-block/domain/standard-block.service';
+} from '@/features/standard-block/domain/standard-block.errors';
+import { StandardBlockService } from '@/features/standard-block/domain/standard-block.service';
 import type { StandardBlock } from '@/features/standard-block/domain/standard-block.types';
 
 class MemoryRepository implements StandardBlockRepository {
