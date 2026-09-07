@@ -24,14 +24,14 @@ features/
 │   ├── application/
 │   ├── domain/
 │   ├── infrastructure/
-│   ├── tests/
+│   ├── _tests/
 │   ├── view/
 │   └── index.ts
 ├── permanent-block/
     ├── application/
     ├── domain/
     ├── infrastructure/
-    ├── tests/
+    ├── _tests/
     ├── view/
 │   └── index.ts
 ├── anti-mode/       # motor compartilhado dos compromissos
@@ -52,7 +52,8 @@ As responsabilidades internas são:
 - `infrastructure`: implementações de contratos para Chrome, armazenamento ou
   outras APIs externas;
 - `view`: página, View, Model e componentes específicos do slice;
-- `tests`: testes comportamentais do slice;
+- `_tests`: testes comportamentais do slice; o prefixo mantém a pasta próxima
+  do topo na árvore de arquivos;
 - `index.ts`: interface pública pequena do módulo.
 
 ### O significado de Domain
@@ -182,6 +183,35 @@ service worker (`background`), popup, configurações e página de bloqueio. Um
 entrypoint inicia um contexto e compõe dependências; ele não contém regras de
 negócio.
 
+Nas superfícies visuais, `Page` coordena e injeta dependências, `Model`
+concentra estado e lógica, e `View` apenas renderiza as propriedades recebidas.
+Arquivos CSS dos entrypoints ficam em `styles/`; componentes extraídos ficam em
+`components/`.
+
+```text
+entrypoints/
+├── blocked/
+│   ├── blocked.model.ts
+│   ├── blocked.page.tsx
+│   ├── blocked.view.tsx
+│   ├── index.html
+│   └── index.tsx
+├── popup/
+│   ├── components/
+│   ├── styles/
+│   ├── popup.model.ts
+│   ├── popup.page.tsx
+│   └── popup.view.tsx
+└── settings/
+    ├── styles/
+    ├── settings.model.ts
+    ├── settings.page.tsx
+    └── settings.view.tsx
+```
+
+O manifest mantém a chave obrigatória `options_page`, mas ela aponta para o
+entrypoint `settings/`, nome que descreve a superfície no projeto.
+
 O `background` chama somente `registerChromeBrowserRuntime()`. O diretório
 `src/browser/chrome` integra as features às APIs do Chrome. Seu `runtime.ts`
 monta o contexto compartilhado e registra cada integração, sem conhecer alarmes,
@@ -267,7 +297,7 @@ slice. Cada capacidade explicita suas próprias responsabilidades:
 shared/
 ├── web-address/
 │   ├── domain/          # Tipo, parser, erro e schema de hostname
-│   └── tests/
+│   └── _tests/
 ├── current-time/
 │   ├── domain/          # Contrato Clock consumido pelas regras de negócio
 │   └── infrastructure/  # Relógio concreto baseado no ambiente
@@ -330,10 +360,10 @@ do botão base da extensão. A nova interface usa o botão simples; a animação
 
 ### Dados estáticos durante o refactor
 
-Mocks visuais ficam próximos ao Model da superfície, nunca dentro do domínio,
-controller ou infraestrutura. Eles mantêm o formato esperado pela View e só
-preenchem estados sem contrato real. Dados e fluxos já existentes continuam
-usando as mensagens da extensão.
+Mocks visuais temporários ficam próximos ao Model da superfície, nunca dentro
+do domínio, controller ou infraestrutura. Quando o contrato real ainda não
+existe, o estado correspondente não deve aparecer na interface de produção. O
+popup atual usa somente integrações existentes e não mantém um mock próprio.
 
 As lacunas conhecidas do handoff ficam documentadas em
 `.new_features/design_handoff_block_pill_interfaces/DYNAMIC_INTERFACE_REQUIREMENTS.md`.
@@ -350,10 +380,13 @@ respeitam `prefers-reduced-motion`.
 
 ## Convenções de nomes
 
-- O domínio usa hífen: `standard-block`, `permanent-block`.
-- A responsabilidade usa ponto: `standard-block.service.ts`,
-  `standard-block.rule-manager.ts`, `standard-block.model.ts`.
-- Evitamos variantes como `standard-block-rule-manager.ts`.
+- O nome segue a ordem `<domínio-de-negócio>.<camada>.<browser>.<tipo>`;
+- segmentos que formam um mesmo conceito usam hífen, enquanto o ponto separa
+  responsabilidades: `standard-block-settings.repository.chrome.ts`;
+- o segmento de browser só existe quando a implementação depende daquela
+  plataforma;
+- extensões compostas mantêm seus pontos próprios, como `.module.css` e
+  `.test.ts`;
 - Constantes ficam em `<domínio>.constants.ts` dentro do slice; só são movidas
   para `shared` após reutilização real entre domínios.
 - Bloqueio padrão e bloqueio permanente nunca compartilham o mesmo serviço ou
