@@ -4,6 +4,10 @@ import {
   MAXIMUM_ANTI_DURATION_MS,
   MINIMUM_ANTI_DURATION_MS,
 } from './anti-mode.constants';
+import {
+  AntiModeCommitmentError,
+  AntiModeDurationError,
+} from './anti-mode.errors';
 import type { AntiModeRepository } from './anti-mode.repository';
 import type { AntiModeRuleManager } from './anti-mode.rule-manager';
 import type {
@@ -31,20 +35,6 @@ const DEFAULT_WARNING_DOMAINS = {
   'anti-porn': ANTI_PORN_WARNING_DOMAINS,
   'anti-bet': ANTI_BET_WARNING_DOMAINS,
 } as const;
-
-export class AntiModeCommitmentError extends Error {
-  constructor() {
-    super('Este compromisso ainda está ativo e não pode ser desativado.');
-    this.name = 'AntiModeCommitmentError';
-  }
-}
-
-export class AntiModeDurationError extends Error {
-  constructor() {
-    super('O compromisso deve durar entre um dia e 732 dias.');
-    this.name = 'AntiModeDurationError';
-  }
-}
 
 export class AntiModeService {
   constructor(

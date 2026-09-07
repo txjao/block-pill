@@ -1,4 +1,3 @@
-import type { AntiModeId } from '@/features/anti-mode/domain/anti-mode.types';
 import type { AntiModeModel } from './anti-mode.model';
 import { AlertDialog } from '@/shared/ui/components/alert-dialog';
 import { Badge } from '@/shared/ui/components/badge';
@@ -7,30 +6,15 @@ import { Toggle } from '@/shared/ui/components/toggle';
 import styles from './anti-mode.module.css';
 import { AntiModeConfiguration } from './components/anti-mode-configuration';
 
-const copy = {
-  'anti-porn': {
-    title: 'Anti-pornografia',
-    description:
-      'Reduza encontros impulsivos com conteúdo adulto e crie espaço para retomar seus objetivos.',
-    domainHelp: 'Adicione sites adultos que não aparecem na proteção inicial.',
-    count: '1.482 domínios na lista',
-  },
-  'anti-bet': {
-    title: 'Anti-aposta',
-    description:
-      'Crie distância de bets, cassinos e estímulos que incentivam decisões financeiras por impulso.',
-    domainHelp:
-      'Adicione casas de aposta ou páginas promocionais que você encontrou.',
-    count: 'proteção inicial e sites adicionados',
-  },
-} as const;
-
-export function AntiModeView(
-  props: AntiModeModel & { selectedMode?: AntiModeId },
-) {
+export function AntiModeView(props: AntiModeModel) {
   const {
-    configs,
-    drafts,
+    active,
+    canDeactivate,
+    canImportProfile,
+    commitmentLabel,
+    config,
+    copy,
+    draft,
     feedback,
     isLoading,
     incognitoAllowed,
@@ -43,23 +27,15 @@ export function AntiModeView(
     confirmDeactivate,
     setShowCelebration,
     openIncognitoSettings,
-    selectedMode = 'anti-porn',
+    mode,
   } = props;
-  const mode = selectedMode;
-  const config = configs.find((item) => item.id === mode);
-  const draft = drafts[mode];
-  const active = config?.enabled ?? false;
-  const canDeactivate =
-    active &&
-    !config?.permanent &&
-    (config?.commitmentEndsAt ?? Infinity) <= Date.now();
 
   return (
     <section class={styles.section} aria-labelledby="anti-title">
-      <p class={styles.breadcrumb}>Modos anti › {copy[mode].title}</p>
+      <p class={styles.breadcrumb}>Modos anti › {copy.title}</p>
       <header class={styles.pageHeader}>
         <div>
-          <h1 id="anti-title">{copy[mode].title}</h1>
+          <h1 id="anti-title">{copy.title}</h1>
           <p>
             Um compromisso com prazo. Enquanto ele durar, a configuração não
             pode ser desfeita por impulso.
@@ -88,8 +64,8 @@ export function AntiModeView(
           <Badge variant={active ? 'success' : 'neutral'}>
             {active ? 'proteção ativa' : 'inativo'}
           </Badge>
-          <small>{copy[mode].count}</small>
-          <p>{copy[mode].description}</p>
+          <small>{copy.count}</small>
+          <p>{copy.description}</p>
         </span>
         <Toggle
           checked={active}
@@ -112,8 +88,9 @@ export function AntiModeView(
         mode={mode}
         config={config}
         active={active}
-        configs={configs}
-        drafts={drafts}
+        canImportProfile={canImportProfile}
+        commitmentLabel={commitmentLabel}
+        draft={draft}
         updateDraft={updateDraft}
       />
 
@@ -122,7 +99,7 @@ export function AntiModeView(
         onSubmit={(event) => void addDomain(mode, event)}
       >
         <label for={`${mode}-domain`}>Adicionar site à proteção</label>
-        <p>{copy[mode].domainHelp}</p>
+        <p>{copy.domainHelp}</p>
         <div>
           <input
             id={`${mode}-domain`}

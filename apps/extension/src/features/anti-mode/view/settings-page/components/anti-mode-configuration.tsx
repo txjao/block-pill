@@ -5,11 +5,10 @@ import type {
 import { Toggle } from '@/shared/ui/components/toggle';
 import type { AntiModeModel } from '@/features/anti-mode/view/settings-page/anti-mode.model';
 import styles from '@/features/anti-mode/view/settings-page/anti-mode.module.css';
-import { formatCommitmentLabel } from '@/features/anti-mode/view/anti-mode.presentation';
 
 type ConfigurationProps = Pick<
   AntiModeModel,
-  'configs' | 'drafts' | 'updateDraft'
+  'canImportProfile' | 'commitmentLabel' | 'draft' | 'updateDraft'
 > & {
   mode: AntiModeId;
   config?: AntiModeConfig;
@@ -17,13 +16,20 @@ type ConfigurationProps = Pick<
 };
 
 export function AntiModeConfiguration(props: ConfigurationProps) {
-  const { mode, config, active, configs, drafts, updateDraft } = props;
-  const draft = drafts[mode];
+  const {
+    mode,
+    config,
+    active,
+    canImportProfile,
+    commitmentLabel,
+    draft,
+    updateDraft,
+  } = props;
 
   if (active && config) {
     return (
       <div class={styles.activeCommitment}>
-        <strong>{formatCommitmentLabel(config)}</strong>
+        <strong>{commitmentLabel}</strong>
         <p>
           {config.goals.length
             ? `Você escolheu este modo por: ${config.goals.join(', ')}`
@@ -117,10 +123,7 @@ export function AntiModeConfiguration(props: ConfigurationProps) {
           />
           Mostrar reflexões filosóficas nos momentos de pausa
         </label>
-        {configs.some(
-          (item) =>
-            item.id !== mode && (item.goals.length || item.hobbies.length),
-        ) && (
+        {canImportProfile && (
           <label class={styles.checkbox}>
             <input
               type="checkbox"

@@ -1,16 +1,13 @@
 import styles from '@/features/anti-mode/view/blocked-page/anti-mode.blocked.module.css';
-import {
-  getRecommendationText,
-  type AntiModeNeed,
-} from '@/features/anti-mode/view/anti-mode.presentation';
+import type { AntiModeNeed } from '@/features/anti-mode/view/blocked-page/anti-mode.blocked-model';
 import { Button } from '@/shared/ui/components/button';
 
 export function Recommendation({
   need,
-  hobbies,
+  recommendationText,
 }: {
   need: AntiModeNeed;
-  hobbies: string[];
+  recommendationText?: string;
 }) {
   if (need === 'information') {
     return (
@@ -37,7 +34,5 @@ export function Recommendation({
     );
   }
 
-  return (
-    <p class={styles.recommendation}>{getRecommendationText(need, hobbies)}</p>
-  );
+  return <p class={styles.recommendation}>{recommendationText}</p>;
 }

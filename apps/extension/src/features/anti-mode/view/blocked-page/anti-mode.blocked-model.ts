@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'preact/hooks';
-import {
-  ACTIVITY_MESSAGE_TYPE,
-  sendActivityRequest,
-} from '@/features/activity';
+import { ACTIVITY_MESSAGE_TYPE } from '@/features/activity';
+import type {
+  ActivityRequest,
+  ActivityResponse,
+} from '@/features/activity/application/activity.messages';
 import { ANTI_MODE_MESSAGE_TYPE } from '@/features/anti-mode/application/anti-mode.messages.constants';
 import type {
   AntiModeRequest,
@@ -14,11 +15,39 @@ import type {
   AntiModeId,
 } from '@/features/anti-mode/domain/anti-mode.types';
 
-export function useAntiModeBlockedModel() {
-  const parameters = new URLSearchParams(window.location.search);
-  const mode = (parameters.get('mode') ?? 'anti-porn') as AntiModeId;
-  const hostname = parameters.get('hostname') ?? '';
-  const kind = parameters.get('kind') === 'warning' ? 'warning' : 'explicit';
+export type AntiModeNeed = 'entertainment' | 'information' | 'impulse';
+
+const accessDurations = [1, 5, 15] as const;
+const feelingOptions = [
+  ['tristeza', '😔'],
+  ['raiva', '😠'],
+  ['frustração', '😣'],
+  ['ansiedade', '😰'],
+  ['solidão', '🫥'],
+  ['impulso externo', '⚡'],
+] as const;
+
+export interface UseAntiModeBlockedModelProps {
+  hostname: string | null;
+  kind: string | null;
+  mode: string | null;
+  navigate: (url: string) => void;
+  sendActivityMessage: (request: ActivityRequest) => Promise<ActivityResponse>;
+  sendMessage: (request: AntiModeRequest) => Promise<AntiModeResponse>;
+}
+
+export function useAntiModeBlockedModel({
+  hostname: requestedHostname,
+  kind: requestedKind,
+  mode: requestedMode,
+  navigate,
+  sendActivityMessage,
+  sendMessage,
+}: UseAntiModeBlockedModelProps) {
+  const mode: AntiModeId =
+    requestedMode === 'anti-bet' ? 'anti-bet' : 'anti-porn';
+  const hostname = requestedHostname ?? '';
+  const kind = requestedKind === 'warning' ? 'warning' : 'explicit';
   const [config, setConfig] = useState<AntiModeConfig>();
   const [feelings, setFeelings] = useState<string[]>([]);
   const [reason, setReason] = useState('');
@@ -30,7 +59,9 @@ export function useAntiModeBlockedModel() {
 
   useEffect(() => {
     async function load(): Promise<void> {
-      const response = await send({ type: ANTI_MODE_MESSAGE_TYPE.list });
+      const response = await sendMessage({
+        type: ANTI_MODE_MESSAGE_TYPE.list,
+      });
       if (response.ok && 'configs' in response) {
         setConfig(response.configs.find((item) => item.id === mode));
       } else
@@ -39,7 +70,7 @@ export function useAntiModeBlockedModel() {
     }
 
     void load();
-  }, [mode, hostname]);
+  }, [hostname, mode, sendMessage]);
 
   function toggleFeeling(feeling: string): void {
     setFeelings((current) =>
@@ -51,7 +82,7 @@ export function useAntiModeBlockedModel() {
 
   async function saveReflection(): Promise<void> {
     if (!hostname) return;
-    const response = await sendActivityRequest({
+    const response = await sendActivityMessage({
       type: ACTIVITY_MESSAGE_TYPE.record,
       source: mode,
       kind: 'reflection',
@@ -67,7 +98,7 @@ export function useAntiModeBlockedModel() {
 
   async function requestAccess(minutes: AntiAccessMinutes): Promise<void> {
     setIsLoading(true);
-    const response = await send({
+    const response = await sendMessage({
       type: ANTI_MODE_MESSAGE_TYPE.grantAccess,
       mode,
       hostname,
@@ -79,7 +110,7 @@ export function useAntiModeBlockedModel() {
       );
       await Promise.all(
         matchingModes.map((item) =>
-          sendActivityRequest({
+          sendActivityMessage({
             type: ACTIVITY_MESSAGE_TYPE.record,
             source: item.id,
             kind: 'access-granted',
@@ -89,7 +120,7 @@ export function useAntiModeBlockedModel() {
           }),
         ),
       );
-      window.location.assign(`https://${hostname}`);
+      navigate(`https://${hostname}`);
       return;
     }
     setFeedback(response.ok ? 'Resposta inesperada.' : response.message);
@@ -97,6 +128,8 @@ export function useAntiModeBlockedModel() {
   }
 
   return {
+    accessDurations,
+    feelingOptions,
     mode,
     hostname,
     kind,
@@ -106,22 +139,31 @@ export function useAntiModeBlockedModel() {
     need,
     feedback,
     isLoading,
+    recommendationText: getRecommendationText(need, config?.hobbies ?? []),
     setReason,
     setNeed,
     toggleFeeling,
     saveReflection,
     requestAccess,
+    title:
+      mode === 'anti-porn'
+        ? 'Seu compromisso anti-pornografia'
+        : 'Seu compromisso anti-aposta',
   };
 }
 
 export type AntiModeBlockedModel = ReturnType<typeof useAntiModeBlockedModel>;
 
-async function send(request: AntiModeRequest): Promise<AntiModeResponse> {
-  try {
-    return await chrome.runtime.sendMessage<AntiModeRequest, AntiModeResponse>(
-      request,
-    );
-  } catch {
-    return { ok: false, message: 'Não foi possível comunicar com a extensão.' };
+export function getRecommendationText(
+  need: AntiModeNeed,
+  hobbies: string[],
+): string | undefined {
+  if (need === 'information') return undefined;
+  if (need === 'entertainment') {
+    return 'Que tal algo fora da tela: caminhar, ler, cozinhar, conversar ou praticar um esporte?';
   }
+  const alternatives = hobbies.length
+    ? hobbies.join(', ')
+    : 'uma caminhada curta, alongamento ou uma tarefa manual';
+  return `Direcione essa energia para ${alternatives}.`;
 }

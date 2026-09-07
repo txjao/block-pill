@@ -1,10 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import {
-  formatCommitmentLabel,
-  getRecommendationText,
-} from '@/features/anti-mode/view/anti-mode.presentation';
+import { getRecommendationText } from '@/features/anti-mode/view/blocked-page/anti-mode.blocked-model';
+import { formatCommitmentLabel } from '@/features/anti-mode/view/settings-page/anti-mode.model';
 
-describe('anti mode presentation', () => {
+describe('anti mode models', () => {
   it('describes a permanent commitment without a date', () => {
     expect(
       formatCommitmentLabel({

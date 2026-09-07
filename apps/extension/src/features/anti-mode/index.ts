@@ -21,6 +21,8 @@ export {
 export {
   AntiModeCommitmentError,
   AntiModeDurationError,
+} from './domain/anti-mode.errors';
+export {
   AntiModeService,
   convertAntiDuration,
 } from './domain/anti-mode.service';

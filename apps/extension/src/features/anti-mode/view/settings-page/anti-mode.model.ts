@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'preact/hooks';
+import { useCallback, useEffect, useState } from 'preact/hooks';
 import type { JSX } from 'preact';
 import type {
   AntiModeRequest,
@@ -36,7 +36,37 @@ const initialDraft: Draft = {
   hostname: '',
 };
 
-export function useAntiModeModel() {
+const modeCopy = {
+  'anti-porn': {
+    title: 'Anti-pornografia',
+    description:
+      'Reduza encontros impulsivos com conteúdo adulto e crie espaço para retomar seus objetivos.',
+    domainHelp: 'Adicione sites adultos que não aparecem na proteção inicial.',
+    count: '1.482 domínios na lista',
+  },
+  'anti-bet': {
+    title: 'Anti-aposta',
+    description:
+      'Crie distância de bets, cassinos e estímulos que incentivam decisões financeiras por impulso.',
+    domainHelp:
+      'Adicione casas de aposta ou páginas promocionais que você encontrou.',
+    count: 'proteção inicial e sites adicionados',
+  },
+} as const;
+
+export interface UseAntiModeModelProps {
+  now: () => number;
+  selectedMode?: AntiModeId;
+  sendMessage: (request: AntiModeRequest) => Promise<AntiModeResponse>;
+  subscribeToFocus: (listener: () => void) => () => void;
+}
+
+export function useAntiModeModel({
+  now,
+  selectedMode = 'anti-porn',
+  sendMessage,
+  subscribeToFocus,
+}: UseAntiModeModelProps) {
   const [configs, setConfigs] = useState<AntiModeConfig[]>([]);
   const [drafts, setDrafts] = useState<Record<AntiModeId, Draft>>({
     'anti-porn': { ...initialDraft },
@@ -48,24 +78,23 @@ export function useAntiModeModel() {
   const [pendingDeactivate, setPendingDeactivate] = useState<AntiModeId>();
   const [showCelebration, setShowCelebration] = useState(false);
 
-  useEffect(() => {
-    void load();
-    const reloadPermission = () => void load();
-    window.addEventListener('focus', reloadPermission);
-    return () => window.removeEventListener('focus', reloadPermission);
-  }, []);
-
-  async function load(): Promise<void> {
+  const load = useCallback(async (): Promise<void> => {
     setIsLoading(true);
     const [modes, incognito] = await Promise.all([
-      send({ type: ANTI_MODE_MESSAGE_TYPE.list }),
-      send({ type: INCOGNITO_MESSAGE_TYPE.status }),
+      sendMessage({ type: ANTI_MODE_MESSAGE_TYPE.list }),
+      sendMessage({ type: INCOGNITO_MESSAGE_TYPE.status }),
     ]);
     if (modes.ok && 'configs' in modes) setConfigs(modes.configs);
     if (incognito.ok && 'incognitoAllowed' in incognito)
       setIncognitoAllowed(incognito.incognitoAllowed);
     setIsLoading(false);
-  }
+  }, [sendMessage]);
+
+  useEffect(() => {
+    void load();
+    const reloadPermission = () => void load();
+    return subscribeToFocus(reloadPermission);
+  }, [load, subscribeToFocus]);
 
   function updateDraft<K extends keyof Draft>(
     mode: AntiModeId,
@@ -82,7 +111,7 @@ export function useAntiModeModel() {
     const draft = drafts[mode];
     setIsLoading(true);
     const other: AntiModeId = mode === 'anti-porn' ? 'anti-bet' : 'anti-porn';
-    const response = await send({
+    const response = await sendMessage({
       type: ANTI_MODE_MESSAGE_TYPE.activate,
       mode,
       permanent: draft.permanent,
@@ -102,7 +131,7 @@ export function useAntiModeModel() {
   ): Promise<void> {
     event.preventDefault();
     setIsLoading(true);
-    const response = await send({
+    const response = await sendMessage({
       type: ANTI_MODE_MESSAGE_TYPE.addDomain,
       mode,
       hostname: drafts[mode].hostname,
@@ -118,7 +147,7 @@ export function useAntiModeModel() {
   async function confirmDeactivate(): Promise<void> {
     if (!pendingDeactivate) return;
     setIsLoading(true);
-    const response = await send({
+    const response = await sendMessage({
       type: ANTI_MODE_MESSAGE_TYPE.deactivate,
       mode: pendingDeactivate,
     });
@@ -132,7 +161,7 @@ export function useAntiModeModel() {
   }
 
   async function openIncognitoSettings(): Promise<void> {
-    await send({ type: INCOGNITO_MESSAGE_TYPE.openSettings });
+    await sendMessage({ type: INCOGNITO_MESSAGE_TYPE.openSettings });
   }
 
   function consumeConfigs(response: AntiModeResponse, message: string): void {
@@ -143,9 +172,27 @@ export function useAntiModeModel() {
     setIsLoading(false);
   }
 
+  const mode = selectedMode;
+  const config = configs.find((item) => item.id === mode);
+  const draft = drafts[mode];
+  const active = config?.enabled ?? false;
+
   return {
+    active,
+    canDeactivate:
+      active &&
+      !config?.permanent &&
+      (config?.commitmentEndsAt ?? Infinity) <= now(),
+    canImportProfile: configs.some(
+      (item) =>
+        item.id !== mode && (item.goals.length > 0 || item.hobbies.length > 0),
+    ),
+    commitmentLabel: config ? formatCommitmentLabel(config) : undefined,
+    config,
+    copy: modeCopy[mode],
     configs,
     drafts,
+    draft,
     feedback,
     isLoading,
     incognitoAllowed,
@@ -158,24 +205,21 @@ export function useAntiModeModel() {
     confirmDeactivate,
     setShowCelebration,
     openIncognitoSettings,
+    mode,
   };
 }
 
 export type AntiModeModel = ReturnType<typeof useAntiModeModel>;
-
-async function send(request: AntiModeRequest): Promise<AntiModeResponse> {
-  try {
-    return await chrome.runtime.sendMessage<AntiModeRequest, AntiModeResponse>(
-      request,
-    );
-  } catch {
-    return { ok: false, message: 'Não foi possível comunicar com a extensão.' };
-  }
-}
 
 function splitList(value: string): string[] {
   return value
     .split(/[\n,]/)
     .map((item) => item.trim())
     .filter(Boolean);
+}
+
+export function formatCommitmentLabel(config: AntiModeConfig): string {
+  return config.permanent
+    ? 'Compromisso sem prazo definido'
+    : `Protegido até ${new Intl.DateTimeFormat('pt-BR', { dateStyle: 'long', timeStyle: 'short' }).format(config.commitmentEndsAt)}`;
 }

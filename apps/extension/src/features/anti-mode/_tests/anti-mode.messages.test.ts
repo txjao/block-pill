@@ -1,11 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { parseAntiModeRequest } from '@/features/anti-mode/application/anti-mode.messages';
+import { ANTI_MODE_MESSAGE_TYPE } from '@/features/anti-mode/application/anti-mode.messages.constants';
 
 describe('anti mode messages', () => {
   it('normalizes activation goals and hobbies with domain schemas', () => {
     expect(
       parseAntiModeRequest({
-        type: 'anti-mode/activate',
+        type: ANTI_MODE_MESSAGE_TYPE.activate,
         mode: 'anti-porn',
         permanent: true,
         goals: ['  dormir melhor  '],
@@ -21,7 +22,7 @@ describe('anti mode messages', () => {
   it('rejects unsupported access durations', () => {
     expect(
       parseAntiModeRequest({
-        type: 'anti-mode/grant-access',
+        type: ANTI_MODE_MESSAGE_TYPE.grantAccess,
         mode: 'anti-porn',
         hostname: 'example.com',
         minutes: 10,

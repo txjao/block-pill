@@ -5,6 +5,8 @@ import type { AntiModeRuleManager } from '@/features/anti-mode/domain/anti-mode.
 import {
   AntiModeCommitmentError,
   AntiModeDurationError,
+} from '@/features/anti-mode/domain/anti-mode.errors';
+import {
   AntiModeService,
   convertAntiDuration,
 } from '@/features/anti-mode/domain/anti-mode.service';

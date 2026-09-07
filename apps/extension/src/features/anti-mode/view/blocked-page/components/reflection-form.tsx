@@ -2,22 +2,22 @@ import type { AntiModeBlockedModel } from '@/features/anti-mode/view/blocked-pag
 import { Button } from '@/shared/ui/components/button';
 import styles from '@/features/anti-mode/view/blocked-page/anti-mode.blocked.module.css';
 
-const FEELINGS = [
-  ['tristeza', '😔'],
-  ['raiva', '😠'],
-  ['frustração', '😣'],
-  ['ansiedade', '😰'],
-  ['solidão', '🫥'],
-  ['impulso externo', '⚡'],
-] as const;
-
 type ReflectionFormProps = Pick<
   AntiModeBlockedModel,
   'feelings' | 'reason' | 'setReason' | 'toggleFeeling' | 'saveReflection'
->;
+> & {
+  feelingOptions: readonly (readonly [string, string])[];
+};
 
 export function ReflectionForm(props: ReflectionFormProps) {
-  const { feelings, reason, setReason, toggleFeeling, saveReflection } = props;
+  const {
+    feelingOptions,
+    feelings,
+    reason,
+    setReason,
+    toggleFeeling,
+    saveReflection,
+  } = props;
 
   return (
     <div class={styles.reflectionForm}>
@@ -27,7 +27,7 @@ export function ReflectionForm(props: ReflectionFormProps) {
         neste navegador.
       </p>
       <div class={styles.feelingGrid}>
-        {FEELINGS.map(([feeling, emoji]) => (
+        {feelingOptions.map(([feeling, emoji]) => (
           <label
             class={`${styles.feelingOption} ${feelings.includes(feeling) ? styles.selected : ''}`}
             key={feeling}
