@@ -1,4 +1,3 @@
-import type { ActivitySource } from '@/features/activity/domain/activity.types';
 import { Badge } from '@/shared/ui/components/badge';
 import { Button } from '@/shared/ui/components/button';
 import type { ActivityDashboardModel } from './activity-dashboard.model';
@@ -6,15 +5,8 @@ import styles from './activity-dashboard.module.css';
 import { ActivityDeletionDialog } from './components/activity-deletion-dialog';
 import { ActivityModeCard } from './components/activity-mode-card';
 
-const sources: ActivitySource[] = [
-  'standard',
-  'permanent',
-  'anti-porn',
-  'anti-bet',
-];
-
 export function ActivityDashboardView(props: ActivityDashboardModel) {
-  const { events, feedback, requestDeletion } = props;
+  const { events, feedback, isLoading, modes, requestDeletion } = props;
 
   return (
     <section aria-labelledby="dashboard-title">
@@ -30,8 +22,13 @@ export function ActivityDashboardView(props: ActivityDashboardModel) {
       </div>
 
       <div class={styles.modeStack}>
-        {sources.map((source) => (
-          <ActivityModeCard key={source} source={source} {...props} />
+        {modes.map((mode) => (
+          <ActivityModeCard
+            key={mode.source}
+            isLoading={isLoading}
+            mode={mode}
+            requestDeletion={requestDeletion}
+          />
         ))}
       </div>
 

@@ -19,5 +19,4 @@ export type {
   ActivitySource,
 } from './domain/activity.types';
 export { ChromeActivityRepository } from './infrastructure/activity.repository.chrome';
-export { sendActivityRequest } from './view/activity.client';
 export { ActivityDashboardPage } from './view/dashboard-page/activity-dashboard.page';

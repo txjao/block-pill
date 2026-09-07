@@ -2,9 +2,9 @@ import { describe, expect, it } from 'vitest';
 import {
   createAntiInsightData,
   createModeMetrics,
-} from '@/features/activity/view/dashboard-page/activity-dashboard.presentation';
+} from '@/features/activity/view/dashboard-page/activity-dashboard.model';
 
-describe('activity dashboard presentation', () => {
+describe('activity dashboard model', () => {
   it('aggregates metrics for a mode card', () => {
     expect(
       createModeMetrics([

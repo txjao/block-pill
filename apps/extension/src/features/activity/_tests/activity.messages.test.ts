@@ -1,18 +1,19 @@
 import { describe, expect, it } from 'vitest';
 import { parseActivityRequest } from '@/features/activity/application/activity.messages';
+import { ACTIVITY_MESSAGE_TYPE } from '@/features/activity/application/activity.messages.constants';
 
 describe('activity messages', () => {
   it('normalizes semantic values before delivering a record request', () => {
     expect(
       parseActivityRequest({
-        type: 'activity/record',
+        type: ACTIVITY_MESSAGE_TYPE.record,
         source: 'standard',
         kind: 'reflection',
         hostname: 'https://www.youtube.com/watch?v=1',
         feelings: ['  focado  '],
       }),
     ).toEqual({
-      type: 'activity/record',
+      type: ACTIVITY_MESSAGE_TYPE.record,
       source: 'standard',
       kind: 'reflection',
       hostname: 'youtube.com',
@@ -24,7 +25,7 @@ describe('activity messages', () => {
   it('rejects records that violate activity limits', () => {
     expect(
       parseActivityRequest({
-        type: 'activity/record',
+        type: ACTIVITY_MESSAGE_TYPE.record,
         source: 'standard',
         kind: 'reflection',
         hostname: 'youtube.com',
