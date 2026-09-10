@@ -27,6 +27,7 @@ import type {
   StandardBlock,
   StandardBlockSnapshot,
 } from '@/features/standard-block/domain/standard-block.types';
+import { INTERFACE_PREVIEW_NAME } from './interface-preview.constants';
 
 const currentTime = Date.now();
 let nextRuleId = 3;
@@ -86,11 +87,23 @@ export function installChromeSimulator(): void {
         sendMessage: handleMessage,
       },
       tabs: {
-        create: () => Promise.resolve(undefined),
+        create: ({ url }: { url?: string }) => {
+          if (url) openSimulatedTab(url);
+          return Promise.resolve(undefined);
+        },
         query: () => Promise.resolve([{ url: 'https://video.example/watch' }]),
       },
     },
   });
+}
+
+function openSimulatedTab(value: string): void {
+  const url = new URL(value, globalThis.location.origin);
+  if (url.pathname.endsWith('/src/entrypoints/settings/index.html')) {
+    url.pathname = '/dev/interfaces/frame/index.html';
+    url.searchParams.set('interface', INTERFACE_PREVIEW_NAME.settings);
+  }
+  globalThis.open(url, '_blank', 'noopener');
 }
 
 function handleMessage(message: unknown): Promise<unknown> {
