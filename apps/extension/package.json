@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite build --watch",
+    "dev:interfaces": "vite --host 127.0.0.1 --open /dev/interfaces/index.html",
     "build": "tsc --noEmit && vite build && node scripts/validate-build.mjs",
     "test": "vitest run",
     "test:watch": "vitest",

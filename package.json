@@ -8,6 +8,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "eslint . --max-warnings 0",
+    "dev": "pnpm --filter @block-pill/extension dev:interfaces",
     "dev:web": "pnpm --filter @block-pill/web dev",
     "dev:extension": "pnpm --filter @block-pill/extension dev",
     "build": "pnpm -r build",
