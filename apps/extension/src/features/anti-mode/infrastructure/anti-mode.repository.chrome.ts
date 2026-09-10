@@ -2,7 +2,7 @@ import { antiModeConfigSchema } from '@/features/anti-mode/domain/anti-mode.sche
 import type { AntiModeRepository } from '@/features/anti-mode/domain/anti-mode.repository';
 import type { AntiModeConfig } from '@/features/anti-mode/domain/anti-mode.types';
 
-const STORAGE_KEY = 'antiModes';
+import { ANTI_MODE_STORAGE_KEY as STORAGE_KEY } from './anti-mode-storage.constants';
 
 export class ChromeAntiModeRepository implements AntiModeRepository {
   async getAll(): Promise<AntiModeConfig[]> {

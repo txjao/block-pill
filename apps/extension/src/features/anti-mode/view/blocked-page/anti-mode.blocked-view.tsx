@@ -1,3 +1,4 @@
+import { ReflectionQuotePage } from '@/features/reflections';
 import type { AntiModeBlockedModel } from './anti-mode.blocked-model';
 import { Button } from '@/shared/ui/components/button';
 import { PageBrand } from '@/shared/ui/components/page-brand';
@@ -41,38 +42,39 @@ export function AntiModeBlockedView(props: AntiModeBlockedModel) {
           </p>
         )}
 
-        <div class={styles.needSection}>
-          <h2>O que você estava procurando?</h2>
-          <div class={styles.needSelector}>
-            {(
-              [
-                ['entertainment', 'Entretenimento'],
-                ['information', 'Informação'],
-                ['impulse', 'Foi só impulso'],
-              ] as const
-            ).map(([value, label]) => (
-              <Button
-                key={value}
-                className={need === value ? styles.selected : undefined}
-                variant="secondary"
-                type="button"
-                onClick={() => setNeed(value)}
-              >
-                {label}
-              </Button>
-            ))}
+        <ReflectionQuotePage />
+
+        {kind === 'warning' && (
+          <div class={styles.needSection}>
+            <h2>O que você estava procurando?</h2>
+            <div class={styles.needSelector}>
+              {(
+                [
+                  ['entertainment', 'Entretenimento'],
+                  ['information', 'Informação'],
+                  ['impulse', 'Foi só impulso'],
+                ] as const
+              ).map(([value, label]) => (
+                <Button
+                  key={value}
+                  className={need === value ? styles.selected : undefined}
+                  variant="secondary"
+                  type="button"
+                  onClick={() => setNeed(value)}
+                >
+                  {label}
+                </Button>
+              ))}
+            </div>
+            <Recommendation
+              need={need}
+              recommendationText={recommendationText}
+            />
           </div>
-          <Recommendation need={need} recommendationText={recommendationText} />
-        </div>
+        )}
 
         <ReflectionForm {...props} feelingOptions={feelingOptions} />
 
-        {config?.philosophicalKnowledge && (
-          <blockquote>
-            “Nenhum homem é livre se não for senhor de si mesmo.”{' '}
-            <cite>Epicteto</cite>
-          </blockquote>
-        )}
         {kind === 'warning' ? (
           <div class={styles.warningAccess}>
             <h2>Este site também pode ter outros usos.</h2>

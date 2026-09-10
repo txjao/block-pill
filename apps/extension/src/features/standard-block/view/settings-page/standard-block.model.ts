@@ -18,7 +18,11 @@ export function useStandardBlockModel({
 }: UseStandardBlockModelProps) {
   const [blocks, setBlocks] = useState<StandardBlock[]>([]);
   const [hostname, setHostname] = useState('');
+  const [settingsOpen, setSettingsOpenState] = useState(false);
   const [feedback, setFeedback] = useState('');
+  const [settingsFeedback, setSettingsFeedback] = useState('');
+  const [domainSettingsFeedback, setDomainSettingsFeedback] = useState('');
+  const [editingBlock, setEditingBlock] = useState<StandardBlock>();
   const [isLoading, setIsLoading] = useState(true);
   const [globalCooldownHours, setGlobalCooldownHours] = useState('1');
   const blockRows = useMemo(
@@ -52,6 +56,21 @@ export function useStandardBlockModel({
   useEffect(() => {
     void loadBlocks();
   }, [loadBlocks]);
+
+  function setSettingsOpen(open: boolean) {
+    setSettingsOpenState(open);
+    if (open) setSettingsFeedback('');
+  }
+
+  function openDomainSettings(block: StandardBlock) {
+    setDomainSettingsFeedback('');
+    setEditingBlock(block);
+  }
+
+  function closeDomainSettings() {
+    setEditingBlock(undefined);
+    setDomainSettingsFeedback('');
+  }
 
   async function addBlock(event: JSX.TargetedSubmitEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -105,36 +124,37 @@ export function useStandardBlockModel({
     });
     if (response.ok && 'settings' in response) {
       setBlocks(response.blocks);
-      setFeedback('Cooldown global atualizado.');
+      setSettingsFeedback('Tempo de espera atualizado.');
     } else
-      setFeedback(
+      setSettingsFeedback(
         response.ok ? 'Resposta inesperada da extensão.' : response.message,
       );
     setIsLoading(false);
   }
 
   async function saveDomainCooldown(
-    block: StandardBlock,
     event: JSX.TargetedSubmitEvent<HTMLFormElement>,
   ) {
     event.preventDefault();
+    if (!editingBlock) return;
     const form = new FormData(event.currentTarget);
     const value = readFormText(form, 'cooldownHours').trim();
     setIsLoading(true);
     const response = await sendMessage({
       type: STANDARD_BLOCK_MESSAGE_TYPE.updateDomainCooldown,
-      hostname: block.hostname,
+      hostname: editingBlock.hostname,
       cooldownMilliseconds: value ? Number(value) * 3_600_000 : null,
     });
     if (response.ok && 'blocks' in response) {
       setBlocks(response.blocks);
+      setEditingBlock(undefined);
       setFeedback(
         value
           ? 'Cooldown específico atualizado.'
           : 'O domínio voltou a usar o cooldown global.',
       );
     } else
-      setFeedback(
+      setDomainSettingsFeedback(
         response.ok ? 'Resposta inesperada da extensão.' : response.message,
       );
     setIsLoading(false);
@@ -167,16 +187,23 @@ export function useStandardBlockModel({
   }
 
   return {
+    settingsOpen,
+    setSettingsOpen,
     blocks,
     blockRows,
     hostname,
     feedback,
+    settingsFeedback,
+    domainSettingsFeedback,
+    editingBlock,
     isLoading,
     globalCooldownHours,
     setHostname,
     setGlobalCooldownHours,
     addBlock,
     removeBlock,
+    openDomainSettings,
+    closeDomainSettings,
     saveGlobalCooldown,
     saveDomainCooldown,
     addSubdomainException,

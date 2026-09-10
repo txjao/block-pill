@@ -1,3 +1,4 @@
+import { ReflectionQuotePage } from '@/features/reflections';
 import type { usePermanentBlockBlockedModel } from './permanent-block.blocked-model';
 import { PageBrand } from '@/shared/ui/components/page-brand';
 import styles from './permanent-block.blocked.module.css';
@@ -12,6 +13,7 @@ export function PermanentBlockBlockedView({
   return (
     <main class={styles.page}>
       <PageBrand title="Bloqueio permanente" />
+      <ReflectionQuotePage />
       <section class={styles.interruption}>
         <h1>Você já tomou esta decisão.</h1>
         <p>

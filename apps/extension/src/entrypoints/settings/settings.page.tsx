@@ -3,7 +3,9 @@ import { SettingsView } from './settings.view';
 
 const settingsUrl = new URL(window.location.href);
 const requestedSection = settingsUrl.searchParams.get('section');
+
 settingsUrl.searchParams.delete('section');
+
 history.replaceState(
   null,
   '',

@@ -1,4 +1,5 @@
 import type { ComponentChildren, JSX } from 'preact';
+import { forwardRef } from 'preact/compat';
 import styles from './button.module.css';
 
 export type ButtonVariant =
@@ -13,36 +14,43 @@ export interface ButtonProps extends JSX.ButtonHTMLAttributes<HTMLButtonElement>
   loading?: boolean;
 }
 
-export function Button({
-  children,
-  variant = 'primary',
-  size = 'default',
-  fluid = false,
-  loading = false,
-  className,
-  disabled,
-  ...buttonProps
-}: ButtonProps) {
-  const classes = [
-    styles.button,
-    styles[variant],
-    styles[size],
-    fluid ? styles.fluid : '',
-    className,
-  ]
-    .filter(
-      (value): value is string => typeof value === 'string' && value.length > 0,
-    )
-    .join(' ');
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+  function Button(
+    {
+      children,
+      variant = 'primary',
+      size = 'default',
+      fluid = false,
+      loading = false,
+      className,
+      disabled,
+      ...buttonProps
+    },
+    ref,
+  ) {
+    const classes = [
+      styles.button,
+      styles[variant],
+      styles[size],
+      fluid ? styles.fluid : '',
+      className,
+    ]
+      .filter(
+        (value): value is string =>
+          typeof value === 'string' && value.length > 0,
+      )
+      .join(' ');
 
-  return (
-    <button
-      {...buttonProps}
-      class={classes}
-      disabled={loading ? true : disabled}
-      aria-busy={loading ? true : undefined}
-    >
-      {loading ? 'Aguarde…' : children}
-    </button>
-  );
-}
+    return (
+      <button
+        ref={ref}
+        {...buttonProps}
+        class={classes}
+        disabled={loading ? true : disabled}
+        aria-busy={loading ? true : undefined}
+      >
+        {loading ? 'Aguarde…' : children}
+      </button>
+    );
+  },
+);

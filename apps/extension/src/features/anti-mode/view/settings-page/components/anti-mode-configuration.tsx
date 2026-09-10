@@ -3,12 +3,19 @@ import type {
   AntiModeId,
 } from '@/features/anti-mode/domain/anti-mode.types';
 import { Toggle } from '@/shared/ui/components/toggle';
+import { Button } from '@/shared/ui/components/button';
 import type { AntiModeModel } from '@/features/anti-mode/view/settings-page/anti-mode.model';
 import styles from '@/features/anti-mode/view/settings-page/anti-mode.module.css';
 
 type ConfigurationProps = Pick<
   AntiModeModel,
-  'canImportProfile' | 'commitmentLabel' | 'draft' | 'updateDraft'
+  | 'canImportProfile'
+  | 'commitmentLabel'
+  | 'draft'
+  | 'updateDraft'
+  | 'activate'
+  | 'isLoading'
+  | 'incognitoAllowed'
 > & {
   mode: AntiModeId;
   config?: AntiModeConfig;
@@ -24,6 +31,9 @@ export function AntiModeConfiguration(props: ConfigurationProps) {
     commitmentLabel,
     draft,
     updateDraft,
+    activate,
+    isLoading,
+    incognitoAllowed,
   } = props;
 
   if (active && config) {
@@ -40,10 +50,16 @@ export function AntiModeConfiguration(props: ConfigurationProps) {
   }
 
   return (
-    <div class={styles.configuration}>
+    <form
+      class={styles.configuration}
+      onSubmit={(event) => {
+        event.preventDefault();
+        void activate(mode);
+      }}
+    >
       <header>
         <strong>Configurar este modo</strong>
-        <small>Passo 1 de 2 · revise antes de ativar</small>
+        <small>Revise seu compromisso antes de ativar</small>
       </header>
       <div class={styles.formGrid}>
         <div class={styles.fieldGroup}>
@@ -56,6 +72,7 @@ export function AntiModeConfiguration(props: ConfigurationProps) {
               id={`${mode}-duration`}
               type="number"
               min="1"
+              required={!draft.permanent}
               value={draft.durationValue}
               disabled={draft.permanent}
               onInput={(event) =>
@@ -109,20 +126,6 @@ export function AntiModeConfiguration(props: ConfigurationProps) {
             placeholder="Caminhar, ler, cozinhar, conversar, treinar…"
           />
         </label>
-        <label class={styles.checkbox}>
-          <input
-            type="checkbox"
-            checked={draft.philosophicalKnowledge}
-            onChange={(event) =>
-              updateDraft(
-                mode,
-                'philosophicalKnowledge',
-                event.currentTarget.checked,
-              )
-            }
-          />
-          Mostrar reflexões filosóficas nos momentos de pausa
-        </label>
         {canImportProfile && (
           <label class={styles.checkbox}>
             <input
@@ -136,6 +139,14 @@ export function AntiModeConfiguration(props: ConfigurationProps) {
           </label>
         )}
       </div>
-    </div>
+      <div class={styles.activationActions}>
+        <Button type="submit" loading={isLoading} disabled={!incognitoAllowed}>
+          Ativar proteção
+        </Button>
+        <small>
+          Depois de ativar, aguarde o prazo escolhido para desativar.
+        </small>
+      </div>
+    </form>
   );
 }

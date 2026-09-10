@@ -1,12 +1,15 @@
 .button {
+  justify-self: start;
+  width: fit-content;
+  max-width: 100%;
   display: inline-flex;
   min-width: 0;
   align-items: center;
   justify-content: center;
   gap: 8px;
   border: 1px solid transparent;
-  border-radius: var(--radius-pill);
-  font-weight: 700;
+  border-radius: var(--radius-control);
+  font-weight: 600;
   line-height: 1.2;
   text-align: center;
   cursor: pointer;
@@ -14,7 +17,7 @@
 
 .default {
   min-height: 44px;
-  padding: 0 21px;
+  padding: 0 16px;
 }
 
 .compact {
@@ -27,14 +30,14 @@
 }
 
 .primary {
-  color: #000;
-  background: var(--color-action);
-  border-color: var(--color-action);
+  color: var(--color-button-primary-text);
+  background: var(--color-button-primary);
+  border-color: var(--color-button-primary);
 }
 
 .primary:hover:not(:disabled) {
-  background: var(--color-action-hover);
-  border-color: var(--color-action-hover);
+  background: var(--color-button-primary-hover);
+  border-color: var(--color-button-primary-hover);
 }
 
 .secondary {
@@ -58,21 +61,25 @@
 }
 
 .destructive {
-  color: #fff;
-  background: var(--color-danger);
-  border-color: var(--color-danger);
+  color: var(--color-danger);
+  background: var(--color-danger-surface);
+  border-color: transparent;
 }
 
 .text {
+  background-color: transparent;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0 1px;
+  background-position: center calc(100% - 8px);
+  background-repeat: no-repeat;
+  transition: background-size 180ms ease-out;
   min-height: 40px;
   padding-inline: 8px;
   color: var(--color-text);
-  background: transparent;
 }
 
 .text:hover:not(:disabled) {
-  text-decoration: underline;
-  text-underline-offset: 3px;
+  background-size: calc(100% - 16px) 1px;
 }
 
 .button:disabled {

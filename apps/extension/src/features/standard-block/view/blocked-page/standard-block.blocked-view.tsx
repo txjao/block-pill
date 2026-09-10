@@ -1,3 +1,4 @@
+import { ReflectionQuotePage } from '@/features/reflections';
 import type { useStandardBlockBlockedModel } from './standard-block.blocked-model';
 import { Button } from '@/shared/ui/components/button';
 import { InteractiveHoverButton } from '@/shared/ui/components/interactive-hover-button';
@@ -25,6 +26,7 @@ export function StandardBlockBlockedView(props: StandardBlockBlockedModel) {
     return (
       <main class={styles.page}>
         <PageBrand title="Site bloqueado" />
+        <ReflectionQuotePage />
         <p role={feedback ? 'alert' : undefined}>{feedback || 'Carregando…'}</p>
       </main>
     );
@@ -50,7 +52,7 @@ export function StandardBlockBlockedView(props: StandardBlockBlockedModel) {
           </p>
           <div class={styles.accessActions}>
             <InteractiveHoverButton
-              className="interactive-hover-button--fluid"
+              className={styles.subdomainButton}
               text="Liberar este subdomínio"
               loading={isLoading}
               onClick={() => void allowSubdomain()}
@@ -74,6 +76,7 @@ export function StandardBlockBlockedView(props: StandardBlockBlockedModel) {
     return (
       <main class={styles.page}>
         <PageBrand title="Site bloqueado" />
+        <ReflectionQuotePage />
         <section class={styles.interruption} aria-labelledby="blocked-title">
           <span class={styles.eyebrow}>Pausa em andamento</span>
           <h1 id="blocked-title">Seu tempo acabou.</h1>
@@ -92,6 +95,7 @@ export function StandardBlockBlockedView(props: StandardBlockBlockedModel) {
     return (
       <main class={styles.page}>
         <PageBrand title="Site bloqueado" />
+        <ReflectionQuotePage />
         <section class={styles.interruption}>
           <h1>Acesso temporário ativo</h1>
           <p>Você já pode voltar para {hostname}.</p>
@@ -103,12 +107,13 @@ export function StandardBlockBlockedView(props: StandardBlockBlockedModel) {
   return (
     <main class={styles.page}>
       <PageBrand title="Site bloqueado" />
+      <p class={styles.openingMessage}>
+        Todo mundo merece 15 minutinhos de descanso!
+      </p>
       <section class={styles.interruption} aria-labelledby="blocked-title">
         <span class={styles.eyebrow}>Antes do próximo clique</span>
         <h1 id="blocked-title">Uma pausa para escolher.</h1>
-        <p>
-          <strong>Todo mundo merece 15 minutinhos de descanso!</strong>
-        </p>
+        <ReflectionQuotePage />
         <p>
           Você ainda tem {snapshot.remainingMinutes} minutos disponíveis neste
           ciclo.
@@ -131,7 +136,8 @@ export function StandardBlockBlockedView(props: StandardBlockBlockedModel) {
           ))}
         </div>
         <p class={styles.supportCopy}>
-          Quando os 15 minutos terminarem, o tempo de espera deste site começa.
+          Ao usar os 15 minutos do ciclo, este site entra em pausa até o próximo
+          período de acesso.
         </p>
         {feedback && <p role="alert">{feedback}</p>}
       </section>

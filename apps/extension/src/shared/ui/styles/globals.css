@@ -12,6 +12,9 @@
   --color-text-muted: #525252;
   --color-action: var(--brand-red);
   --color-action-hover: #e51f1f;
+  --color-button-primary: #b63838;
+  --color-button-primary-hover: #992d2d;
+  --color-button-primary-text: #fff;
   --color-danger: #9d1c20;
   --color-danger-surface: #fff0f0;
   --color-success: #075c25;
@@ -60,6 +63,28 @@ body {
   font-size: 0.90625rem;
   line-height: 1.5;
   text-rendering: optimizeLegibility;
+}
+
+input[type='number'] {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+  appearance: none;
+  margin: 0;
+}
+
+textarea {
+  resize: none;
+  overflow: auto;
+}
+
+input[type='checkbox'] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--color-button-primary);
 }
 
 button,

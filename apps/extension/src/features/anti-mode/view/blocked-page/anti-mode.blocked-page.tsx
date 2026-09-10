@@ -8,6 +8,7 @@ import type {
 } from '@/features/anti-mode/application/anti-mode.messages';
 import { useAntiModeBlockedModel } from './anti-mode.blocked-model';
 import { AntiModeBlockedView } from './anti-mode.blocked-view';
+import { useMemo } from 'preact/hooks';
 
 function navigate(url: string): void {
   window.location.assign(url);
@@ -55,4 +56,3 @@ export function AntiModeBlockedPage() {
   });
   return <AntiModeBlockedView {...model} />;
 }
-import { useMemo } from 'preact/hooks';

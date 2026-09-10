@@ -20,18 +20,21 @@
 }
 
 .list li {
-  padding: 14px 4px;
-  border-bottom: 1px solid var(--color-border-light);
-}
-
-.listRow {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 18px;
+  padding: 14px 4px;
+  border-bottom: 1px solid var(--color-border-light);
 }
 
-.listRow > span {
+.listActions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.list li > span {
   display: grid;
   gap: 3px;
 }
@@ -46,35 +49,30 @@
   font-size: 0.8125rem;
 }
 
-.domainSettings {
-  margin-top: 6px;
-  color: var(--color-text-muted);
-  font-size: 0.75rem;
+.domainDialogForm {
+  display: grid;
+  gap: 10px;
+  margin-top: 22px;
 }
 
-.domainSettings summary {
-  width: fit-content;
-  cursor: pointer;
+.domainDialogForm label {
+  font-size: 0.78125rem;
+  font-weight: 650;
 }
 
-.domainSettings form {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 10px;
-}
-
-.domainSettings input {
-  width: 118px;
+.domainDialogForm input {
+  width: 100%;
   min-height: 44px;
   padding: 0 12px;
   border: 1px solid var(--color-border-control);
   border-radius: var(--radius-control);
 }
 
-.domainSettings > small {
-  display: block;
-  margin-top: 6px;
+.domainDialogFeedback {
+  min-height: 1.4em;
+  margin: 0;
+  color: var(--color-danger);
+  font-size: 0.8125rem;
 }
 
 .emptyState {
@@ -115,16 +113,38 @@
 }
 
 .formCard {
-  margin-top: 24px;
-  padding: 22px;
-  border: 1px solid var(--color-border-medium);
-  border-radius: var(--radius-surface);
+  margin: 0 0 32px;
+  padding: 8px 0 28px;
+  border-bottom: 1px solid var(--color-border-light);
 }
 
 .formCard h3 {
   margin: 0;
   font-size: 1.1875rem;
   letter-spacing: -0.02em;
+}
+
+.formCard > header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.settingsButton {
+  flex: 0 0 44px;
+  width: 44px;
+  padding: 0;
+}
+
+.createButton {
+  background: #a42f32;
+  border-color: #a42f32;
+}
+
+.createButton:hover:not(:disabled) {
+  background: var(--color-button-primary-hover);
+  border-color: var(--color-button-primary-hover);
 }
 
 .formCard header p {
@@ -206,12 +226,9 @@
     flex-wrap: wrap;
   }
 
-  .domainSettings form {
-    align-items: stretch;
+  .list li {
+    align-items: flex-start;
     flex-direction: column;
-  }
-
-  .domainSettings input {
-    width: 100%;
+    gap: 4px;
   }
 }

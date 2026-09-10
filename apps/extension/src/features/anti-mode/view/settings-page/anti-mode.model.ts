@@ -36,6 +36,8 @@ const initialDraft: Draft = {
   hostname: '',
 };
 
+const MAX_TIMEOUT_MILLISECONDS = 2_147_000_000;
+
 const modeCopy = {
   'anti-porn': {
     title: 'Anti-pornografia',
@@ -73,6 +75,7 @@ export function useAntiModeModel({
     'anti-bet': { ...initialDraft },
   });
   const [feedback, setFeedback] = useState('');
+  const [currentTime, setCurrentTime] = useState(now);
   const [isLoading, setIsLoading] = useState(true);
   const [incognitoAllowed, setIncognitoAllowed] = useState(false);
   const [pendingDeactivate, setPendingDeactivate] = useState<AntiModeId>();
@@ -87,14 +90,24 @@ export function useAntiModeModel({
     if (modes.ok && 'configs' in modes) setConfigs(modes.configs);
     if (incognito.ok && 'incognitoAllowed' in incognito)
       setIncognitoAllowed(incognito.incognitoAllowed);
+    setCurrentTime(now());
     setIsLoading(false);
-  }, [sendMessage]);
+  }, [now, sendMessage]);
 
   useEffect(() => {
     void load();
     const reloadPermission = () => void load();
     return subscribeToFocus(reloadPermission);
   }, [load, subscribeToFocus]);
+
+  useEffect(() => {
+    const selectedConfig = configs.find((item) => item.id === selectedMode);
+    const delay = getCommitmentRefreshDelay(selectedConfig, currentTime);
+    if (delay === undefined) return;
+
+    const timeout = window.setTimeout(() => setCurrentTime(now()), delay);
+    return () => window.clearTimeout(timeout);
+  }, [configs, currentTime, now, selectedMode]);
 
   function updateDraft<K extends keyof Draft>(
     mode: AntiModeId,
@@ -182,7 +195,7 @@ export function useAntiModeModel({
     canDeactivate:
       active &&
       !config?.permanent &&
-      (config?.commitmentEndsAt ?? Infinity) <= now(),
+      (config?.commitmentEndsAt ?? Infinity) <= currentTime,
     canImportProfile: configs.some(
       (item) =>
         item.id !== mode && (item.goals.length > 0 || item.hobbies.length > 0),
@@ -222,4 +235,22 @@ export function formatCommitmentLabel(config: AntiModeConfig): string {
   return config.permanent
     ? 'Compromisso sem prazo definido'
     : `Protegido até ${new Intl.DateTimeFormat('pt-BR', { dateStyle: 'long', timeStyle: 'short' }).format(config.commitmentEndsAt)}`;
+}
+
+export function getCommitmentRefreshDelay(
+  config: AntiModeConfig | undefined,
+  currentTime: number,
+): number | undefined {
+  if (
+    !config?.enabled ||
+    config.permanent ||
+    config.commitmentEndsAt === undefined ||
+    config.commitmentEndsAt <= currentTime
+  )
+    return undefined;
+
+  return Math.min(
+    config.commitmentEndsAt - currentTime + 50,
+    MAX_TIMEOUT_MILLISECONDS,
+  );
 }

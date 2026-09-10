@@ -47,7 +47,7 @@
   gap: 24px;
   margin-top: 26px;
   padding: 18px 0;
-  border-top: 2px solid #000;
+  border-top: 1px solid var(--color-border-light);
   border-bottom: 1px solid var(--color-border-medium);
 }
 
@@ -128,7 +128,9 @@
 
 .fieldGroup textarea {
   min-height: 94px;
-  resize: vertical;
+  resize: none;
+  line-height: 1.6;
+  padding: 14px;
 }
 
 .durationRow {
@@ -143,6 +145,20 @@
   align-items: flex-start;
   gap: 9px;
   font-size: 0.8125rem;
+  align-items: center;
+  padding-block: 8px;
+}
+
+.activationActions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 28px;
+}
+.activationActions small {
+  max-width: 34ch;
+  color: var(--color-text-muted);
 }
 
 .checkbox input {

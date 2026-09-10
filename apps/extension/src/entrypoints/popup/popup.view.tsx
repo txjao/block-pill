@@ -47,7 +47,11 @@ export function PopupView(props: PopupModel) {
         </div>
       )}
       <div class={styles.footerActions}>
-        <Button fluid onClick={() => void openSettings('blocking')}>
+        <Button
+          fluid
+          variant="dark"
+          onClick={() => void openSettings('blocking')}
+        >
           Gerenciar bloqueios
         </Button>
         <Button

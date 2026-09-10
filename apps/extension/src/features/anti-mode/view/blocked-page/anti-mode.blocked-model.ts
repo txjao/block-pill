@@ -36,6 +36,22 @@ export interface UseAntiModeBlockedModelProps {
   sendMessage: (request: AntiModeRequest) => Promise<AntiModeResponse>;
 }
 
+export type AntiModeBlockedModel = ReturnType<typeof useAntiModeBlockedModel>;
+
+export function getRecommendationText(
+  need: AntiModeNeed,
+  hobbies: string[],
+): string | undefined {
+  if (need === 'information') return undefined;
+  if (need === 'entertainment') {
+    return 'Que tal algo fora da tela: caminhar, ler, cozinhar, conversar ou praticar um esporte?';
+  }
+  const alternatives = hobbies.length
+    ? hobbies.join(', ')
+    : 'uma caminhada curta, alongamento ou uma tarefa manual';
+  return `Direcione essa energia para ${alternatives}.`;
+}
+
 export function useAntiModeBlockedModel({
   hostname: requestedHostname,
   kind: requestedKind,
@@ -150,20 +166,4 @@ export function useAntiModeBlockedModel({
         ? 'Seu compromisso anti-pornografia'
         : 'Seu compromisso anti-aposta',
   };
-}
-
-export type AntiModeBlockedModel = ReturnType<typeof useAntiModeBlockedModel>;
-
-export function getRecommendationText(
-  need: AntiModeNeed,
-  hobbies: string[],
-): string | undefined {
-  if (need === 'information') return undefined;
-  if (need === 'entertainment') {
-    return 'Que tal algo fora da tela: caminhar, ler, cozinhar, conversar ou praticar um esporte?';
-  }
-  const alternatives = hobbies.length
-    ? hobbies.join(', ')
-    : 'uma caminhada curta, alongamento ou uma tarefa manual';
-  return `Direcione essa energia para ${alternatives}.`;
 }

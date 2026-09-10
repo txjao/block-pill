@@ -10,7 +10,7 @@ interface AlertDialogProps {
   confirmLabel: string;
   cancelLabel?: string;
   loading?: boolean;
-  variant?: 'dark' | 'destructive';
+  variant?: 'dark' | 'destructive' | 'primary';
   onOpenChange: (open: boolean) => void;
   onConfirm: () => void;
 }

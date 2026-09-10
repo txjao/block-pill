@@ -79,15 +79,13 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 12px;
-  margin-top: 24px;
-  padding: 22px;
-  border: 1px solid #000;
-  border-radius: var(--radius-surface);
+  margin: 0 0 32px;
+  padding: 8px 0 28px;
+  border-bottom: 1px solid var(--color-border-light);
 }
 
 .formCard header,
 .fieldLabel,
-.acknowledgement,
 .formCard > small {
   grid-column: 1 / -1;
 }
@@ -111,6 +109,8 @@
 }
 
 .formCard > input {
+  width: min(100%, 440px);
+  grid-column: 1 / -1;
   min-width: 0;
   min-height: 44px;
   padding: 0 12px;
@@ -118,25 +118,15 @@
   border-radius: var(--radius-control);
 }
 
-.acknowledgement {
-  display: flex;
-  align-items: flex-start;
-  gap: 9px;
-  font-size: 0.8125rem;
-  line-height: 1.5;
-}
-
-.acknowledgement input {
-  width: 18px;
-  height: 18px;
-  flex: 0 0 auto;
-  margin-top: 1px;
-  accent-color: var(--color-action);
-}
-
 .formCard > small {
   color: var(--color-text-muted);
   font-size: 0.75rem;
+}
+
+.confirmationPreference {
+  margin: -10px 0 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--color-border-light);
 }
 
 .formCard > small a {
@@ -158,7 +148,6 @@
 
   .formCard header,
   .fieldLabel,
-  .acknowledgement,
   .formCard > small {
     grid-column: 1;
   }
