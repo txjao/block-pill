@@ -19,7 +19,7 @@ export function ActivityModeCard(props: ActivityModeCardProps) {
     events,
     insights,
     label,
-    metrics,
+    metricItems,
     source,
     summaries,
     title,
@@ -53,18 +53,12 @@ export function ActivityModeCard(props: ActivityModeCardProps) {
       </header>
 
       <div class={styles.metricRow}>
-        <div>
-          <strong>{metrics.attempts}</strong>
-          <span>Tentativas interrompidas</span>
-        </div>
-        <div>
-          <strong>{metrics.grants}</strong>
-          <span>Acessos temporários</span>
-        </div>
-        <div>
-          <strong>{metrics.sites}</strong>
-          <span>Sites registrados</span>
-        </div>
+        {metricItems.map((metric) => (
+          <div key={metric.label}>
+            <strong>{metric.value}</strong>
+            <span>{metric.label}</span>
+          </div>
+        ))}
       </div>
 
       {summaries.length ? (

@@ -1,12 +1,22 @@
 import { Badge } from '@/shared/ui/components/badge';
 import { Button } from '@/shared/ui/components/button';
+import { Tabs, TabsContent } from '@/shared/ui/components/tabs';
 import type { ActivityDashboardModel } from './activity-dashboard.model';
 import styles from './activity-dashboard.module.css';
 import { ActivityDeletionDialog } from './components/activity-deletion-dialog';
 import { ActivityModeCard } from './components/activity-mode-card';
 
 export function ActivityDashboardView(props: ActivityDashboardModel) {
-  const { events, feedback, isLoading, modes, requestDeletion } = props;
+  const {
+    events,
+    feedback,
+    isLoading,
+    modes,
+    requestDeletion,
+    selectedSource,
+    setSelectedSource,
+    modeTabs,
+  } = props;
 
   return (
     <section aria-labelledby="dashboard-title">
@@ -21,16 +31,22 @@ export function ActivityDashboardView(props: ActivityDashboardModel) {
         </div>
       </div>
 
-      <div class={styles.modeStack}>
+      <Tabs
+        value={selectedSource}
+        onValueChange={setSelectedSource}
+        items={modeTabs}
+      >
         {modes.map((mode) => (
-          <ActivityModeCard
-            key={mode.source}
-            isLoading={isLoading}
-            mode={mode}
-            requestDeletion={requestDeletion}
-          />
+          <TabsContent key={mode.source} value={mode.source}>
+            <ActivityModeCard
+              key={mode.source}
+              isLoading={isLoading}
+              mode={mode}
+              requestDeletion={requestDeletion}
+            />
+          </TabsContent>
         ))}
-      </div>
+      </Tabs>
 
       {events.length > 0 && (
         <Button

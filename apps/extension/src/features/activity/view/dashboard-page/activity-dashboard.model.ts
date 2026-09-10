@@ -41,6 +41,7 @@ export interface ActivityModeViewModel {
   insights?: ReturnType<typeof createAntiInsightData>;
   label: string;
   metrics: ReturnType<typeof createModeMetrics>;
+  metricItems: { label: string; value: number }[];
   source: ActivitySource;
   summaries: (ActivitySummary & { lastAttemptLabel: string })[];
   title: string;
@@ -56,6 +57,7 @@ export function useActivityDashboardModel({
   sendMessage,
 }: UseActivityDashboardModelProps) {
   const [events, setEvents] = useState<ActivityEvent[]>([]);
+  const [selectedSource, setSelectedSource] = useState('standard');
   const [feedback, setFeedback] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [deletionTarget, setDeletionTarget] =
@@ -108,6 +110,9 @@ export function useActivityDashboardModel({
   }
 
   return {
+    selectedSource,
+    setSelectedSource,
+    modeTabs: modes.map((mode) => ({ value: mode.source, label: mode.label })),
     events,
     summaries,
     feedback,
@@ -140,6 +145,33 @@ function createActivityModes(
         : undefined,
       label: sourceLabel(source),
       metrics: createModeMetrics(modeSummaries),
+      metricItems: [
+        {
+          label: 'Tentativas interrompidas',
+          value: modeSummaries.reduce((sum, item) => sum + item.attempts, 0),
+        },
+        ...(source === 'permanent'
+          ? []
+          : [
+              {
+                label: 'Acessos temporários',
+                value: modeSummaries.reduce(
+                  (sum, item) => sum + item.grants,
+                  0,
+                ),
+              },
+            ]),
+        { label: 'Sites registrados', value: modeSummaries.length },
+        ...(source.startsWith('anti')
+          ? [
+              {
+                label: 'Relatos registrados',
+                value: modeEvents.filter((event) => event.kind === 'reflection')
+                  .length,
+              },
+            ]
+          : []),
+      ],
       source,
       summaries: modeSummaries.map((summary) => ({
         ...summary,

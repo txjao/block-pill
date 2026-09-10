@@ -1,5 +1,5 @@
 .pageHeader {
-  margin: 56px 0 18px;
+  margin: 0 0 28px;
 }
 
 .pageHeader h2 {
@@ -18,11 +18,8 @@
 }
 
 .modeCard {
-  padding: clamp(18px, 3vw, 28px);
-  border: 1px solid var(--color-border-medium);
-  border-radius: var(--radius-surface);
+  padding: 24px 0;
   background: var(--color-surface);
-  box-shadow: 0 12px 34px rgb(0 0 0 / 5%);
 }
 
 .modeCard > header {
@@ -50,7 +47,7 @@
 
 .metricRow {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 1px;
   margin-top: 20px;
   overflow: hidden;
