@@ -1,7 +1,6 @@
 import type { usePermanentBlockModel } from './permanent-block.model';
 import { AlertDialog } from '@/shared/ui/components/alert-dialog';
 import { Button } from '@/shared/ui/components/button';
-import { Toggle } from '@/shared/ui/components/toggle';
 import blockPillIcon from '@workspace/shared/brand/icons/block-pill-transparent.svg?url';
 import styles from './permanent-block.module.css';
 
@@ -12,8 +11,6 @@ export function PermanentBlockView(props: PermanentBlockModel) {
     documentationUrl,
     blocks,
     hostname,
-    confirmationEnabled,
-    confirmationLoading,
     confirmationOpen,
     feedback,
     isLoading,
@@ -21,7 +18,6 @@ export function PermanentBlockView(props: PermanentBlockModel) {
     setConfirmationOpen,
     submitBlock,
     createBlock,
-    changeConfirmationEnabled,
   } = props;
 
   return (
@@ -59,16 +55,6 @@ export function PermanentBlockView(props: PermanentBlockModel) {
           </a>
         </small>
       </form>
-
-      <div class={styles.confirmationPreference}>
-        <Toggle
-          label="Confirmar bloqueios permanentes"
-          description="Mostra uma revisão final antes de criar o bloqueio."
-          checked={confirmationEnabled}
-          disabled={confirmationLoading}
-          onCheckedChange={(enabled) => void changeConfirmationEnabled(enabled)}
-        />
-      </div>
 
       {blocks.length === 0 ? (
         <div class={styles.emptyState}>

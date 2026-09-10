@@ -15,9 +15,32 @@ const interfacePreviewOptions = [
     height: 820,
   },
   {
-    id: 'popup',
-    label: 'Popup',
-    parameters: { interface: INTERFACE_PREVIEW_NAME.popup },
+    id: 'popup-outside',
+    label: 'Popup: fora da lista',
+    parameters: {
+      interface: INTERFACE_PREVIEW_NAME.popup,
+      preview: 'outside',
+    },
+    width: 380,
+    height: 520,
+  },
+  {
+    id: 'popup-stimulating',
+    label: 'Popup: site estimulante',
+    parameters: {
+      interface: INTERFACE_PREVIEW_NAME.popup,
+      preview: 'stimulating',
+    },
+    width: 380,
+    height: 520,
+  },
+  {
+    id: 'popup-paused',
+    label: 'Popup: site em pausa',
+    parameters: {
+      interface: INTERFACE_PREVIEW_NAME.popup,
+      preview: 'paused',
+    },
     width: 380,
     height: 520,
   },
@@ -127,7 +150,8 @@ const interfacePreviewOptions = [
 type InterfacePreviewId = (typeof interfacePreviewOptions)[number]['id'];
 
 export function useInterfacePreviewModel() {
-  const [selectedId, setSelectedId] = useState<InterfacePreviewId>('popup');
+  const [selectedId, setSelectedId] =
+    useState<InterfacePreviewId>('popup-outside');
   const [reloadKey, setReloadKey] = useState(0);
   const selectedPreview =
     interfacePreviewOptions.find((preview) => preview.id === selectedId) ??

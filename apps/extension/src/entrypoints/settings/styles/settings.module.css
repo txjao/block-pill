@@ -67,8 +67,7 @@
   color: rgb(255 255 255 / 72%);
 }
 
-.navigationItem:focus-visible,
-.submenuInner button:focus-visible {
+.navigationItem:focus-visible {
   outline: 2px solid var(--color-text);
   outline-offset: -3px;
 }
@@ -160,11 +159,18 @@
 
 .submenuInner button:hover {
   background: rgb(0 0 0 / 5%);
+  box-shadow: inset 2px 0 0 var(--color-action);
 }
 
 .submenuInner .submenuActive {
   background: color-mix(in srgb, var(--color-action) 8%, #fff);
   box-shadow: inset 2px 0 0 var(--color-action);
+}
+
+.submenuInner button:focus-visible {
+  outline: none;
+  background: color-mix(in srgb, var(--color-action) 14%, #fff);
+  box-shadow: none;
 }
 
 .sidebarFooter {

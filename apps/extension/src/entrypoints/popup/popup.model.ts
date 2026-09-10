@@ -96,8 +96,8 @@ export function usePopupModel({
 function formatIncognitoStatus(
   response: Extract<AntiModeResponse, { ok: true; incognitoAllowed: boolean }>,
 ): string {
-  if (!response.incognitoAllowed) return 'permissão pendente';
-  if (response.lockedByAntiMode) return 'proteção obrigatória ativa';
+  if (!response.incognitoAllowed) return 'permissão necessária';
+  if (response.lockedByAntiMode) return 'obrigatória durante o modo anti';
   if (!response.controlEnabled) return 'proteção desativada';
   if (response.blocked) return 'abertura bloqueada';
   if (response.suspendedUntil) {
@@ -106,5 +106,5 @@ function formatIncognitoStatus(
     }).format(response.suspendedUntil);
     return `pausada até ${time}`;
   }
-  return 'proteção pronta';
+  return 'proteção ativa';
 }

@@ -1,4 +1,5 @@
 import { usePopupModel } from './popup.model';
+import { readPopupPreview } from './popup.mock';
 import { PopupView } from './popup.view';
 import type { AntiModeRequest, AntiModeResponse } from '@/features/anti-mode';
 
@@ -38,6 +39,9 @@ async function sendMessage(
 }
 
 export function PopupPage() {
+  const preview = import.meta.env.DEV
+    ? readPopupPreview(globalThis.location.search)
+    : undefined;
   const model = usePopupModel({
     closePopup,
     createExtensionUrl,
@@ -45,5 +49,5 @@ export function PopupPage() {
     queryActiveTabUrl,
     sendMessage,
   });
-  return <PopupView {...model} />;
+  return <PopupView {...model} preview={preview} />;
 }

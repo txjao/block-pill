@@ -5,9 +5,6 @@ import type {
 } from '@/features/permanent-block/application/permanent-block.messages';
 import { usePermanentBlockModel } from './permanent-block.model';
 import { PermanentBlockView } from './permanent-block.view';
-import { ChromePermanentBlockConfirmationRepository } from '@/features/permanent-block/infrastructure/permanent-block-confirmation.repository.chrome';
-
-const confirmationRepository = new ChromePermanentBlockConfirmationRepository();
 
 async function sendMessage(
   request: PermanentBlockRequest,
@@ -27,10 +24,7 @@ export function PermanentBlockPage({
 }: {
   onCountChange?: (count: number) => void;
 }) {
-  const model = usePermanentBlockModel({
-    confirmationRepository,
-    sendMessage,
-  });
+  const model = usePermanentBlockModel({ sendMessage });
 
   useEffect(
     () => onCountChange?.(model.blocks.length),

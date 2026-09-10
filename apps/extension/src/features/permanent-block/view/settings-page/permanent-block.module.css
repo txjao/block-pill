@@ -123,12 +123,6 @@
   font-size: 0.75rem;
 }
 
-.confirmationPreference {
-  margin: -10px 0 24px;
-  padding-bottom: 24px;
-  border-bottom: 1px solid var(--color-border-light);
-}
-
 .formCard > small a {
   color: var(--color-text);
   font-weight: 650;

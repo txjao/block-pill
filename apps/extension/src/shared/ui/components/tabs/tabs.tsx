@@ -21,13 +21,25 @@ export function Tabs<T extends string>({
   children: ComponentChildren;
   onValueChange: (value: T) => void;
 }) {
+  const itemCount = Math.max(items.length, 1);
+  const activeIndex = Math.max(
+    items.findIndex((item) => item.value === value),
+    0,
+  );
+
   return (
     <RadixTabs.Root
       value={value}
       onValueChange={(next) => onValueChange(next as T)}
     >
       <div class={styles.header}>
-        <RadixTabs.List className={styles.list} aria-label="Alternar conteúdo">
+        <RadixTabs.List
+          className={styles.list}
+          aria-label="Alternar conteúdo"
+          style={{
+            gridTemplateColumns: `repeat(${itemCount}, minmax(max-content, 1fr))`,
+          }}
+        >
           {items.map((item) => (
             <RadixTabs.Trigger
               className={styles.trigger}
@@ -38,6 +50,14 @@ export function Tabs<T extends string>({
               {item.count !== undefined && <span> · {item.count}</span>}
             </RadixTabs.Trigger>
           ))}
+          <span
+            className={styles.indicator}
+            aria-hidden="true"
+            style={{
+              width: `${100 / itemCount}%`,
+              transform: `translateX(${activeIndex * 100}%)`,
+            }}
+          />
         </RadixTabs.List>
         {note && <span class={styles.note}>{note}</span>}
       </div>
