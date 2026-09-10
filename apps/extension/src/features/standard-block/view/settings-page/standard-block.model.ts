@@ -11,10 +11,12 @@ export interface UseStandardBlockModelProps {
   sendMessage: (
     request: StandardBlockRequest,
   ) => Promise<StandardBlockResponse>;
+  initialHighlightedHostname?: string;
 }
 
 export function useStandardBlockModel({
   sendMessage,
+  initialHighlightedHostname,
 }: UseStandardBlockModelProps) {
   const [blocks, setBlocks] = useState<StandardBlock[]>([]);
   const [hostname, setHostname] = useState('');
@@ -24,6 +26,7 @@ export function useStandardBlockModel({
   const [domainSettingsFeedback, setDomainSettingsFeedback] = useState('');
   const [editingBlock, setEditingBlock] = useState<StandardBlock>();
   const [isLoading, setIsLoading] = useState(true);
+  const [highlightedHostname, setHighlightedHostname] = useState<string>();
   const [globalCooldownHours, setGlobalCooldownHours] = useState('1');
   const blockRows = useMemo(
     () => createStandardBlockRows(blocks, globalCooldownHours),
@@ -38,6 +41,14 @@ export function useStandardBlockModel({
 
     if (response.ok && 'blocks' in response) {
       setBlocks(response.blocks);
+      if (
+        initialHighlightedHostname &&
+        response.blocks.some(
+          (block) => block.hostname === initialHighlightedHostname,
+        )
+      ) {
+        setHighlightedHostname(initialHighlightedHostname);
+      }
       if ('settings' in response) {
         setGlobalCooldownHours(
           String(response.settings.globalCooldownMilliseconds / 3_600_000),
@@ -51,11 +62,20 @@ export function useStandardBlockModel({
     }
 
     setIsLoading(false);
-  }, [sendMessage]);
+  }, [initialHighlightedHostname, sendMessage]);
 
   useEffect(() => {
     void loadBlocks();
   }, [loadBlocks]);
+
+  useEffect(() => {
+    if (!highlightedHostname) return;
+    const timeout = window.setTimeout(
+      () => setHighlightedHostname(undefined),
+      1200,
+    );
+    return () => window.clearTimeout(timeout);
+  }, [highlightedHostname]);
 
   function setSettingsOpen(open: boolean) {
     setSettingsOpenState(open);
@@ -82,7 +102,9 @@ export function useStandardBlockModel({
     });
 
     if (response.ok && 'blocks' in response) {
+      const added = findAddedHostname(blocks, response.blocks);
       setBlocks(response.blocks);
+      setHighlightedHostname(added);
       setHostname('');
       setFeedback('Domínio bloqueado.');
     } else {
@@ -197,6 +219,7 @@ export function useStandardBlockModel({
     domainSettingsFeedback,
     editingBlock,
     isLoading,
+    highlightedHostname,
     globalCooldownHours,
     setHostname,
     setGlobalCooldownHours,
@@ -208,6 +231,14 @@ export function useStandardBlockModel({
     saveDomainCooldown,
     addSubdomainException,
   };
+}
+
+export function findAddedHostname(
+  previous: readonly StandardBlock[],
+  next: readonly StandardBlock[],
+): string | undefined {
+  const previousHostnames = new Set(previous.map((block) => block.hostname));
+  return next.find((block) => !previousHostnames.has(block.hostname))?.hostname;
 }
 
 export type StandardBlockModel = ReturnType<typeof useStandardBlockModel>;

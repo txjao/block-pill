@@ -14,6 +14,7 @@ export function PermanentBlockView(props: PermanentBlockModel) {
     confirmationOpen,
     feedback,
     isLoading,
+    highlightedHostname,
     setHostname,
     setConfirmationOpen,
     submitBlock,
@@ -69,7 +70,14 @@ export function PermanentBlockView(props: PermanentBlockModel) {
       ) : (
         <ul class={styles.list}>
           {blocks.map((block) => (
-            <li key={block.hostname}>
+            <li
+              class={
+                block.hostname === highlightedHostname
+                  ? styles.recentlyAdded
+                  : undefined
+              }
+              key={block.hostname}
+            >
               <strong>{block.hostname}</strong>
               <small>decisão permanente</small>
             </li>

@@ -13,16 +13,30 @@ type StandardBlockListProps = Pick<
   | 'editingBlock'
   | 'domainSettingsFeedback'
   | 'saveDomainCooldown'
+  | 'highlightedHostname'
 >;
 
 export function StandardBlockList(props: StandardBlockListProps) {
-  const { blockRows, isLoading, removeBlock, openDomainSettings } = props;
+  const {
+    blockRows,
+    highlightedHostname,
+    isLoading,
+    removeBlock,
+    openDomainSettings,
+  } = props;
 
   return (
     <>
       <ul class={styles.list}>
         {blockRows.map(({ block, cooldownLabel }) => (
-          <li key={block.hostname}>
+          <li
+            class={
+              block.hostname === highlightedHostname
+                ? styles.recentlyAdded
+                : undefined
+            }
+            key={block.hostname}
+          >
             <span>
               <strong>{block.hostname}</strong>
               <small>{cooldownLabel}</small>

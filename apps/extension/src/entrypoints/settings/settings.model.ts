@@ -12,23 +12,27 @@ const settingsSections = [
 ] as const;
 
 export interface UseSettingsModelProps {
-  requestedSection: string | null;
+  requestedSection: SettingsSection;
+  requestedBlocksTab: BlocksTab;
+  requestedMode?: AntiModeId;
+  highlightedHostname?: string;
+  permanentHostname?: string;
+  openPermanentConfirmation: boolean;
 }
 
-function normalizeSection(section: string | null): SettingsSection {
-  return section === 'anti' ||
-    section === 'activity' ||
-    section === 'reflections'
-    ? section
-    : 'blocking';
-}
-
-export function useSettingsModel({ requestedSection }: UseSettingsModelProps) {
-  const [section, setSection] = useState<SettingsSection>(() =>
-    normalizeSection(requestedSection),
+export function useSettingsModel({
+  requestedSection,
+  requestedBlocksTab,
+  requestedMode,
+  highlightedHostname,
+  permanentHostname,
+  openPermanentConfirmation,
+}: UseSettingsModelProps) {
+  const [section, setSection] = useState<SettingsSection>(requestedSection);
+  const [blocksTab, setBlocksTab] = useState<BlocksTab>(requestedBlocksTab);
+  const [selectedMode, setSelectedMode] = useState<AntiModeId | undefined>(
+    requestedMode,
   );
-  const [blocksTab, setBlocksTab] = useState<BlocksTab>('flexible');
-  const [selectedMode, setSelectedMode] = useState<AntiModeId>();
   const [standardCount, setStandardCount] = useState(0);
   const [permanentCount, setPermanentCount] = useState(0);
 
@@ -49,6 +53,9 @@ export function useSettingsModel({ requestedSection }: UseSettingsModelProps) {
     selectedMode,
     standardCount,
     permanentCount,
+    highlightedHostname,
+    permanentHostname,
+    openPermanentConfirmation,
     selectSection,
     setBlocksTab,
     selectMode,

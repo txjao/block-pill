@@ -21,10 +21,18 @@ async function sendMessage(
 
 export function PermanentBlockPage({
   onCountChange,
+  initialHostname,
+  confirmationInitiallyOpen,
 }: {
   onCountChange?: (count: number) => void;
+  initialHostname?: string;
+  confirmationInitiallyOpen?: boolean;
 }) {
-  const model = usePermanentBlockModel({ sendMessage });
+  const model = usePermanentBlockModel({
+    sendMessage,
+    initialHostname,
+    confirmationInitiallyOpen,
+  });
 
   useEffect(
     () => onCountChange?.(model.blocks.length),

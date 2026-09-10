@@ -30,10 +30,15 @@ async function sendMessage(
 
 export function StandardBlockPage({
   onCountChange,
+  initialHighlightedHostname,
 }: {
   onCountChange?: (count: number) => void;
+  initialHighlightedHostname?: string;
 }) {
-  const model = useStandardBlockModel({ sendMessage });
+  const model = useStandardBlockModel({
+    sendMessage,
+    initialHighlightedHostname,
+  });
 
   useEffect(
     () => onCountChange?.(model.blocks.length),

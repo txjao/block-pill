@@ -28,6 +28,21 @@
   border-bottom: 1px solid var(--color-border-light);
 }
 
+.list li.recentlyAdded {
+  animation: recently-added 900ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes recently-added {
+  0%,
+  100% {
+    background: transparent;
+  }
+
+  30% {
+    background: color-mix(in srgb, var(--color-action) 14%, #fff);
+  }
+}
+
 .listActions {
   display: flex;
   align-items: center;
@@ -137,20 +152,17 @@
   padding: 0;
 }
 
-.createButton {
-  background: #a42f32;
-  border-color: #a42f32;
-}
-
-.createButton:hover:not(:disabled) {
-  background: var(--color-button-primary-hover);
-  border-color: var(--color-button-primary-hover);
-}
-
 .formCard header p {
   margin: 5px 0 0;
   color: var(--color-text-secondary);
   font-size: 0.8125rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .list li.recentlyAdded {
+    animation: none;
+    background: color-mix(in srgb, var(--color-action) 10%, #fff);
+  }
 }
 
 .form,

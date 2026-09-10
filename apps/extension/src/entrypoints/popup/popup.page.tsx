@@ -2,6 +2,10 @@ import { usePopupModel } from './popup.model';
 import { readPopupPreview } from './popup.mock';
 import { PopupView } from './popup.view';
 import type { AntiModeRequest, AntiModeResponse } from '@/features/anti-mode';
+import type {
+  StandardBlockRequest,
+  StandardBlockResponse,
+} from '@/features/standard-block';
 
 function closePopup(): void {
   window.close();
@@ -23,7 +27,7 @@ async function queryActiveTabUrl(): Promise<string | undefined> {
   return tab?.url;
 }
 
-async function sendMessage(
+async function sendAntiModeMessage(
   request: AntiModeRequest,
 ): Promise<AntiModeResponse> {
   try {
@@ -38,6 +42,22 @@ async function sendMessage(
   }
 }
 
+async function sendStandardBlockMessage(
+  request: StandardBlockRequest,
+): Promise<StandardBlockResponse> {
+  try {
+    return await chrome.runtime.sendMessage<
+      StandardBlockRequest,
+      StandardBlockResponse
+    >(request);
+  } catch {
+    return {
+      ok: false,
+      message: 'Não foi possível consultar os bloqueios deste site.',
+    };
+  }
+}
+
 export function PopupPage() {
   const preview = import.meta.env.DEV
     ? readPopupPreview(globalThis.location.search)
@@ -47,7 +67,8 @@ export function PopupPage() {
     createExtensionUrl,
     openTab,
     queryActiveTabUrl,
-    sendMessage,
+    sendAntiModeMessage,
+    sendStandardBlockMessage,
   });
   return <PopupView {...model} preview={preview} />;
 }

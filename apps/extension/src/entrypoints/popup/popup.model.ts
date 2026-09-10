@@ -4,6 +4,18 @@ import {
   type AntiModeRequest,
   type AntiModeResponse,
 } from '@/features/anti-mode';
+import {
+  STANDARD_BLOCK_MESSAGE_TYPE,
+  type StandardBlockRequest,
+  type StandardBlockResponse,
+  type StandardBlockSnapshot,
+} from '@/features/standard-block';
+import {
+  createSettingsPath,
+  resolvePopupSiteClassification,
+  type PopupSiteClassification,
+} from './popup-context';
+import { stimulatingDomains } from './stimulating-sites';
 
 const documentationUrl =
   'https://github.com/txjao/block-pill/blob/main/docs/BLOCKING_RULES.md';
@@ -13,7 +25,10 @@ export interface UsePopupModelProps {
   createExtensionUrl: (path: string) => string;
   openTab: (url: string) => Promise<void>;
   queryActiveTabUrl: () => Promise<string | undefined>;
-  sendMessage: (request: AntiModeRequest) => Promise<AntiModeResponse>;
+  sendAntiModeMessage: (request: AntiModeRequest) => Promise<AntiModeResponse>;
+  sendStandardBlockMessage: (
+    request: StandardBlockRequest,
+  ) => Promise<StandardBlockResponse>;
 }
 
 export function usePopupModel({
@@ -21,26 +36,61 @@ export function usePopupModel({
   createExtensionUrl,
   openTab,
   queryActiveTabUrl,
-  sendMessage,
+  sendAntiModeMessage,
+  sendStandardBlockMessage,
 }: UsePopupModelProps) {
   const [hostname, setHostname] = useState('site atual');
+  const [siteClassification, setSiteClassification] =
+    useState<PopupSiteClassification>({
+      kind: 'outside',
+      hostname: 'site atual',
+    });
+  const [standardSnapshot, setStandardSnapshot] =
+    useState<StandardBlockSnapshot>();
   const [incognitoAllowed, setIncognitoAllowed] = useState(true);
   const [incognitoStatus, setIncognitoStatus] = useState(
     'consultando proteção',
   );
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [pendingAction, setPendingAction] = useState<
+    'standard' | 'permanent'
+  >();
 
   const load = useCallback(async (): Promise<void> => {
     setIsLoading(true);
     try {
-      const activeTabUrl = await queryActiveTabUrl();
-      if (activeTabUrl) {
-        const url = new URL(activeTabUrl);
-        if (url.hostname) setHostname(url.hostname);
+      const [activeTabUrl, standardResponse] = await Promise.all([
+        queryActiveTabUrl(),
+        sendStandardBlockMessage({ type: STANDARD_BLOCK_MESSAGE_TYPE.list }),
+      ]);
+      const classification = resolvePopupSiteClassification({
+        currentUrl: activeTabUrl,
+        standardBlocks:
+          standardResponse.ok && 'blocks' in standardResponse
+            ? standardResponse.blocks
+            : [],
+        stimulatingDomains: standardResponse.ok
+          ? stimulatingDomains
+          : new Set<string>(),
+      });
+      if (!standardResponse.ok) setErrorMessage(standardResponse.message);
+      setHostname(classification.hostname);
+      setSiteClassification(classification);
+
+      if (classification.kind === 'paused') {
+        const statusResponse = await sendStandardBlockMessage({
+          type: STANDARD_BLOCK_MESSAGE_TYPE.status,
+          hostname: classification.hostname,
+        });
+        if (statusResponse.ok && 'snapshot' in statusResponse) {
+          setStandardSnapshot(statusResponse.snapshot);
+        } else if (!statusResponse.ok) {
+          setErrorMessage(statusResponse.message);
+        }
       }
 
-      const response = await sendMessage({
+      const response = await sendAntiModeMessage({
         type: INCOGNITO_MESSAGE_TYPE.status,
       });
       if (response.ok && 'incognitoAllowed' in response) {
@@ -54,22 +104,65 @@ export function usePopupModel({
     } finally {
       setIsLoading(false);
     }
-  }, [queryActiveTabUrl, sendMessage]);
+  }, [queryActiveTabUrl, sendAntiModeMessage, sendStandardBlockMessage]);
 
   useEffect(() => {
     void load();
   }, [load]);
 
-  async function openSettings(section: 'blocking' | 'anti'): Promise<void> {
+  async function openSettings(
+    section: 'blocking' | 'anti',
+    parameters: Record<string, string | undefined> = {},
+  ): Promise<boolean> {
     try {
       await openTab(
-        createExtensionUrl(
-          `src/entrypoints/settings/index.html?section=${section}`,
-        ),
+        createExtensionUrl(createSettingsPath({ section, ...parameters })),
       );
       closePopup();
+      return true;
     } catch {
       setErrorMessage('Não foi possível abrir as configurações.');
+      return false;
+    }
+  }
+
+  async function blockStandard(): Promise<void> {
+    setPendingAction('standard');
+    setErrorMessage('');
+    const response = await sendStandardBlockMessage({
+      type: STANDARD_BLOCK_MESSAGE_TYPE.add,
+      hostname,
+    });
+
+    if (!response.ok) {
+      setErrorMessage(response.message);
+      setPendingAction(undefined);
+      return;
+    }
+
+    const opened = await openSettings('blocking', {
+      tab: 'flexible',
+      highlight: hostname,
+    });
+    if (!opened) {
+      setErrorMessage(
+        'O site foi bloqueado, mas não foi possível abrir as configurações.',
+      );
+      setPendingAction(undefined);
+    }
+  }
+
+  async function preparePermanentBlock(): Promise<void> {
+    setPendingAction('permanent');
+    setErrorMessage('');
+    try {
+      await openSettings('blocking', {
+        tab: 'permanent',
+        hostname,
+        confirm: 'permanent',
+      });
+    } finally {
+      setPendingAction(undefined);
     }
   }
 
@@ -84,12 +177,17 @@ export function usePopupModel({
 
   return {
     hostname,
+    siteClassification,
+    standardSnapshot,
     incognitoAllowed,
     incognitoStatus,
     errorMessage,
     isLoading,
+    pendingAction,
     openSettings,
     openDocumentation,
+    blockStandard,
+    preparePermanentBlock,
   };
 }
 

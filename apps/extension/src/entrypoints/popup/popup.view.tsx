@@ -11,12 +11,13 @@ type PopupModel = ReturnType<typeof usePopupModel>;
 type PopupViewProps = PopupModel & { preview?: PopupPreviewFixture };
 
 export function PopupView(props: PopupViewProps) {
-  if (props.preview?.kind === 'stimulating') {
-    return <StimulatingPopup {...props} fixture={props.preview} />;
+  const context = props.preview ?? props.siteClassification;
+  if (context.kind === 'stimulating') {
+    return <StimulatingPopup {...props} fixture={context} />;
   }
 
-  if (props.preview?.kind === 'paused') {
-    return <PausedPopup {...props} fixture={props.preview} />;
+  if (context.kind === 'paused') {
+    return <PausedPopup {...props} fixture={context} />;
   }
 
   return <OutsidePopup {...props} />;
@@ -81,8 +82,17 @@ function OutsidePopup(props: PopupViewProps) {
 function StimulatingPopup({
   fixture,
   openSettings,
+  blockStandard,
+  preparePermanentBlock,
+  pendingAction,
+  errorMessage,
 }: PopupViewProps & {
-  fixture: Extract<PopupPreviewFixture, { kind: 'stimulating' }>;
+  fixture:
+    | Extract<PopupPreviewFixture, { kind: 'stimulating' }>
+    | {
+        kind: 'stimulating';
+        hostname: string;
+      };
 }) {
   return (
     <main class={styles.popup}>
@@ -108,27 +118,47 @@ function StimulatingPopup({
         <h1 id="stimulating-site">{fixture.hostname}</h1>
       </section>
       <div class={styles.contextActions}>
-        <Button fluid variant="primary" disabled>
-          Pausar 15 min
+        <Button
+          fluid
+          variant="primary"
+          loading={pendingAction === 'standard'}
+          disabled={pendingAction !== undefined}
+          onClick={() => void blockStandard()}
+        >
+          Bloquear
         </Button>
-        <Button fluid variant="secondary" disabled>
+        <Button
+          fluid
+          variant="secondary"
+          loading={pendingAction === 'permanent'}
+          disabled={pendingAction !== undefined}
+          onClick={() => void preparePermanentBlock()}
+        >
           Bloquear em definitivo
         </Button>
       </div>
       <dl class={styles.summary} aria-label="Resumo deste site">
-        <SummaryRow label="Tempo neste site hoje" value={fixture.timeToday} />
+        <SummaryRow
+          label="Tempo neste site hoje"
+          value={'timeToday' in fixture ? fixture.timeToday : 'sem dados ainda'}
+        />
         <SummaryRow
           label="Desde a instalação"
-          value={fixture.sinceInstallation}
+          value={
+            'sinceInstallation' in fixture
+              ? fixture.sinceInstallation
+              : 'sem dados ainda'
+          }
         />
       </dl>
       <Button
-        fluid
+        className={styles.settingsTextButton}
         variant="text"
         onClick={() => void openSettings('blocking')}
       >
         Abrir configurações
       </Button>
+      {errorMessage && <p class={styles.error}>{errorMessage}</p>}
     </main>
   );
 }
@@ -136,9 +166,25 @@ function StimulatingPopup({
 function PausedPopup({
   fixture,
   openSettings,
+  standardSnapshot,
 }: PopupViewProps & {
-  fixture: Extract<PopupPreviewFixture, { kind: 'paused' }>;
+  fixture:
+    | Extract<PopupPreviewFixture, { kind: 'paused' }>
+    | {
+        kind: 'paused';
+        hostname: string;
+      };
 }) {
+  const remainingMinutes =
+    'remainingMinutes' in fixture
+      ? fixture.remainingMinutes
+      : (standardSnapshot?.remainingMinutes ?? 0);
+  const statusLabel =
+    standardSnapshot?.status === 'cooldown'
+      ? 'Em tempo de espera'
+      : standardSnapshot?.status === 'active'
+        ? 'Acesso temporário ativo'
+        : 'Pausa flexível';
   return (
     <main class={`${styles.popup} ${styles.pausedPopup}`}>
       <section class={styles.pausedHeader}>
@@ -159,19 +205,29 @@ function PausedPopup({
       </section>
       <section class={styles.pausedBody}>
         <div class={styles.remainingTime}>
-          <strong>{fixture.remainingMinutes}</strong>
+          <strong>{remainingMinutes}</strong>
           <span>min restantes de uso</span>
         </div>
         <dl class={styles.summary} aria-label="Resumo desta pausa">
-          <SummaryRow label="Tipo de bloqueio" value={fixture.blockType} />
-          <SummaryRow label="Liberações hoje" value={fixture.releasesToday} />
+          <SummaryRow
+            label="Tipo de bloqueio"
+            value={'blockType' in fixture ? fixture.blockType : statusLabel}
+          />
+          <SummaryRow
+            label="Liberações hoje"
+            value={
+              'releasesToday' in fixture
+                ? fixture.releasesToday
+                : `${standardSnapshot?.usedMinutes ?? 0} de 15 min`
+            }
+          />
         </dl>
         <div class={styles.contextActions}>
           <Button fluid variant="primary" disabled>
-            Liberar por {fixture.remainingMinutes} min
+            Liberar por {remainingMinutes} min
           </Button>
           <Button
-            fluid
+            className={styles.settingsTextButton}
             variant="text"
             onClick={() => void openSettings('blocking')}
           >

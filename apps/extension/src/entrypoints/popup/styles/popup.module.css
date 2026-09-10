@@ -134,6 +134,11 @@
   margin-top: 18px;
 }
 
+.settingsTextButton {
+  justify-self: center;
+  margin: 14px auto 0;
+}
+
 .pausedPopup {
   padding: 0;
 }

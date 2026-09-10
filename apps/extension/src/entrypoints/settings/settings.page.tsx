@@ -1,10 +1,16 @@
 import { useSettingsModel } from './settings.model';
 import { SettingsView } from './settings.view';
+import {
+  consumedSettingsParameters,
+  readSettingsRequest,
+} from './settings.request';
 
 const settingsUrl = new URL(window.location.href);
-const requestedSection = settingsUrl.searchParams.get('section');
+const request = readSettingsRequest(settingsUrl.search);
 
-settingsUrl.searchParams.delete('section');
+consumedSettingsParameters.forEach((parameter) =>
+  settingsUrl.searchParams.delete(parameter),
+);
 
 history.replaceState(
   null,
@@ -13,6 +19,13 @@ history.replaceState(
 );
 
 export function SettingsPage() {
-  const model = useSettingsModel({ requestedSection });
+  const model = useSettingsModel({
+    requestedSection: request.section,
+    requestedBlocksTab: request.tab,
+    requestedMode: request.mode,
+    highlightedHostname: request.highlightedHostname,
+    permanentHostname: request.permanentHostname,
+    openPermanentConfirmation: request.openPermanentConfirmation,
+  });
   return <SettingsView {...model} />;
 }

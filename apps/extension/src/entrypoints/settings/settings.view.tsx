@@ -18,6 +18,9 @@ export function SettingsView(props: SettingsModel) {
     selectedMode,
     standardCount,
     permanentCount,
+    highlightedHostname,
+    permanentHostname,
+    openPermanentConfirmation,
     selectSection,
     setBlocksTab,
     selectMode,
@@ -108,10 +111,17 @@ export function SettingsView(props: SettingsModel) {
               }
             >
               <TabsContent value="flexible">
-                <StandardBlockPage onCountChange={setStandardCount} />
+                <StandardBlockPage
+                  initialHighlightedHostname={highlightedHostname}
+                  onCountChange={setStandardCount}
+                />
               </TabsContent>
               <TabsContent value="permanent">
-                <PermanentBlockPage onCountChange={setPermanentCount} />
+                <PermanentBlockPage
+                  initialHostname={permanentHostname}
+                  confirmationInitiallyOpen={openPermanentConfirmation}
+                  onCountChange={setPermanentCount}
+                />
               </TabsContent>
             </Tabs>
           </>

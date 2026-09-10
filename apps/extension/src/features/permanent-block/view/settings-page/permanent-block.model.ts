@@ -14,16 +14,23 @@ export interface UsePermanentBlockModelProps {
   sendMessage: (
     request: PermanentBlockRequest,
   ) => Promise<PermanentBlockResponse>;
+  initialHostname?: string;
+  confirmationInitiallyOpen?: boolean;
 }
 
 export function usePermanentBlockModel({
   sendMessage,
+  initialHostname,
+  confirmationInitiallyOpen = false,
 }: UsePermanentBlockModelProps) {
   const [blocks, setBlocks] = useState<PermanentBlock[]>([]);
-  const [hostname, setHostname] = useState('');
-  const [confirmationOpen, setConfirmationOpen] = useState(false);
+  const [hostname, setHostname] = useState(initialHostname ?? '');
+  const [confirmationOpen, setConfirmationOpen] = useState(
+    confirmationInitiallyOpen && initialHostname !== undefined,
+  );
   const [feedback, setFeedback] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [highlightedHostname, setHighlightedHostname] = useState<string>();
 
   const load = useCallback(async (): Promise<void> => {
     setIsLoading(true);
@@ -36,6 +43,15 @@ export function usePermanentBlockModel({
   }, [sendMessage]);
 
   useEffect(() => void load(), [load]);
+
+  useEffect(() => {
+    if (!highlightedHostname) return;
+    const timeout = window.setTimeout(
+      () => setHighlightedHostname(undefined),
+      1200,
+    );
+    return () => window.clearTimeout(timeout);
+  }, [highlightedHostname]);
 
   function submitBlock(event: JSX.TargetedSubmitEvent<HTMLFormElement>): void {
     event.preventDefault();
@@ -50,7 +66,12 @@ export function usePermanentBlockModel({
     });
 
     if (response.ok) {
+      const added = response.blocks.find(
+        (block) =>
+          !blocks.some((current) => current.hostname === block.hostname),
+      );
       setBlocks(response.blocks);
+      setHighlightedHostname(added?.hostname);
       setHostname('');
       setConfirmationOpen(false);
       setFeedback('Bloqueio permanente criado.');
@@ -67,6 +88,7 @@ export function usePermanentBlockModel({
     confirmationOpen,
     feedback,
     isLoading,
+    highlightedHostname,
     setHostname,
     setConfirmationOpen,
     submitBlock,
