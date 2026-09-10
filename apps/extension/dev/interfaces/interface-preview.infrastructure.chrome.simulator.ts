@@ -402,16 +402,17 @@ function createAntiModeConfig(
   goals: string[],
   hobbies: string[],
 ): AntiModeConfig {
+  const commitmentOngoing =
+    new URLSearchParams(globalThis.location.search).get('commitment') ===
+    'ongoing';
   return {
     id,
-    enabled: true,
+    enabled: commitmentOngoing,
     permanent: false,
     createdAt: currentTime - 14 * 86_400_000,
-    commitmentEndsAt:
-      new URLSearchParams(globalThis.location.search).get('commitment') ===
-      'ongoing'
-        ? currentTime + 31 * 86_400_000
-        : currentTime - 60_000,
+    commitmentEndsAt: commitmentOngoing
+      ? currentTime + 31 * 86_400_000
+      : undefined,
     goals,
     hobbies,
     philosophicalKnowledge: true,

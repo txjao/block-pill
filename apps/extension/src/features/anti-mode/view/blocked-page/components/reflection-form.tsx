@@ -1,5 +1,5 @@
 import type { AntiModeBlockedModel } from '@/features/anti-mode/view/blocked-page/anti-mode.blocked-model';
-import { Button } from '@/shared/ui/components/button';
+import { InteractiveHoverButton } from '@/shared/ui/components/interactive-hover-button';
 import styles from '@/features/anti-mode/view/blocked-page/anti-mode.blocked.module.css';
 
 type ReflectionFormProps = Pick<
@@ -55,13 +55,11 @@ export function ReflectionForm(props: ReflectionFormProps) {
         maxLength={4000}
         placeholder="Escreva apenas se isso ajudar você a entender o momento."
       />
-      <Button
-        variant="secondary"
-        type="button"
+      <InteractiveHoverButton
+        className={styles.reflectionSaveButton}
+        text="Salvar reflexão neste navegador"
         onClick={() => void saveReflection()}
-      >
-        Salvar reflexão neste navegador
-      </Button>
+      />
     </div>
   );
 }

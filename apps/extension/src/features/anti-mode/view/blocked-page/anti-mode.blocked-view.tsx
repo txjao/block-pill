@@ -42,8 +42,6 @@ export function AntiModeBlockedView(props: AntiModeBlockedModel) {
           </p>
         )}
 
-        <ReflectionQuotePage />
-
         {kind === 'warning' && (
           <div class={styles.needSection}>
             <h2>O que você estava procurando?</h2>
@@ -72,6 +70,8 @@ export function AntiModeBlockedView(props: AntiModeBlockedModel) {
             />
           </div>
         )}
+
+        <ReflectionQuotePage />
 
         <ReflectionForm {...props} feelingOptions={feelingOptions} />
 

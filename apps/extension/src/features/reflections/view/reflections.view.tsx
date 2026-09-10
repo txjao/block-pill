@@ -1,4 +1,5 @@
 import { Toggle } from '@/shared/ui/components/toggle';
+import type { ComponentChildren } from 'preact';
 import type { useReflectionsModel } from './reflections.model';
 import styles from './styles/reflections.module.css';
 
@@ -29,11 +30,18 @@ export function ReflectionsView({
   );
 }
 
-export function ReflectionQuoteView({ enabled }: Model) {
+export function ReflectionQuoteView({
+  enabled,
+  loading,
+  fallback,
+}: Model & { fallback?: ComponentChildren }) {
+  if (loading) return null;
   return enabled ? (
     <blockquote class={styles.quote}>
       <p>“Nenhum homem é livre se não for senhor de si mesmo.”</p>
       <cite>Epicteto</cite>
     </blockquote>
-  ) : null;
+  ) : (
+    <>{fallback}</>
+  );
 }

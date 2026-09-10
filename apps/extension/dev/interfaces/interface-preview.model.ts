@@ -9,7 +9,20 @@ const interfacePreviewOptions = [
     parameters: {
       interface: INTERFACE_PREVIEW_NAME.settings,
       section: 'anti',
+      mode: 'anti-porn',
       commitment: 'ongoing',
+    },
+    width: 1280,
+    height: 820,
+  },
+  {
+    id: 'settings-anti-setup',
+    label: 'Modos anti: configurar compromisso',
+    parameters: {
+      interface: INTERFACE_PREVIEW_NAME.settings,
+      section: 'anti',
+      mode: 'anti-porn',
+      commitment: 'inactive',
     },
     width: 1280,
     height: 820,

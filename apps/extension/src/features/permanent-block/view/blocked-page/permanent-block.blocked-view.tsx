@@ -13,9 +13,9 @@ export function PermanentBlockBlockedView({
   return (
     <main class={styles.page}>
       <PageBrand title="Bloqueio permanente" />
-      <ReflectionQuotePage />
       <section class={styles.interruption}>
         <h1>Você já tomou esta decisão.</h1>
+        <ReflectionQuotePage />
         <p>
           {hostname ? <strong>{hostname}</strong> : 'Este site'} continuará
           bloqueado. A extensão não oferece liberação temporária nem exceções

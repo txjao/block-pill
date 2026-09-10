@@ -70,6 +70,19 @@
   gap: 14px;
 }
 
+.reflectionForm :global(.interactive-hover-button-wrapper) {
+  width: 100%;
+}
+
+.reflectionSaveButton.reflectionSaveButton {
+  --interactive-button-background: var(--color-surface);
+  --interactive-button-foreground: var(--color-text);
+  --interactive-button-primary: var(--color-button-primary);
+  width: 100%;
+  border-color: var(--color-border-control);
+  border-radius: var(--radius-control);
+}
+
 .feelingGrid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

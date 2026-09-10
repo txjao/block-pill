@@ -1,4 +1,5 @@
 import { ChromeReflectionsRepository } from '@/features/reflections/infrastructure/reflections.repository.chrome';
+import type { ComponentChildren } from 'preact';
 import { useReflectionsModel } from './reflections.model';
 import { ReflectionsView, ReflectionQuoteView } from './reflections.view';
 
@@ -9,7 +10,11 @@ export function ReflectionsPage() {
   return <ReflectionsView {...model} />;
 }
 
-export function ReflectionQuotePage() {
+export function ReflectionQuotePage({
+  fallback,
+}: {
+  fallback?: ComponentChildren;
+} = {}) {
   const model = useReflectionsModel(repository);
-  return <ReflectionQuoteView {...model} />;
+  return <ReflectionQuoteView {...model} fallback={fallback} />;
 }

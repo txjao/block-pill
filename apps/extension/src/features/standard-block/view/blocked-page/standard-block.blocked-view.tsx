@@ -81,7 +81,8 @@ export function StandardBlockBlockedView(props: StandardBlockBlockedModel) {
           <span class={styles.eyebrow}>Pausa em andamento</span>
           <h1 id="blocked-title">Seu tempo acabou.</h1>
           <p>
-            O acesso a <strong>{hostname}</strong> volta em {availableIn}.
+            O acesso a <strong>{hostname}</strong> volta em{' '}
+            <strong>{availableIn}</strong>.
           </p>
           <p class={styles.supportCopy}>
             Use esta pausa para retomar o que você queria fazer.
@@ -107,16 +108,19 @@ export function StandardBlockBlockedView(props: StandardBlockBlockedModel) {
   return (
     <main class={styles.page}>
       <PageBrand title="Site bloqueado" />
-      <p class={styles.openingMessage}>
-        Todo mundo merece 15 minutinhos de descanso!
-      </p>
+      <ReflectionQuotePage
+        fallback={
+          <p class={styles.openingMessage}>
+            Todo mundo merece 15 minutinhos de descanso!
+          </p>
+        }
+      />
       <section class={styles.interruption} aria-labelledby="blocked-title">
         <span class={styles.eyebrow}>Antes do próximo clique</span>
         <h1 id="blocked-title">Uma pausa para escolher.</h1>
-        <ReflectionQuotePage />
         <p>
-          Você ainda tem {snapshot.remainingMinutes} minutos disponíveis neste
-          ciclo.
+          Você ainda tem <strong>{snapshot.remainingMinutes} minutos</strong>{' '}
+          disponíveis neste ciclo.
         </p>
         <div
           class={styles.accessActions}

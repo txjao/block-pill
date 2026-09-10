@@ -1,4 +1,6 @@
 .shell {
+  --color-button-primary: #9d1c20;
+  --color-button-primary-hover: #7d1619;
   display: flex;
   width: min(1120px, 100%);
   min-height: 720px;
@@ -78,15 +80,7 @@
 
 .submenu {
   display: grid;
-  grid-template-rows: 0fr;
-  margin: 0 0 0 8px;
-  opacity: 0;
-  visibility: hidden;
-  transition:
-    grid-template-rows 200ms cubic-bezier(0.16, 1, 0.3, 1),
-    margin 200ms cubic-bezier(0.16, 1, 0.3, 1),
-    opacity 130ms ease-out,
-    visibility 0s linear 200ms;
+  margin: 12px 0 14px 8px;
 }
 
 .submenuInner {
@@ -96,15 +90,6 @@
   overflow: hidden;
   padding-left: 12px;
   border-left: 1px solid var(--color-border-medium);
-}
-
-.navigation > div:hover .submenu,
-.navigation > div:focus-within .submenu {
-  grid-template-rows: 1fr;
-  margin: 12px 0 14px 8px;
-  opacity: 1;
-  visibility: visible;
-  transition-delay: 0s;
 }
 
 .antiIndex > p {
@@ -229,10 +214,10 @@
   }
 
   .navigation {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: start;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .submenu,
   .sidebarFooter {
     display: none;
   }
