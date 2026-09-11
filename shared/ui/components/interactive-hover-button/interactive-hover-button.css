@@ -11,6 +11,8 @@
   --interactive-button-background: var(--brand-white, #fff);
   --interactive-button-foreground: var(--brand-black, #000);
   --interactive-button-primary: var(--brand-red, #ff2c2c);
+  --interactive-button-hover-foreground: var(--interactive-button-foreground);
+  --interactive-button-border: var(--brand-black, #000);
   position: relative;
   display: inline-grid;
   place-items: center;
@@ -18,11 +20,11 @@
   width: fit-content;
   min-width: 8rem;
   max-width: 100%;
-  min-height: 44px;
+  min-height: var(--brand-button-height, 44px);
   overflow: hidden;
   padding: 0.5rem 1rem;
-  border: 1px solid var(--brand-black, #000);
-  border-radius: 999px;
+  border: 1px solid var(--interactive-button-border);
+  border-radius: var(--brand-button-radius);
   color: var(--interactive-button-foreground);
   background: var(--interactive-button-background);
   font: inherit;
@@ -39,7 +41,9 @@
   transform: translateX(0.25rem);
   max-width: 100%;
   white-space: nowrap;
-  transition: all 300ms;
+  transition:
+    transform 240ms ease-out,
+    opacity 180ms ease-out;
 }
 
 .interactive-hover-button__reveal {
@@ -50,11 +54,13 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  color: var(--interactive-button-foreground);
+  color: var(--interactive-button-hover-foreground);
   opacity: 0;
   pointer-events: none;
   transform: translateX(3rem);
-  transition: all 300ms;
+  transition:
+    transform 240ms ease-out,
+    opacity 180ms ease-out;
 }
 
 .interactive-hover-button__reveal > span {
@@ -70,14 +76,12 @@
 
 .interactive-hover-button__fill {
   position: absolute;
-  left: 25px;
-  top: 40%;
-  width: 0.5rem;
-  height: 0.5rem;
-  border-radius: 0.5rem;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   background: var(--interactive-button-primary);
-  transform: scale(1);
-  transition: all 300ms;
+  clip-path: circle(4px at 16px 50%);
+  transition: clip-path 280ms ease-out;
 }
 
 .interactive-hover-button:hover .interactive-hover-button__label,
@@ -94,11 +98,102 @@
 
 .interactive-hover-button:hover .interactive-hover-button__fill,
 .interactive-hover-button:focus-visible .interactive-hover-button__fill {
-  left: 0;
-  top: 0;
+  clip-path: circle(150% at 16px 50%);
+}
+
+.interactive-hover-button--primary {
+  --interactive-button-background: #b63838;
+  --interactive-button-foreground: #fff;
+  --interactive-button-primary: #992d2d;
+  --interactive-button-border: #b63838;
+}
+
+.interactive-hover-button--bright {
+  --interactive-button-background: var(
+    --brand-button-bright-background,
+    #ff2c2c
+  );
+  --interactive-button-foreground: var(--brand-button-bright-foreground, #000);
+  --interactive-button-primary: var(
+    --brand-button-bright-hover-background,
+    #000
+  );
+  --interactive-button-hover-foreground: var(
+    --brand-button-bright-hover-foreground,
+    #ff2c2c
+  );
+  --interactive-button-border: var(--brand-button-bright-background, #ff2c2c);
+}
+
+.interactive-hover-button--bright:hover,
+.interactive-hover-button--bright:focus-visible {
+  border-color: var(--brand-button-bright-hover-background, #000);
+}
+
+.interactive-hover-button--inverse {
+  --interactive-button-background: var(--brand-button-inverse-background, #000);
+  --interactive-button-foreground: var(
+    --brand-button-inverse-foreground,
+    #ff2c2c
+  );
+  --interactive-button-primary: var(
+    --brand-button-inverse-hover-background,
+    #ff2c2c
+  );
+  --interactive-button-hover-foreground: var(
+    --brand-button-inverse-hover-foreground,
+    #000
+  );
+  --interactive-button-border: var(--brand-button-inverse-background, #000);
+}
+
+.interactive-hover-button--inverse:hover,
+.interactive-hover-button--inverse:focus-visible {
+  border-color: var(--brand-button-inverse-hover-background, #ff2c2c);
+}
+
+.interactive-hover-button--dark {
+  --interactive-button-background: #000;
+  --interactive-button-foreground: #fff;
+  --interactive-button-primary: #292929;
+}
+
+.interactive-hover-button--compact {
+  min-height: 40px;
+  font-size: 0.875rem;
+}
+.interactive-hover-button-wrapper--fluid,
+.interactive-hover-button-wrapper--fluid > .interactive-hover-button {
   width: 100%;
-  height: 100%;
-  transform: scale(1.8);
+}
+.interactive-hover-button__icon {
+  display: inline-flex;
+  flex: none;
+}
+.interactive-hover-button__icon--start {
+  order: -1;
+}
+.interactive-hover-button__label {
+  position: relative;
+  z-index: 1;
+}
+.interactive-hover-button__label,
+.interactive-hover-button__reveal > span {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.interactive-hover-button:disabled .interactive-hover-button__label,
+.interactive-hover-button[aria-disabled='true']
+  .interactive-hover-button__label {
+  opacity: 1;
+  transform: none;
+}
+.interactive-hover-button:disabled .interactive-hover-button__fill,
+.interactive-hover-button:disabled .interactive-hover-button__reveal,
+.interactive-hover-button[aria-disabled='true'] .interactive-hover-button__fill,
+.interactive-hover-button[aria-disabled='true']
+  .interactive-hover-button__reveal {
+  display: none;
 }
 
 .interactive-hover-button--fluid {
@@ -106,9 +201,9 @@
 }
 
 .interactive-hover-button:focus-visible {
-  outline: 3px solid
-    color-mix(in srgb, var(--interactive-button-primary) 42%, transparent);
-  outline-offset: 3px;
+  outline: none;
+  box-shadow: 0 0 0 3px
+    color-mix(in srgb, var(--interactive-button-primary) 34%, transparent);
 }
 
 .interactive-hover-button:disabled,
@@ -124,6 +219,7 @@
   }
 
   .interactive-hover-button__label {
+    opacity: 1 !important;
     transform: none;
   }
 }
@@ -132,6 +228,6 @@
   .interactive-hover-button__label,
   .interactive-hover-button__reveal,
   .interactive-hover-button__fill {
-    transition-duration: 0.01ms;
+    transition: none;
   }
 }

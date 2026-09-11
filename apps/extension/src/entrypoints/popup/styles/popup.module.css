@@ -135,8 +135,8 @@
 }
 
 .settingsTextButton {
-  justify-self: center;
-  margin: 14px auto 0;
+  justify-self: stretch;
+  margin-top: 14px;
 }
 
 .pausedPopup {

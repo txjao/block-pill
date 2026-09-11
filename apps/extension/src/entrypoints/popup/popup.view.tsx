@@ -2,6 +2,7 @@ import type { usePopupModel } from './popup.model';
 import type { PopupPreviewFixture } from './popup.mock';
 import { Badge } from '@/shared/ui/components/badge';
 import { Button } from '@/shared/ui/components/button';
+import { InteractiveHoverButton } from '@/shared/ui/components/interactive-hover-button';
 import { PopupHeader } from './components/popup-header';
 import { SummaryRow } from './components/summary-row';
 import blockPillFilledIcon from '@workspace/shared/brand/icons/block-pill-filled.svg?url';
@@ -41,9 +42,12 @@ function OutsidePopup(props: PopupViewProps) {
         <strong>{isLoading ? 'Consultando esta aba…' : hostname}</strong>
         <Badge variant="outline">fora da lista</Badge>
       </div>
-      <Button fluid variant="primary" onClick={() => void openDocumentation()}>
-        Adicionar aos estimulantes
-      </Button>
+      <InteractiveHoverButton
+        fluid
+        variant="bright"
+        text="Adicionar aos estimulantes"
+        onClick={() => void openDocumentation()}
+      />
       <dl class={styles.summary} aria-label="Como cada proteção funciona">
         <SummaryRow label="Pausas flexíveis" value="até 15 min por ciclo" />
         <SummaryRow label="Decisões permanentes" value="sem liberação" />
@@ -61,7 +65,7 @@ function OutsidePopup(props: PopupViewProps) {
       <div class={styles.footerActions}>
         <Button
           fluid
-          variant="dark"
+          variant="inverse"
           onClick={() => void openSettings('blocking')}
         >
           Gerenciar bloqueios
@@ -118,15 +122,14 @@ function StimulatingPopup({
         <h1 id="stimulating-site">{fixture.hostname}</h1>
       </section>
       <div class={styles.contextActions}>
-        <Button
+        <InteractiveHoverButton
           fluid
-          variant="primary"
+          variant="bright"
+          text="Bloquear"
           loading={pendingAction === 'standard'}
           disabled={pendingAction !== undefined}
           onClick={() => void blockStandard()}
-        >
-          Bloquear
-        </Button>
+        />
         <Button
           fluid
           variant="secondary"
@@ -153,6 +156,7 @@ function StimulatingPopup({
       </dl>
       <Button
         className={styles.settingsTextButton}
+        fluid
         variant="text"
         onClick={() => void openSettings('blocking')}
       >
@@ -228,6 +232,7 @@ function PausedPopup({
           </Button>
           <Button
             className={styles.settingsTextButton}
+            fluid
             variant="text"
             onClick={() => void openSettings('blocking')}
           >

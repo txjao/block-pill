@@ -1,6 +1,18 @@
 import './interactive-hover-button.css';
 
 export interface InteractiveHoverButtonProps {
+  variant?: 'outline' | 'primary' | 'bright' | 'inverse' | 'dark';
+  size?: 'compact' | 'default';
+  fluid?: boolean;
+  icon?: unknown;
+  iconPosition?: 'start' | 'end';
+  colors?: {
+    background?: string;
+    foreground?: string;
+    hoverBackground?: string;
+    hoverForeground?: string;
+    border?: string;
+  };
   text?: string;
   className?: string;
   type?: 'button' | 'submit' | 'reset';
@@ -32,10 +44,33 @@ export function createInteractiveHoverButton(
     rel,
     ariaLabel,
     onClick,
+    variant = 'outline',
+    size = 'default',
+    fluid = false,
+    icon,
+    iconPosition = 'end',
+    colors,
   }: InteractiveHoverButtonProps,
 ) {
   const label = loading ? 'Aguarde…' : text;
-  const controlClassName = `interactive-hover-button ${className}`.trim();
+  const controlClassName =
+    `interactive-hover-button interactive-hover-button--${variant} interactive-hover-button--${size} ${className}`.trim();
+  const busy = disabled || loading;
+  const style = {
+    ...(colors?.background && {
+      '--interactive-button-background': colors.background,
+    }),
+    ...(colors?.foreground && {
+      '--interactive-button-foreground': colors.foreground,
+    }),
+    ...(colors?.hoverBackground && {
+      '--interactive-button-primary': colors.hoverBackground,
+    }),
+    ...(colors?.hoverForeground && {
+      '--interactive-button-hover-foreground': colors.hoverForeground,
+    }),
+    ...(colors?.border && { '--interactive-button-border': colors.border }),
+  };
 
   const arrow = h(
     'svg',
@@ -65,7 +100,23 @@ export function createInteractiveHoverButton(
         'aria-hidden': 'true',
       },
       h('span', null, label),
-      arrow,
+      iconPosition === 'start' && icon !== null
+        ? h(
+            'span',
+            {
+              className:
+                'interactive-hover-button__icon interactive-hover-button__icon--start',
+            },
+            icon ?? arrow,
+          )
+        : null,
+      iconPosition === 'end' && icon !== null
+        ? h(
+            'span',
+            { className: 'interactive-hover-button__icon' },
+            icon ?? arrow,
+          )
+        : null,
     ),
     h('div', {
       className: 'interactive-hover-button__fill',
@@ -78,10 +129,16 @@ export function createInteractiveHoverButton(
         'a',
         {
           className: controlClassName,
-          href,
+          href: busy ? undefined : href,
           target,
-          rel,
+          rel: rel ?? (target === '_blank' ? 'noopener noreferrer' : undefined),
           'aria-label': ariaLabel,
+          style,
+          'aria-disabled': busy || undefined,
+          'aria-busy': loading || undefined,
+          role: busy ? 'link' : undefined,
+          tabIndex: busy ? -1 : undefined,
+          onClick: busy ? undefined : onClick,
         },
         ...children,
       )
@@ -89,14 +146,21 @@ export function createInteractiveHoverButton(
         'button',
         {
           className: controlClassName,
+          style,
           type,
           disabled: disabled || loading,
           'aria-label': ariaLabel,
           'aria-busy': loading || undefined,
-          onClick,
+          onClick: busy ? undefined : onClick,
         },
         ...children,
       );
 
-  return h('div', { className: 'interactive-hover-button-wrapper' }, control);
+  return h(
+    'div',
+    {
+      className: `interactive-hover-button-wrapper${fluid ? ' interactive-hover-button-wrapper--fluid' : ''}`,
+    },
+    control,
+  );
 }

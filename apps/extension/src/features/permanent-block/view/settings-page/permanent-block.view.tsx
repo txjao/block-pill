@@ -1,6 +1,7 @@
 import type { usePermanentBlockModel } from './permanent-block.model';
 import { AlertDialog } from '@/shared/ui/components/alert-dialog';
 import { Button } from '@/shared/ui/components/button';
+import { TextLink } from '@/shared/ui/components/text-link';
 import blockPillIcon from '@workspace/shared/brand/icons/block-pill-transparent.svg?url';
 import styles from './permanent-block.module.css';
 
@@ -46,14 +47,14 @@ export function PermanentBlockView(props: PermanentBlockModel) {
           disabled={isLoading}
           required
         />
-        <Button variant="primary" type="submit" loading={isLoading}>
+        <Button variant="bright" type="submit" loading={isLoading}>
           Bloquear em definitivo
         </Button>
         <small>
           Use para o que você já decidiu que não volta a negociar.{' '}
-          <a href={documentationUrl} target="_blank" rel="noreferrer">
+          <TextLink href={documentationUrl} target="_blank" rel="noreferrer">
             Entenda os detalhes.
-          </a>
+          </TextLink>
         </small>
       </form>
 

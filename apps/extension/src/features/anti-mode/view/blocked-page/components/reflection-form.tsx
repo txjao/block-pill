@@ -56,6 +56,21 @@ export function ReflectionForm(props: ReflectionFormProps) {
         placeholder="Escreva apenas se isso ajudar você a entender o momento."
       />
       <InteractiveHoverButton
+        variant="outline"
+        colors={{ hoverBackground: '#b63838', hoverForeground: '#fff' }}
+        icon={
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            aria-hidden="true"
+          >
+            <path d="m5 12 4 4L19 6" />
+          </svg>
+        }
         className={styles.reflectionSaveButton}
         text="Salvar reflexão neste navegador"
         onClick={() => void saveReflection()}

@@ -3,7 +3,13 @@ import { forwardRef } from 'preact/compat';
 import styles from './button.module.css';
 
 export type ButtonVariant =
-  'primary' | 'secondary' | 'dark' | 'destructive' | 'text';
+  | 'primary'
+  | 'bright'
+  | 'inverse'
+  | 'secondary'
+  | 'dark'
+  | 'destructive'
+  | 'text';
 export type ButtonSize = 'compact' | 'default';
 
 export interface ButtonProps extends JSX.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -28,6 +34,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     },
     ref,
   ) {
+    const content = loading ? 'Aguarde…' : children;
     const classes = [
       styles.button,
       styles[variant],
@@ -49,7 +56,11 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         disabled={loading ? true : disabled}
         aria-busy={loading ? true : undefined}
       >
-        {loading ? 'Aguarde…' : children}
+        {variant === 'text' ? (
+          <span class={styles.textLabel}>{content}</span>
+        ) : (
+          content
+        )}
       </button>
     );
   },

@@ -25,4 +25,15 @@
     var(--brand-red) 86%,
     var(--brand-black)
   );
+
+  --brand-button-height: 44px;
+  --brand-button-radius: 999px;
+  --brand-button-bright-background: var(--brand-red);
+  --brand-button-bright-foreground: var(--brand-black);
+  --brand-button-bright-hover-background: var(--brand-black);
+  --brand-button-bright-hover-foreground: var(--brand-red);
+  --brand-button-inverse-background: var(--brand-black);
+  --brand-button-inverse-foreground: var(--brand-red);
+  --brand-button-inverse-hover-background: var(--brand-red);
+  --brand-button-inverse-hover-foreground: var(--brand-black);
 }
