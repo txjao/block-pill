@@ -177,6 +177,7 @@ async function recordStandardNavigation(
     [`${STANDARD_BLOCK_CONTEXT_KEY_PREFIX}${tabId}`]: {
       hostname: standard.hostname,
       attemptedHostname: hostname,
+      originalUrl: value,
     },
   });
 
@@ -193,7 +194,10 @@ async function recordStandardNavigation(
 
 async function getStandardBlockContext(
   tabId?: number,
-): Promise<{ hostname: string; attemptedHostname: string } | undefined> {
+): Promise<
+  | { hostname: string; attemptedHostname: string; originalUrl?: string }
+  | undefined
+> {
   if (tabId === undefined) return undefined;
 
   const key = `${STANDARD_BLOCK_CONTEXT_KEY_PREFIX}${tabId}`;
@@ -212,6 +216,8 @@ async function getStandardBlockContext(
   return {
     hostname: context.hostname,
     attemptedHostname: context.attemptedHostname,
+    originalUrl:
+      typeof context.originalUrl === 'string' ? context.originalUrl : undefined,
   };
 }
 

@@ -6,7 +6,18 @@ import { useStandardBlockBlockedModel } from './standard-block.blocked-model';
 import { StandardBlockBlockedView } from './standard-block.blocked-view';
 
 function navigate(url: string): void {
-  window.location.assign(url);
+  window.location.replace(url);
+}
+
+function subscribeToChanges(refresh: () => void): () => void {
+  const listener = (
+    changes: Record<string, chrome.storage.StorageChange>,
+    area: string,
+  ) => {
+    if (area === 'local' && 'standardBlocks' in changes) refresh();
+  };
+  chrome.storage.onChanged?.addListener(listener);
+  return () => chrome.storage.onChanged?.removeListener(listener);
 }
 
 function now(): number {
@@ -42,6 +53,7 @@ export function StandardBlockBlockedPage() {
     navigate,
     now,
     sendMessage,
+    subscribeToChanges,
   });
   return <StandardBlockBlockedView {...model} />;
 }

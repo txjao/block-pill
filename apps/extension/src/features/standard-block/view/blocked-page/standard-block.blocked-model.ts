@@ -1,4 +1,9 @@
 import { useEffect, useState } from 'preact/hooks';
+import {
+  hasStandardBlock,
+  resolveReturnUrl,
+} from './standard-block.return-url';
+import { parseHostname } from '@/shared/web-address/domain';
 import type {
   StandardBlockRequest,
   StandardBlockResponse,
@@ -17,6 +22,7 @@ export interface UseStandardBlockBlockedModelProps {
   hostname: string | null;
   navigate: (url: string) => void;
   now: () => number;
+  subscribeToChanges?: (refresh: () => void) => () => void;
   sendMessage: (
     request: StandardBlockRequest,
   ) => Promise<StandardBlockResponse>;
@@ -27,6 +33,7 @@ export function useStandardBlockBlockedModel({
   navigate,
   now,
   sendMessage,
+  subscribeToChanges,
 }: UseStandardBlockBlockedModelProps) {
   const hostname = requestedHostname ?? '';
   const [attemptedHostname, setAttemptedHostname] = useState('');
@@ -35,17 +42,42 @@ export function useStandardBlockBlockedModel({
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    let disposed = false;
+    let revision = 0;
     async function loadStatus(): Promise<void> {
+      const currentRevision = ++revision;
       if (!hostname) {
         setFeedback('Não foi possível identificar o domínio bloqueado.');
         setIsLoading(false);
         return;
       }
+      try {
+        parseHostname(hostname);
+      } catch {
+        setFeedback('O endereço do bloqueio é inválido.');
+        setIsLoading(false);
+        return;
+      }
       setIsLoading(true);
-      const [response, contextResponse] = await Promise.all([
+      const [response, contextResponse, listResponse] = await Promise.all([
         sendMessage({ type: STANDARD_BLOCK_MESSAGE_TYPE.status, hostname }),
         sendMessage({ type: STANDARD_BLOCK_MESSAGE_TYPE.context }),
+        sendMessage({ type: STANDARD_BLOCK_MESSAGE_TYPE.list }),
       ]);
+      if (disposed || currentRevision !== revision) return;
+      const context =
+        contextResponse.ok && 'context' in contextResponse
+          ? contextResponse.context
+          : undefined;
+      const returnUrl = resolveReturnUrl(hostname, context);
+      if (
+        listResponse.ok &&
+        'blocks' in listResponse &&
+        !hasStandardBlock(returnUrl, listResponse.blocks)
+      ) {
+        navigate(returnUrl);
+        return;
+      }
       if (response.ok && 'snapshot' in response) {
         setSnapshot(response.snapshot);
         setFeedback('');
@@ -63,8 +95,13 @@ export function useStandardBlockBlockedModel({
       setIsLoading(false);
     }
 
+    const unsubscribe = subscribeToChanges?.(() => void loadStatus());
     void loadStatus();
-  }, [hostname, sendMessage]);
+    return () => {
+      disposed = true;
+      unsubscribe?.();
+    };
+  }, [hostname, sendMessage, navigate, subscribeToChanges]);
 
   async function allowSubdomain() {
     if (!attemptedHostname) return;

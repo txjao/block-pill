@@ -18,7 +18,14 @@ export type {
 export type StandardBlockResponse =
   | { ok: true; blocks: StandardBlock[] }
   | { ok: true; snapshot: StandardBlockSnapshot }
-  | { ok: true; context?: { hostname: string; attemptedHostname: string } }
+  | {
+      ok: true;
+      context?: {
+        hostname: string;
+        attemptedHostname: string;
+        originalUrl?: string;
+      };
+    }
   | { ok: true; settings: StandardBlockSettings; blocks: StandardBlock[] }
   | { ok: false; message: string };
 
