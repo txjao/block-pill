@@ -16,8 +16,6 @@
 
 .interruption {
   margin-top: 48px;
-  padding-top: 28px;
-  border-top: 1px solid var(--color-border-medium);
 }
 
 .interruption h1 {
@@ -36,9 +34,7 @@
 
 .subdomainInterruption {
   margin-top: 0;
-  border-top: 1px solid var(--color-border-light);
-  padding-inline: 20px;
-  padding-bottom: 20px;
+  padding: 20px;
   background: var(--color-danger-surface);
 }
 
@@ -57,9 +53,6 @@
 
 .textLink {
   align-self: center;
-  color: var(--color-text);
-  font-weight: 700;
-  text-underline-offset: 3px;
 }
 
 .subdomainButton.subdomainButton {
@@ -72,8 +65,8 @@
 }
 
 .subdomainButton:focus-visible {
-  outline: var(--focus-light);
-  outline-offset: 3px;
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-action) 28%, transparent);
 }
 
 @media (max-width: 760px) {

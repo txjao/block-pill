@@ -5,6 +5,7 @@ import { PermanentBlockPage } from '@/features/permanent-block';
 import { StandardBlockPage } from '@/features/standard-block';
 import { ReflectionsPage } from '@/features/reflections';
 import { Brand } from '@/shared/ui/components/brand';
+import { HoverUnderline } from '@/shared/ui/components/hover-underline';
 import { Tabs, TabsContent } from '@/shared/ui/components/tabs';
 import styles from './styles/settings.module.css';
 
@@ -147,11 +148,19 @@ export function SettingsView(props: SettingsModel) {
               </p>
               <nav class={styles.modeLinks} aria-label="Escolher modo anti">
                 <button type="button" onClick={() => selectMode('anti-porn')}>
-                  <strong>Anti-pornografia</strong>
+                  <strong>
+                    <HoverUnderline className={styles.modeLinkTitle}>
+                      Anti-pornografia
+                    </HoverUnderline>
+                  </strong>
                   <span>Configure a proteção contra conteúdo adulto.</span>
                 </button>
                 <button type="button" onClick={() => selectMode('anti-bet')}>
-                  <strong>Anti-aposta</strong>
+                  <strong>
+                    <HoverUnderline className={styles.modeLinkTitle}>
+                      Anti-aposta
+                    </HoverUnderline>
+                  </strong>
                   <span>Configure a proteção contra apostas.</span>
                 </button>
               </nav>

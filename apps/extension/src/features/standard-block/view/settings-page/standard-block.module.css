@@ -29,7 +29,7 @@
 }
 
 .list li.recentlyAdded {
-  animation: recently-added 900ms cubic-bezier(0.16, 1, 0.3, 1);
+  animation: recently-added 1600ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes recently-added {

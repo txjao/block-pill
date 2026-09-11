@@ -115,7 +115,6 @@
 }
 
 .fieldGroup input,
-.fieldGroup select,
 .fieldGroup textarea,
 .domainForm input {
   min-height: 44px;
@@ -137,6 +136,106 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px;
+}
+
+.durationSelect {
+  display: inline-flex;
+  min-width: 0;
+  min-height: 44px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border-control);
+  border-radius: var(--radius-control);
+  color: var(--color-text);
+  background: var(--color-surface);
+  cursor: pointer;
+  transition:
+    border-color 160ms ease,
+    background-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.durationSelect:hover:not(:disabled) {
+  border-color: var(--color-text);
+  background: color-mix(in srgb, var(--color-action) 4%, #fff);
+}
+
+.durationSelect[data-state='open'] {
+  border-color: var(--color-action);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-action) 16%, transparent);
+}
+
+.durationSelect:disabled {
+  color: var(--color-text-muted);
+  background: var(--color-disabled);
+  cursor: not-allowed;
+}
+
+.durationSelectIcon {
+  display: inline-flex;
+  transition: transform 160ms ease;
+}
+
+.durationSelect[data-state='open'] .durationSelectIcon {
+  transform: rotate(180deg);
+}
+
+.durationSelectContent {
+  z-index: 50;
+  min-width: var(--radix-select-trigger-width);
+  overflow: hidden;
+  border: 1px solid var(--color-border-medium);
+  border-radius: 12px;
+  background: var(--color-surface);
+  box-shadow: 0 14px 36px rgb(0 0 0 / 16%);
+  transform-origin: var(--radix-select-content-transform-origin);
+  animation: duration-select-in 140ms ease-out;
+}
+
+.durationSelectViewport {
+  padding: 6px;
+}
+
+.durationSelectItem {
+  position: relative;
+  display: flex;
+  min-height: 40px;
+  align-items: center;
+  padding: 8px 38px 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.durationSelectItem[data-highlighted] {
+  outline: none;
+  color: #000;
+  background: color-mix(in srgb, var(--color-action) 16%, #fff);
+}
+
+.durationSelectItem[data-state='checked'] {
+  font-weight: 650;
+}
+
+.durationSelectIndicator {
+  position: absolute;
+  right: 12px;
+  display: inline-flex;
+  color: var(--color-action);
+}
+
+@keyframes duration-select-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .checkbox {

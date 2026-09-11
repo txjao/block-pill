@@ -106,7 +106,7 @@ export function AntiModeView(props: AntiModeModel) {
             }
             required
           />
-          <Button type="submit" disabled={isLoading}>
+          <Button variant="bright" type="submit" disabled={isLoading}>
             Adicionar site
           </Button>
         </div>

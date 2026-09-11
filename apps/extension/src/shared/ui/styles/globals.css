@@ -105,8 +105,8 @@ input:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
 [tabindex]:focus-visible {
-  outline: var(--focus-light);
-  outline-offset: 3px;
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-action) 28%, transparent);
 }
 
 ::selection {

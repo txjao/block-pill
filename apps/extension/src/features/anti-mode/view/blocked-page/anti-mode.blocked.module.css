@@ -78,7 +78,6 @@
   --interactive-button-background: var(--color-surface);
   --interactive-button-foreground: var(--color-text);
   --interactive-button-primary: var(--color-button-primary);
-  width: 100%;
   border-color: var(--color-border-control);
   border-radius: var(--radius-control);
 }

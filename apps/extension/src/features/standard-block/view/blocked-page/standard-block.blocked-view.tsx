@@ -3,6 +3,7 @@ import type { useStandardBlockBlockedModel } from './standard-block.blocked-mode
 import { Button } from '@/shared/ui/components/button';
 import { InteractiveHoverButton } from '@/shared/ui/components/interactive-hover-button';
 import { PageBrand } from '@/shared/ui/components/page-brand';
+import { TextLink } from '@/shared/ui/components/text-link';
 import styles from './standard-block.blocked.module.css';
 
 type StandardBlockBlockedModel = ReturnType<
@@ -57,14 +58,14 @@ export function StandardBlockBlockedView(props: StandardBlockBlockedModel) {
               loading={isLoading}
               onClick={() => void allowSubdomain()}
             />
-            <a
-              class={styles.textLink}
+            <TextLink
+              className={styles.textLink}
               href={documentationUrl}
               target="_blank"
               rel="noreferrer"
             >
               Entender mais
-            </a>
+            </TextLink>
           </div>
           {feedback && <p role="alert">{feedback}</p>}
         </section>
@@ -76,10 +77,10 @@ export function StandardBlockBlockedView(props: StandardBlockBlockedModel) {
     return (
       <main class={styles.page}>
         <PageBrand title="Site bloqueado" />
-        <ReflectionQuotePage />
         <section class={styles.interruption} aria-labelledby="blocked-title">
           <span class={styles.eyebrow}>Pausa em andamento</span>
           <h1 id="blocked-title">Seu tempo acabou.</h1>
+          <ReflectionQuotePage />
           <p>
             O acesso a <strong>{hostname}</strong> volta em{' '}
             <strong>{availableIn}</strong>.
@@ -96,9 +97,9 @@ export function StandardBlockBlockedView(props: StandardBlockBlockedModel) {
     return (
       <main class={styles.page}>
         <PageBrand title="Site bloqueado" />
-        <ReflectionQuotePage />
         <section class={styles.interruption}>
           <h1>Acesso temporário ativo</h1>
+          <ReflectionQuotePage />
           <p>Você já pode voltar para {hostname}.</p>
         </section>
       </main>
@@ -108,16 +109,16 @@ export function StandardBlockBlockedView(props: StandardBlockBlockedModel) {
   return (
     <main class={styles.page}>
       <PageBrand title="Site bloqueado" />
-      <ReflectionQuotePage
-        fallback={
-          <p class={styles.openingMessage}>
-            Todo mundo merece 15 minutinhos de descanso!
-          </p>
-        }
-      />
       <section class={styles.interruption} aria-labelledby="blocked-title">
         <span class={styles.eyebrow}>Antes do próximo clique</span>
         <h1 id="blocked-title">Uma pausa para escolher.</h1>
+        <ReflectionQuotePage
+          fallback={
+            <p class={styles.openingMessage}>
+              Todo mundo merece 15 minutinhos de descanso!
+            </p>
+          }
+        />
         <p>
           Você ainda tem <strong>{snapshot.remainingMinutes} minutos</strong>{' '}
           disponíveis neste ciclo.

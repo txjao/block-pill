@@ -6,8 +6,6 @@
 
 .interruption {
   margin-top: 48px;
-  padding-top: 28px;
-  border-top: 1px solid var(--color-border-medium);
 }
 
 .interruption h1 {

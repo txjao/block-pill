@@ -10,8 +10,8 @@ export function AntiModeBlockedView(props: AntiModeBlockedModel) {
   const {
     accessDurations,
     feelingOptions,
-    hostname,
     kind,
+    mode,
     config,
     need,
     feedback,
@@ -28,10 +28,13 @@ export function AntiModeBlockedView(props: AntiModeBlockedModel) {
       <section class={styles.interruption} aria-labelledby="anti-blocked-title">
         <span class={styles.eyebrow}>Uma pausa escolhida por você</span>
         <h1 id="anti-blocked-title">{title} está protegendo este momento.</h1>
-        <p>
-          <strong>{hostname}</strong> pode afastar você dos objetivos
-          escolhidos.
-        </p>
+        {kind === 'warning' && mode === 'anti-bet' && (
+          <p>
+            Páginas ligadas a apostas podem reunir promoções, resultados em
+            tempo real e decisões rápidas. Esse ritmo pode dificultar a pausa
+            antes de gastar.
+          </p>
+        )}
         {config?.goals.length ? (
           <blockquote>
             Você ativou este modo por: {config.goals.join(', ')}.

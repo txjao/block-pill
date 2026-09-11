@@ -60,6 +60,7 @@ export function StandardBlockView(props: StandardBlockModel) {
               required
             />
             <Button
+              variant="bright"
               className={styles.createButton}
               type="submit"
               loading={isLoading}

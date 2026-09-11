@@ -1,7 +1,9 @@
 import type {
   AntiModeConfig,
+  AntiDurationUnit,
   AntiModeId,
 } from '@/features/anti-mode/domain/anti-mode.types';
+import * as Select from 'radix-ui/select';
 import { Toggle } from '@/shared/ui/components/toggle';
 import { Button } from '@/shared/ui/components/button';
 import type { AntiModeModel } from '@/features/anti-mode/view/settings-page/anti-mode.model';
@@ -79,21 +81,36 @@ export function AntiModeConfiguration(props: ConfigurationProps) {
                 updateDraft(mode, 'durationValue', event.currentTarget.value)
               }
             />
-            <select
+            <Select.Root
               value={draft.durationUnit}
               disabled={draft.permanent}
-              onChange={(event) =>
-                updateDraft(
-                  mode,
-                  'durationUnit',
-                  event.currentTarget.value as 'days' | 'months' | 'years',
-                )
+              onValueChange={(value) =>
+                updateDraft(mode, 'durationUnit', value as AntiDurationUnit)
               }
             >
-              <option value="days">dias</option>
-              <option value="months">meses</option>
-              <option value="years">anos</option>
-            </select>
+              <Select.Trigger
+                className={styles.durationSelect}
+                aria-label="Unidade da duração"
+              >
+                <Select.Value />
+                <Select.Icon className={styles.durationSelectIcon}>
+                  <ChevronDownIcon />
+                </Select.Icon>
+              </Select.Trigger>
+              <Select.Portal>
+                <Select.Content
+                  className={styles.durationSelectContent}
+                  position="popper"
+                  sideOffset={6}
+                >
+                  <Select.Viewport className={styles.durationSelectViewport}>
+                    <DurationOption value="days">dias</DurationOption>
+                    <DurationOption value="months">meses</DurationOption>
+                    <DurationOption value="years">anos</DurationOption>
+                  </Select.Viewport>
+                </Select.Content>
+              </Select.Portal>
+            </Select.Root>
           </div>
         </div>
         <Toggle
@@ -148,5 +165,52 @@ export function AntiModeConfiguration(props: ConfigurationProps) {
         </small>
       </div>
     </form>
+  );
+}
+
+function DurationOption({
+  value,
+  children,
+}: {
+  value: AntiDurationUnit;
+  children: string;
+}) {
+  return (
+    <Select.Item className={styles.durationSelectItem} value={value}>
+      <Select.ItemText>{children}</Select.ItemText>
+      <Select.ItemIndicator className={styles.durationSelectIndicator}>
+        <CheckIcon />
+      </Select.ItemIndicator>
+    </Select.Item>
+  );
+}
+
+function ChevronDownIcon() {
+  return (
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="m4 6 4 4 4-4"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.75"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  );
+}
+
+function CheckIcon() {
+  return (
+    <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true">
+      <path
+        d="m3.5 8 3 3 6-6"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.75"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
   );
 }
