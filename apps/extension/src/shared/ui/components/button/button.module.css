@@ -1,0 +1,140 @@
+.button {
+  justify-self: start;
+  width: fit-content;
+  max-width: 100%;
+  display: inline-flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-control);
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: center;
+  cursor: pointer;
+}
+
+.default {
+  min-height: 44px;
+  padding: 0 16px;
+}
+
+.compact {
+  min-height: 40px;
+  padding: 0 17px;
+}
+
+.fluid {
+  width: 100%;
+}
+
+.primary {
+  color: var(--color-button-primary-text);
+  background: var(--color-button-primary);
+  border-color: var(--color-button-primary);
+}
+
+.primary:hover:not(:disabled) {
+  background: var(--color-button-primary-hover);
+  border-color: var(--color-button-primary-hover);
+}
+
+.secondary {
+  color: var(--color-text);
+  background: var(--color-surface);
+  border-color: var(--color-border-control);
+}
+
+.bright,
+.inverse {
+  min-height: var(--brand-button-height);
+  padding-inline: 20px;
+  font-weight: 700;
+  transition:
+    color 160ms ease,
+    background-color 160ms ease,
+    border-color 160ms ease;
+}
+
+.bright {
+  color: var(--brand-button-bright-foreground);
+  background: var(--brand-button-bright-background);
+  border-color: var(--brand-button-bright-background);
+}
+.bright:hover:not(:disabled) {
+  color: var(--brand-button-bright-hover-foreground);
+  background: var(--brand-button-bright-hover-background);
+  border-color: var(--brand-button-bright-hover-background);
+}
+
+.bright:active:not(:disabled) {
+  color: var(--brand-button-bright-hover-foreground);
+  background: var(--brand-button-bright-hover-background);
+  border-color: var(--brand-button-bright-hover-background);
+}
+
+.inverse {
+  color: var(--brand-button-inverse-foreground);
+  background: var(--brand-button-inverse-background);
+  border-color: var(--brand-button-inverse-background);
+}
+
+.inverse:hover:not(:disabled),
+.inverse:active:not(:disabled) {
+  color: var(--brand-button-inverse-hover-foreground);
+  background: var(--brand-button-inverse-hover-background);
+  border-color: var(--brand-button-inverse-hover-background);
+}
+
+.secondary:hover:not(:disabled) {
+  border-color: var(--color-text);
+  background: color-mix(in srgb, var(--color-text) 5%, var(--color-surface));
+}
+
+.secondary:active:not(:disabled) {
+  background: color-mix(in srgb, var(--color-text) 9%, var(--color-surface));
+}
+
+.dark {
+  color: #fff;
+  background: #000;
+  border-color: #000;
+}
+
+.dark:hover:not(:disabled) {
+  background: #292929;
+}
+
+.destructive {
+  color: var(--color-danger);
+  background: var(--color-danger-surface);
+  border-color: transparent;
+}
+
+.text {
+  background-color: transparent;
+  min-height: 40px;
+  padding-inline: 8px;
+  color: var(--color-text);
+}
+
+.textLabel {
+  display: inline-block;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-position: center bottom;
+  background-repeat: no-repeat;
+  background-size: 0 1px;
+  transition: background-size 180ms ease-out;
+}
+
+.text:hover:not(:disabled) .textLabel {
+  background-size: 100% 1px;
+}
+
+.button:disabled {
+  color: var(--color-text-muted);
+  background: var(--color-disabled);
+  border-color: var(--color-disabled);
+  cursor: not-allowed;
+}

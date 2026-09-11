@@ -6,12 +6,17 @@ O repositório também contém a landing page pública do projeto.
 
 ## Estado do projeto
 
-O primeiro fluxo de bloqueio padrão está implementado: domínios podem ser
-adicionados e removidos nas configurações, são armazenados localmente e geram
-regras persistentes de redirecionamento para a página de bloqueio.
+Os fluxos de bloqueio padrão, permanente, anti-pornografia e anti-aposta estão
+integrados às APIs Manifest V3. A extensão oferece liberações temporárias,
+cooldown por domínio, proteção anônima autorizada pelo usuário, reflexões locais
+e recomendações durante as pausas.
 
 A organização do código e as regras de dependência estão descritas em
 [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md).
+As regras de produto já validadas estão em
+[docs/BLOCKING_RULES.md](./docs/BLOCKING_RULES.md).
+O roteiro de validação manual e automatizada está em
+[docs/TEST_PLAN.md](./docs/TEST_PLAN.md).
 
 ## Estrutura
 
@@ -20,7 +25,8 @@ apps/
 ├── extension/  # Extensão Manifest V3
 └── web/        # Landing page publicada na Vercel
 shared/
-└── brand/      # Identidade visual consumida pelas duas aplicações
+├── brand/      # Identidade visual consumida pelas duas aplicações
+└── ui/         # Implementações de interface consumidas pelas duas aplicações
 ```
 
 O workspace é coordenado por pnpm. Cada aplicação possui configuração, scripts,

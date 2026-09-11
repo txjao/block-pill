@@ -1,0 +1,1 @@
+export { registerChromeBrowserRuntime } from './runtime';

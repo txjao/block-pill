@@ -1,5 +1,6 @@
-import { repo } from "../content";
-import { SiteHeader } from "./SiteHeader";
+import { repo } from '@/content';
+import { SiteHeader } from './SiteHeader';
+import { InteractiveHoverButton } from './ui/interactive-hover-button';
 
 export function Hero() {
   return (
@@ -14,24 +15,37 @@ export function Hero() {
             Interrompa o impulso. <em>Não a sua autonomia.</em>
           </h1>
           <p>
-            Block Pill cria uma pausa consciente entre você e os sites que capturam sua atenção.
-            Local, aberta e sem vigilância.
+            Block Pill cria uma pausa consciente entre você e os sites que
+            capturam sua atenção. Local, aberta e sem vigilância.
           </p>
           <div className="hero-actions">
-            <a className="button button-primary" href={repo} target="_blank" rel="noreferrer">
-              Explorar o código
-            </a>
-            <a className="text-link" href="#como">
+            <InteractiveHoverButton
+              className="interactive-hover-button--fluid"
+              text="Explorar o código"
+              href={repo}
+              target="_blank"
+              rel="noreferrer"
+            />
+            <a
+              className="text-link motion-link motion-link--vertical"
+              href="#como"
+            >
               Entender a pausa <span aria-hidden="true">↓</span>
             </a>
           </div>
         </div>
-        <div className="hero-mechanism" role="img" aria-label="Um impulso encontra uma barreira e se transforma em escolha">
+        <div
+          className="hero-mechanism"
+          role="img"
+          aria-label="Um impulso encontra uma barreira e se transforma em escolha"
+        >
           <span className="mechanism-label">impulso</span>
           <div className="route" />
           <span className="impulse" data-impulse />
           <span className="barrier" data-barrier />
-          <span className="choice" data-choice><span>escolha</span></span>
+          <span className="choice" data-choice>
+            <span>escolha</span>
+          </span>
         </div>
       </div>
     </section>

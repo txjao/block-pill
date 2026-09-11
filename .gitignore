@@ -1,6 +1,7 @@
 node_modules/
 dist/
 coverage/
+.new_features/
 *.zip
 .DS_Store
 

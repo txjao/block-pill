@@ -1,0 +1,9 @@
+.textLink {
+  color: var(--color-text);
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.textLink:focus-visible {
+  border-radius: 2px;
+}

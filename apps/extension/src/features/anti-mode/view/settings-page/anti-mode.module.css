@@ -1,0 +1,342 @@
+.section {
+  min-width: 0;
+}
+
+.breadcrumb {
+  margin: 0 0 12px;
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.pageHeader h1 {
+  margin: 0;
+  font-size: 1.875rem;
+  line-height: 1.1;
+  letter-spacing: -0.035em;
+}
+
+.pageHeader p {
+  max-width: 58ch;
+  margin: 8px 0 0;
+  color: var(--color-text-secondary);
+}
+
+.permissionAlert {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-top: 24px;
+  padding: 14px 16px;
+  border-left: 3px solid var(--color-action);
+  border-radius: 12px;
+  background: var(--color-danger-surface);
+}
+
+.permissionAlert p {
+  margin: 3px 0 0;
+  color: var(--color-text-secondary);
+  font-size: 0.8125rem;
+}
+
+.statusRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-top: 26px;
+  padding: 18px 0;
+  border-top: 1px solid var(--color-border-light);
+  border-bottom: 1px solid var(--color-border-medium);
+}
+
+.statusRow > span {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 6px 10px;
+}
+
+.statusRow small {
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+}
+
+.statusRow p {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: 0.8125rem;
+}
+
+.configuration {
+  margin-top: 18px;
+  padding: 24px 22px 26px;
+  border-top: 1px solid var(--color-border-light);
+  background: var(--color-canvas);
+}
+
+.configuration > header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.configuration > header small {
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 20px;
+}
+
+.fieldGroup {
+  display: grid;
+  gap: 7px;
+}
+
+.fieldGroup > label,
+.fieldGroup > span,
+.domainForm > label {
+  font-size: 0.78125rem;
+  font-weight: 650;
+}
+
+.fieldGroup p,
+.domainForm p {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+}
+
+.fieldGroup input,
+.fieldGroup textarea,
+.domainForm input {
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border-control);
+  border-radius: var(--radius-control);
+  color: var(--color-text);
+  background: var(--color-surface);
+}
+
+.fieldGroup textarea {
+  min-height: 94px;
+  resize: none;
+  line-height: 1.6;
+  padding: 14px;
+}
+
+.durationRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.durationSelect {
+  display: inline-flex;
+  min-width: 0;
+  min-height: 44px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border-control);
+  border-radius: var(--radius-control);
+  color: var(--color-text);
+  background: var(--color-surface);
+  cursor: pointer;
+  transition:
+    border-color 160ms ease,
+    background-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.durationSelect:hover:not(:disabled) {
+  border-color: var(--color-text);
+  background: color-mix(in srgb, var(--color-action) 4%, #fff);
+}
+
+.durationSelect[data-state='open'] {
+  border-color: var(--color-action);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-action) 16%, transparent);
+}
+
+.durationSelect:disabled {
+  color: var(--color-text-muted);
+  background: var(--color-disabled);
+  cursor: not-allowed;
+}
+
+.durationSelectIcon {
+  display: inline-flex;
+  transition: transform 160ms ease;
+}
+
+.durationSelect[data-state='open'] .durationSelectIcon {
+  transform: rotate(180deg);
+}
+
+.durationSelectContent {
+  z-index: 50;
+  min-width: var(--radix-select-trigger-width);
+  overflow: hidden;
+  border: 1px solid var(--color-border-medium);
+  border-radius: 12px;
+  background: var(--color-surface);
+  box-shadow: 0 14px 36px rgb(0 0 0 / 16%);
+  transform-origin: var(--radix-select-content-transform-origin);
+  animation: duration-select-in 140ms ease-out;
+}
+
+.durationSelectViewport {
+  padding: 6px;
+}
+
+.durationSelectItem {
+  position: relative;
+  display: flex;
+  min-height: 40px;
+  align-items: center;
+  padding: 8px 38px 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.durationSelectItem[data-highlighted] {
+  outline: none;
+  color: #000;
+  background: color-mix(in srgb, var(--color-action) 16%, #fff);
+}
+
+.durationSelectItem[data-state='checked'] {
+  font-weight: 650;
+}
+
+.durationSelectIndicator {
+  position: absolute;
+  right: 12px;
+  display: inline-flex;
+  color: var(--color-action);
+}
+
+@keyframes duration-select-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.checkbox {
+  display: flex;
+  grid-column: 1 / -1;
+  align-items: flex-start;
+  gap: 9px;
+  font-size: 0.8125rem;
+  align-items: center;
+  padding-block: 8px;
+}
+
+.activationActions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 28px;
+}
+.activationActions small {
+  max-width: 34ch;
+  color: var(--color-text-muted);
+}
+
+.checkbox input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--color-action);
+}
+
+.domainForm {
+  margin-top: 24px;
+  padding-top: 22px;
+  border-top: 1px solid var(--color-border-medium);
+}
+
+.domainForm > div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.domains {
+  margin-top: 16px;
+  color: var(--color-text-secondary);
+  font-size: 0.8125rem;
+}
+
+.explanation {
+  max-width: 66ch;
+  margin-top: 34px;
+  padding-top: 26px;
+  border-top: 1px solid var(--color-border-medium);
+}
+
+.explanation h2 {
+  margin: 0;
+  font-size: 1.1875rem;
+  letter-spacing: -0.02em;
+}
+
+.explanation p {
+  margin: 12px 0 0;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+.activeCommitment {
+  margin-top: 20px;
+  padding: 18px;
+  border-radius: 12px;
+  background: var(--color-success-surface);
+}
+
+.activeCommitment p {
+  margin: 6px 0 0;
+  color: var(--color-success);
+}
+
+.feedback {
+  margin-top: 16px;
+  color: var(--color-text-secondary);
+}
+
+@media (max-width: 700px) {
+  .statusRow,
+  .permissionAlert {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .checkbox {
+    grid-column: 1;
+  }
+
+  .domainForm > div {
+    grid-template-columns: 1fr;
+  }
+}

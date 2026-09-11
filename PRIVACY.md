@@ -14,17 +14,25 @@ Block Pill foi concebida para funcionar localmente e ajudar o usuário sem trans
 
 ## Armazenamento local
 
-Os domínios bloqueados são armazenados em `chrome.storage.local`. Eles não são
-enviados ou sincronizados com serviços externos e são apagados quando a extensão
-é desinstalada.
+Os domínios bloqueados, configurações, objetivos, hobbies, tentativas, sentimentos
+e relatos opcionais são armazenados em `chrome.storage.local`. O histórico guarda
+somente domínio e caminho; query strings e fragmentos são descartados. Esses dados
+não são enviados ou sincronizados e são apagados quando a extensão é desinstalada.
 
 ## Permissões atuais
 
 - `storage`: persiste a lista de domínios no dispositivo.
+- `alarms`: encerra liberações temporárias mesmo quando o service worker estiver
+  suspenso.
+- `tabs`: redireciona todas as abas controláveis quando uma liberação termina.
+- `webNavigation`: identifica tentativas e armazena somente domínio e caminho,
+  sem conteúdo da página, query string ou fragmento.
 - `declarativeNetRequest`: permite ao navegador aplicar regras declarativas sem
   entregar à extensão o conteúdo das requisições.
 - Acesso a páginas HTTP e HTTPS: permite redirecionar domínios escolhidos pelo
   usuário para a página local de bloqueio.
 
-A extensão não usa `tabs`, `webNavigation` ou content scripts para realizar o
-bloqueio padrão.
+O acesso ao modo anônimo não pode ser concedido automaticamente. Quando o usuário
+o habilita na página do Chrome, a extensão consegue fechar janelas anônimas durante
+um compromisso anti. Revogar essa permissão remove tecnicamente esse controle, e a
+interface passa a exibir um alerta.

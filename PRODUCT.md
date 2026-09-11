@@ -25,10 +25,12 @@ A pessoa instala a extensão, cadastra domínios nas configurações e encontra 
 ## Capabilities and Constraints
 
 - Bloqueios padrão podem ser adicionados e removidos.
+- Bloqueios padrão oferecem até 15 minutos cumulativos por ciclo e cooldown configurável.
+- Bloqueios permanentes não podem ser removidos pela interface.
+- Modos anti-pornografia e anti-aposta oferecem compromissos temporários ou permanentes, recomendações locais e proteção da navegação anônima quando autorizada pelo usuário.
 - Endereços são normalizados para o domínio correspondente.
 - As regras persistentes de redirecionamento usam APIs do Chrome.
 - Os dados de bloqueio permanecem no navegador.
-- Desbloqueio temporário e outros modos de intervenção ainda são ideias futuras e não devem ser apresentados como disponíveis.
 - A base existente usa Preact, TypeScript, Vite e Manifest V3.
 
 ## Brand Commitments

@@ -1,0 +1,191 @@
+/*
+ * Landing interaction and viewport polish.
+ * Remove this stylesheet import from index.tsx to revert this pass.
+ */
+
+main > section:not(.hero) {
+  min-height: 100svh;
+}
+
+#como,
+#principios {
+  scroll-margin-top: 92px;
+}
+
+.site-header {
+  border-bottom: 1px solid var(--brand-line-inverse, var(--line));
+}
+
+.header-inner {
+  gap: clamp(24px, 5vw, 72px);
+}
+
+nav {
+  gap: clamp(22px, 3vw, 40px);
+  font-weight: 650;
+}
+
+.nav-link {
+  padding-block: 12px;
+}
+
+.nav-cta {
+  min-height: 44px;
+  padding: 6px 6px 6px 15px;
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  border-radius: 12px;
+  font-weight: 700;
+  text-decoration: none;
+  transition:
+    color 180ms cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 180ms cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 180ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-cta span {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-left: 1px solid currentColor;
+  transition: transform 180ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.motion-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  color: inherit;
+  line-height: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.motion-link::after {
+  position: absolute;
+  bottom: -0.25rem;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  content: '';
+  background-color: currentColor;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.motion-link > span {
+  display: inline-block;
+  flex: 0 0 auto;
+}
+
+.motion-link:focus-visible::after {
+  transform: scaleX(1);
+}
+
+.capabilities,
+.principles,
+.roadmap,
+.contribute {
+  align-content: center;
+}
+
+.capabilities,
+.principles,
+.roadmap {
+  padding-block: clamp(72px, 10vh, 120px);
+}
+
+.contribute {
+  height: auto;
+  min-height: 100svh;
+  padding-block: clamp(72px, 10vh, 120px);
+  align-items: center;
+}
+
+.contribute .interactive-hover-button {
+  transition: border-color 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.contribute .interactive-hover-button:hover,
+.contribute .interactive-hover-button:focus-visible {
+  border-color: var(--brand-white);
+}
+
+@keyframes link-arrow-vertical {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  40% {
+    transform: translateY(-3px);
+  }
+
+  72% {
+    transform: translateY(2px);
+  }
+}
+
+@keyframes link-arrow-external {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+
+  50% {
+    transform: translate(3px, -3px);
+  }
+}
+
+@media (hover: hover) {
+  .motion-link:hover::after {
+    transform: scaleX(1);
+  }
+
+  .motion-link--vertical:hover > span {
+    animation: link-arrow-vertical 680ms cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  }
+
+  .motion-link--external:hover > span {
+    animation: link-arrow-external 680ms cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  }
+
+  .nav-cta:hover {
+    color: var(--brand-black);
+    background: var(--brand-white);
+    border-color: var(--brand-white);
+  }
+
+  .nav-cta:hover span {
+    transform: translate(2px, -2px);
+  }
+}
+
+@media (max-width: 520px) {
+  .nav-cta {
+    padding: 5px 5px 5px 12px;
+  }
+
+  .nav-cta span {
+    width: 28px;
+    height: 28px;
+  }
+
+  #como,
+  #principios {
+    scroll-margin-top: 84px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .motion-link > span,
+  .nav-cta span {
+    animation: none !important;
+    transform: none !important;
+  }
+}

@@ -1,0 +1,233 @@
+.interactive-hover-button-wrapper {
+  position: relative;
+  display: inline-flex;
+  justify-content: center;
+  width: fit-content;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.interactive-hover-button {
+  --interactive-button-background: var(--brand-white, #fff);
+  --interactive-button-foreground: var(--brand-black, #000);
+  --interactive-button-primary: var(--brand-red, #ff2c2c);
+  --interactive-button-hover-foreground: var(--interactive-button-foreground);
+  --interactive-button-border: var(--brand-black, #000);
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  box-sizing: border-box;
+  width: fit-content;
+  min-width: 8rem;
+  max-width: 100%;
+  min-height: var(--brand-button-height, 44px);
+  overflow: hidden;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--interactive-button-border);
+  border-radius: var(--brand-button-radius);
+  color: var(--interactive-button-foreground);
+  background: var(--interactive-button-background);
+  font: inherit;
+  font-weight: 600;
+  line-height: 1.25;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.interactive-hover-button__label {
+  grid-area: 1 / 1;
+  display: inline-block;
+  transform: translateX(0.25rem);
+  max-width: 100%;
+  white-space: nowrap;
+  transition:
+    transform 240ms ease-out,
+    opacity 180ms ease-out;
+}
+
+.interactive-hover-button__reveal {
+  position: relative;
+  z-index: 10;
+  grid-area: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: var(--interactive-button-hover-foreground);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(3rem);
+  transition:
+    transform 240ms ease-out,
+    opacity 180ms ease-out;
+}
+
+.interactive-hover-button__reveal > span {
+  min-width: 0;
+  white-space: nowrap;
+}
+
+.interactive-hover-button__arrow {
+  width: 24px;
+  height: 24px;
+  flex: 0 0 auto;
+}
+
+.interactive-hover-button__fill {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--interactive-button-primary);
+  clip-path: circle(4px at 16px 50%);
+  transition: clip-path 280ms ease-out;
+}
+
+.interactive-hover-button:hover .interactive-hover-button__label,
+.interactive-hover-button:focus-visible .interactive-hover-button__label {
+  opacity: 0;
+  transform: translateX(3rem);
+}
+
+.interactive-hover-button:hover .interactive-hover-button__reveal,
+.interactive-hover-button:focus-visible .interactive-hover-button__reveal {
+  opacity: 1;
+  transform: translateX(-0.25rem);
+}
+
+.interactive-hover-button:hover .interactive-hover-button__fill,
+.interactive-hover-button:focus-visible .interactive-hover-button__fill {
+  clip-path: circle(150% at 16px 50%);
+}
+
+.interactive-hover-button--primary {
+  --interactive-button-background: #b63838;
+  --interactive-button-foreground: #fff;
+  --interactive-button-primary: #992d2d;
+  --interactive-button-border: #b63838;
+}
+
+.interactive-hover-button--bright {
+  --interactive-button-background: var(
+    --brand-button-bright-background,
+    #ff2c2c
+  );
+  --interactive-button-foreground: var(--brand-button-bright-foreground, #000);
+  --interactive-button-primary: var(
+    --brand-button-bright-hover-background,
+    #000
+  );
+  --interactive-button-hover-foreground: var(
+    --brand-button-bright-hover-foreground,
+    #ff2c2c
+  );
+  --interactive-button-border: var(--brand-button-bright-background, #ff2c2c);
+}
+
+.interactive-hover-button--bright:hover,
+.interactive-hover-button--bright:focus-visible {
+  border-color: var(--brand-button-bright-hover-background, #000);
+}
+
+.interactive-hover-button--inverse {
+  --interactive-button-background: var(--brand-button-inverse-background, #000);
+  --interactive-button-foreground: var(
+    --brand-button-inverse-foreground,
+    #ff2c2c
+  );
+  --interactive-button-primary: var(
+    --brand-button-inverse-hover-background,
+    #ff2c2c
+  );
+  --interactive-button-hover-foreground: var(
+    --brand-button-inverse-hover-foreground,
+    #000
+  );
+  --interactive-button-border: var(--brand-button-inverse-background, #000);
+}
+
+.interactive-hover-button--inverse:hover,
+.interactive-hover-button--inverse:focus-visible {
+  border-color: var(--brand-button-inverse-hover-background, #ff2c2c);
+}
+
+.interactive-hover-button--dark {
+  --interactive-button-background: #000;
+  --interactive-button-foreground: #fff;
+  --interactive-button-primary: #292929;
+}
+
+.interactive-hover-button--compact {
+  min-height: 40px;
+  font-size: 0.875rem;
+}
+.interactive-hover-button-wrapper--fluid,
+.interactive-hover-button-wrapper--fluid > .interactive-hover-button {
+  width: 100%;
+}
+.interactive-hover-button__icon {
+  display: inline-flex;
+  flex: none;
+}
+.interactive-hover-button__icon--start {
+  order: -1;
+}
+.interactive-hover-button__label {
+  position: relative;
+  z-index: 1;
+}
+.interactive-hover-button__label,
+.interactive-hover-button__reveal > span {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.interactive-hover-button:disabled .interactive-hover-button__label,
+.interactive-hover-button[aria-disabled='true']
+  .interactive-hover-button__label {
+  opacity: 1;
+  transform: none;
+}
+.interactive-hover-button:disabled .interactive-hover-button__fill,
+.interactive-hover-button:disabled .interactive-hover-button__reveal,
+.interactive-hover-button[aria-disabled='true'] .interactive-hover-button__fill,
+.interactive-hover-button[aria-disabled='true']
+  .interactive-hover-button__reveal {
+  display: none;
+}
+
+.interactive-hover-button--fluid {
+  padding-inline: 1.5rem;
+}
+
+.interactive-hover-button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px
+    color-mix(in srgb, var(--interactive-button-primary) 34%, transparent);
+}
+
+.interactive-hover-button:disabled,
+.interactive-hover-button[aria-disabled='true'] {
+  opacity: 0.48;
+  cursor: not-allowed;
+}
+
+@media (hover: none) {
+  .interactive-hover-button__fill,
+  .interactive-hover-button__reveal {
+    display: none;
+  }
+
+  .interactive-hover-button__label {
+    opacity: 1 !important;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .interactive-hover-button__label,
+  .interactive-hover-button__reveal,
+  .interactive-hover-button__fill {
+    transition: none;
+  }
+}

@@ -1,0 +1,12 @@
+node_modules
+dist
+build
+coverage
+.git
+.new_features
+*.lock
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.ico

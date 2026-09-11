@@ -3,63 +3,437 @@
 O Block Pill é um workspace pnpm com duas aplicações independentes: a landing
 page pública e a extensão de navegador.
 
-## Diretórios
+## Diretórios do workspace
 
-- `apps/web`: landing page Preact/Vite preparada para deploy na Vercel.
-- `apps/extension`: pacote Manifest V3 e suas regras de negócio.
-- `docs`: decisões de arquitetura comuns ao repositório.
-- `shared/brand`: fontes oficiais da identidade visual consumidas pelas duas
-  aplicações; não contém comportamento específico de uma delas.
+- `apps/web`: landing page React/Vite preparada para deploy na Vercel.
+- `apps/extension`: extensão Manifest V3 e suas regras de negócio.
+- `docs`: decisões de produto e arquitetura comuns ao repositório.
+- `shared/brand`: identidade visual consumida pelas duas aplicações.
 
-Dentro de `apps/extension`:
+As aplicações não importam código uma da outra. Código só deve sair de uma
+aplicação quando já possuir consumidores concretos em mais de uma aplicação.
 
-- `src/entrypoints`: pontos de entrada executados pelo navegador, como service
-  worker, popup, configurações, página de bloqueio e futuros content scripts.
-- `src/modules`: regras de negócio puras. Bloqueios padrão, permanentes e de
-  conteúdo são módulos independentes.
-- `src/platform/chrome`: adaptações para APIs do Chrome, criadas somente quando
-  forem necessárias.
-- `src/shared/ui`: elementos visuais usados por mais de uma página da extensão.
+## Recortes funcionais na extensão
 
-Os content scripts são organizados por site em
-`apps/extension/src/entrypoints/content-scripts/<site>`.
+Cada funcionalidade fica em `apps/extension/src/features/<feature>` e contém
+tudo o que pertence a esse recorte do produto:
+
+```text
+features/
+├── standard-block/
+│   ├── application/
+│   ├── domain/
+│   ├── infrastructure/
+│   ├── _tests/
+│   ├── view/
+│   └── index.ts
+├── permanent-block/
+    ├── application/
+    ├── domain/
+    ├── infrastructure/
+    ├── _tests/
+    ├── view/
+│   └── index.ts
+├── anti-mode/       # motor compartilhado dos compromissos
+├── anti-porn/       # dados específicos da categoria
+├── anti-bet/        # dados específicos da categoria
+```
+
+Pastas vazias não são criadas antecipadamente. O motor `anti-mode` concentra as
+regras idênticas dos dois compromissos, enquanto listas e decisões específicas
+permanecem nos slices `anti-porn` e `anti-bet`.
+
+As responsabilidades internas são:
+
+- `domain`: valores, regras de negócio, constantes, schemas semânticos e
+  contratos necessários para executar essas regras;
+- `application`: controllers, casos de uso e mensagens que coordenam o domínio;
+- `infrastructure`: implementações de contratos para Chrome, armazenamento ou
+  outras APIs externas;
+- `view`: página, View, Model e componentes específicos do slice;
+- `_tests`: testes comportamentais do slice; o prefixo mantém a pasta próxima
+  do topo na árvore de arquivos;
+- `index.ts`: interface pública pequena do módulo.
+
+### O significado de Domain
+
+Domain é a área do problema que o software representa. Um modelo de domínio é
+uma seleção dos conceitos e regras relevantes dessa área; a camada `domain` é a
+fronteira usada no código para manter esse modelo independente da interface e
+do Chrome.
+
+No Block Pill, regras de cooldown, compromissos, orçamento de acesso temporário,
+normalização de domínios e limites de configuração pertencem a essa camada. Elas
+são representadas diretamente por tipos, schemas, funções e serviços, sem exigir
+classes para todo conceito.
+
+Uma feature não é automaticamente um Bounded Context. Em Domain-Driven Design,
+um Bounded Context é uma fronteira dentro da qual um modelo e sua linguagem têm
+significado consistente. As pastas em `features/` são inicialmente recortes
+funcionais; só devem ser descritas como Bounded Contexts quando suas fronteiras
+de linguagem, modelo e integração tiverem sido analisadas.
+
+O estudo de domínios em engenharia de software antecede Domain-Driven Design:
+James Neighbors descreveu domain analysis em 1980, FODA sistematizou análise de
+comunalidades e variabilidades em 1990, e Eric Evans consolidou o vocabulário de
+Domain-Driven Design em 2003. Referências:
+
+- [The Draco Approach to Constructing Software from Reusable Components](https://escholarship.org/uc/item/5687j6g6);
+- [Feature-Oriented Domain Analysis](https://www.sei.cmu.edu/library/feature-oriented-domain-analysis-foda-feasibility-study/);
+- [Domain-Driven Design Reference](https://www.domainlanguage.com/ddd/reference/);
+- [Domain Model, por Martin Fowler](https://martinfowler.com/eaaCatalog/domainModel.html).
+
+### Responsabilidade dos schemas
+
+A localização de um schema é definida pelo dado validado, não pela biblioteca
+usada para validá-lo:
+
+| Local                                | Responsabilidade                         | Exemplo                                 |
+| ------------------------------------ | ---------------------------------------- | --------------------------------------- |
+| `domain/*.schema.ts`                 | valores e invariantes de negócio         | hostname, cooldown, duração permitida   |
+| `application/*.messages.schema.ts`   | envelope de comandos e consultas         | `type` e payload de uma mensagem        |
+| `infrastructure/*.storage.schema.ts` | formato externo quando difere do domínio | versão ou migração de dados persistidos |
+
+Schemas de mensagem reutilizam schemas semânticos do domínio. A infraestrutura
+valida dados desconhecidos ao lê-los e também impede a persistência de modelos
+inválidos. Erros internos do Zod não fazem parte do contrato das Views; cada
+fronteira devolve uma mensagem estável da aplicação ou do domínio.
+
+## Módulos profundos e interface simples
+
+Detalhes permanecem dentro do slice. Quem o consome usa uma API curta, enquanto
+o controller orquestra serviço e adapta a resposta para a interface:
+
+```ts
+const controller = new StandardBlockController(
+  new StandardBlockService(repository, ruleManager, clock),
+);
+
+await controller.add('https://www.youtube.com/watch?v=123');
+```
+
+Nesse exemplo, normalização do hostname, prevenção de duplicidade, alocação da
+regra, persistência, atualização das regras Chrome e rollback ficam ocultos no
+serviço. O consumidor não precisa reproduzir essas decisões.
+
+## Interface: View, Model e Page
+
+A interface segue uma separação inspirada em MVVM:
+
+```text
+Page -> Model -> mensagens/controller
+  └──> View
+```
+
+- `standard-block.page.tsx` compõe Model e View;
+- `standard-block.model.ts` mantém estado e traduz ações da interface;
+- `standard-block.view.tsx` renderiza as propriedades recebidas.
+
+A `Page` também é a fronteira entre a tela e o ambiente. Ela lê parâmetros
+imutáveis, implementa operações que dependem de `chrome`, `window`, `history`
+ou do relógio e injeta essas funções no `Model`. O `Model` pode então ser
+testado com funções falsas, sem simular o navegador inteiro. A integração da
+`Page` é validada separadamente.
+
+A própria View deriva o tipo de suas propriedades do Model:
+
+```ts
+type StandardBlockModel = ReturnType<typeof useStandardBlockModel>;
+
+export function StandardBlockView(props: StandardBlockModel) {
+  const { blocks, addBlock, removeBlock } = props;
+  // renderização
+}
+```
+
+Isso evita manter manualmente uma segunda interface de props. A View ainda
+desestrutura `props` no corpo para deixar as dependências visíveis.
+
+Componentes específicos de uma tela são extraídos prioritariamente quando
+precisam de testes isolados ou quando a extração reduz claramente a
+responsabilidade da View principal. Reuso, comportamento próprio e múltiplos
+estados são sinais auxiliares; número de linhas, sozinho, não decide a extração.
+Elementos pequenos que apenas envolvem uma tag e uma classe permanecem na View.
+
+Cada superfície mantém seu CSS Module ao lado da View. Uma pasta `styles/` não é
+criada para um único arquivo, e um componente extraído mantém seu próprio CSS
+Module somente quando também possui estilos sob sua responsabilidade.
+
+As superfícies são diretórios explícitos dentro de `view/`:
+
+```text
+view/
+├── settings-page/
+│   ├── components/
+│   ├── feature.model.ts
+│   ├── feature.page.tsx
+│   ├── feature.view.tsx
+│   └── feature.module.css
+└── blocked-page/
+    ├── components/
+    ├── feature.blocked-model.ts
+    ├── feature.blocked-page.tsx
+    ├── feature.blocked-view.tsx
+    └── feature.blocked.module.css
+```
+
+Diretórios `components/` só existem quando há componentes extraídos. Toda tela
+mantém `Page`, `Model` e `View`: mesmo uma superfície estática recebe seus dados
+pela `Page` e os entrega à `View` por meio do `Model`.
+
+## Entrypoints
+
+`src/entrypoints` contém os arquivos exigidos pelo navegador ou pelo bundler:
+service worker (`background`), popup, configurações e página de bloqueio. Um
+entrypoint inicia um contexto e compõe dependências; ele não contém regras de
+negócio.
+
+Nas superfícies visuais, `Page` coordena e injeta dependências, `Model`
+concentra estado e lógica, e `View` apenas renderiza as propriedades recebidas.
+Arquivos CSS dos entrypoints ficam em `styles/`; componentes extraídos ficam em
+`components/`.
+
+Valores do ambiente que permanecem imutáveis durante a vida da página, como um
+parâmetro da URL de uma página isolada da extensão, são lidos uma vez pela
+`Page`. Entrypoints exclusivos podem fazer essa leitura no escopo do módulo.
+Pages reexportadas por uma feature usam inicialização memoizada, pois seu módulo
+também pode ser carregado em testes ou no background, onde `window` não existe.
+A `Page` injeta o valor no `Model` por meio de um objeto. Assim, o `Model` sabe
+interpretá-lo sem precisar saber como foi obtido nem acessar diretamente
+`window.location`:
+
+```ts
+const mode = new URLSearchParams(window.location.search).get('mode');
+
+export function BlockedPage() {
+  const model = useCreateBlockModel({ mode });
+  return <BlockedView {...model} />;
+}
+```
+
+Se um valor puder mudar sem recarregar a página, ele não deve seguir essa regra:
+a `Page` precisa observar a fonte da mudança e fornecer o valor atualizado ao
+`Model`.
+
+Settings é uma SPA dentro de seu próprio entrypoint. O parâmetro `section` serve
+somente para Popup abrir uma seção inicial específica. A `Page` lê e remove o
+parâmetro da URL; a partir daí, o `Model` controla qual seção é montada ou
+desmontada sem sincronizar a navegação interna com a URL.
+
+```text
+entrypoints/
+├── blocked/
+│   ├── blocked.model.ts
+│   ├── blocked.page.tsx
+│   ├── blocked.view.tsx
+│   ├── index.html
+│   └── index.tsx
+├── popup/
+│   ├── components/
+│   ├── styles/
+│   ├── popup.model.ts
+│   ├── popup.page.tsx
+│   └── popup.view.tsx
+└── settings/
+    ├── styles/
+    ├── settings.model.ts
+    ├── settings.page.tsx
+    └── settings.view.tsx
+```
+
+O manifest mantém a chave obrigatória `options_page`, mas ela aponta para o
+entrypoint `settings/`, nome que descreve a superfície no projeto.
+
+O `background` chama somente `registerChromeBrowserRuntime()`. O diretório
+`src/browser/chrome` integra as features às APIs do Chrome. Seu `runtime.ts`
+monta o contexto compartilhado e registra cada integração, sem conhecer alarmes,
+navegações ou formatos de mensagem específicos.
+
+```text
+browser/chrome/
+├── anti-mode/register-anti-mode.ts
+├── permanent-block/register-permanent-block.ts
+├── standard-block/register-standard-block.ts
+├── context.ts
+├── message-router.ts
+├── runtime.ts
+└── index.ts
+```
+
+Cada `register-*.ts` conecta sua feature aos eventos e APIs do navegador. O
+`message-router.ts` possui o único listener de mensagens e direciona cada uma
+pelo prefixo declarado pela própria feature; apenas o parser da feature de
+destino é executado.
+
+Content scripts futuros permanecem em
+`src/entrypoints/content-scripts/<site>` e delegam comportamento aos slices.
+
+## Imports e composição do build
+
+Imports estáticos são o padrão para páginas, componentes e slices da extensão.
+As seções atuais de Bloqueios e Modos anti não justificam uma etapa assíncrona de
+carregamento.
+
+Cada `index.ts` expõe somente a interface pública necessária do slice. Ele não
+deve reexportar indiscriminadamente View, domínio, aplicação e infraestrutura.
+Entrypoints consomem a interface pública do slice e não atravessam suas camadas
+internas.
+
+O Vite pode mover código usado por mais de um entrypoint para um chunk
+compartilhado. A existência desse arquivo não representa, por si só, um problema
+de performance. Imports dinâmicos somente serão adotados quando uma medição
+demonstrar custo relevante de inicialização ou de interpretação de código.
+
+Qualquer proposta de carregamento dinâmico deve registrar:
+
+- tamanho do build antes e depois;
+- entrypoints afetados;
+- tempo de inicialização observado;
+- estado de carregamento e tratamento de falha introduzidos;
+- benefício que compensa a complexidade adicional.
 
 ## Dependências
 
 ```text
-apps/web ───────────────────────> Preact + DOM
-apps/web ───────────────────────> shared/brand
-apps/extension/shared/ui ───────> shared/brand
-
-apps/extension/entrypoints -> modules
-apps/extension/entrypoints -> platform/chrome
-apps/extension/platform/chrome -> contratos dos modules
+entrypoint -> browser/chrome -> feature/application
+browser/chrome -> feature/infrastructure -> feature/domain
+feature/Page -> APIs do ambiente + feature/Model
+feature/Model -> contratos de feature/application
+feature/View -> propriedades produzidas pelo Model
+feature/domain -> shared sem dependências de plataforma
 ```
 
-Os módulos de negócio não podem depender de Chrome, Preact, `window` ou
-`document`. Essa fronteira permite testar as regras isoladamente com Vitest.
+O domínio não depende de Chrome, Preact, `window` ou `document`. As adaptações
+Chrome implementam contratos declarados pelo domínio, permitindo testes com
+implementações em memória.
 
-O `background` é o ponto de composição: ele conecta os módulos de negócio às
-implementações da plataforma e expõe operações aos outros contextos por
-mensagens tipadas.
+Views não declaram dados auxiliares nem executam funções de apresentação. Textos
+estruturados, opções, cálculos, formatação e decisões chegam pelo Model; a View
+mantém apenas condicionais e iterações necessárias para produzir o JSX.
 
-As aplicações não importam código uma da outra. Ambas podem consumir assets de
-`shared/brand`. Um pacote executável em `packages/` só deve ser criado quando
-existir reutilização concreta de código entre dois consumidores.
+Classes de erro ficam em `<domínio>.errors.ts`. Services importam e lançam essas
+classes, mas não as declaram no mesmo arquivo.
+
+## Formatação e análise estática
+
+O estilo do código não é definido manualmente por cada feature. O workspace usa
+o comportamento padrão do Prettier, mantendo apenas aspas simples como decisão
+local. Isso inclui indentação de dois espaços, ponto e vírgula, vírgula final e
+quebra automática de linhas.
+
+O ESLint usa os presets recomendados e estilísticos com informação de tipos do
+typescript-eslint, as regras fundamentais de Hooks e a configuração de
+compatibilidade com o Prettier. O comando `pnpm check` verifica formatação, lint,
+tipos, testes e builds.
+
+As aplicações continuam compilando com TypeScript 7. Como essa versão ainda não
+expõe a API consumida pelo typescript-eslint, a raiz mantém o pacote oficial de
+compatibilidade TypeScript 6 exclusivamente para a análise estática.
+
+`apps/extension/src/shared` contém apenas capacidades reutilizadas por mais de um
+slice. Cada capacidade explicita suas próprias responsabilidades:
+
+```text
+shared/
+├── web-address/
+│   ├── domain/          # Tipo, parser, erro e schema de hostname
+│   └── _tests/
+├── current-time/
+│   ├── domain/          # Contrato Clock consumido pelas regras de negócio
+│   └── infrastructure/  # Relógio concreto baseado no ambiente
+└── ui/
+    ├── components/      # Componentes reutilizáveis da extensão
+    ├── rendering/       # Inicialização do Preact nos entrypoints
+    └── styles/          # Tokens semânticos e estilos globais mínimos
+```
+
+Um tipo ou constante usado por apenas um domínio permanece dentro dele. O
+diretório `shared` da raiz do workspace tem outro alcance: contém recursos
+consumidos tanto pela extensão quanto pela aplicação web.
+
+`web-address` recebe um endereço informado pelo usuário e produz um `Hostname`
+validado e normalizado. `current-time` fornece o instante atual: regras de
+negócio dependem do contrato `Clock`, enquanto o runtime utiliza `systemClock`,
+baseado em `Date.now()`.
+
+## Tokens e estilos da interface
+
+A identidade visual e a estilização da extensão seguem quatro camadas:
+
+```text
+tokens da marca -> tokens semânticos da extensão -> CSS Modules -> variant
+```
+
+- `shared/brand/tokens.css` contém somente fundamentos compartilhados da marca;
+- a extensão traduz esses fundamentos em papéis semânticos, como canvas, texto,
+  ação, borda, foco e feedback;
+- `apps/extension/src/shared/ui/styles/globals.css` concentra fonte, reset,
+  tokens semânticos e comportamento de documento;
+- cada componente mantém seu layout e seus estados em um CSS Module;
+- componentes recebem diferenças visuais por `variant`, não por `tone`;
+- valores brutos de cor não são repetidos dentro de componentes quando existe um
+  token semântico equivalente.
+
+### Organização dos componentes
+
+Os componentes reutilizáveis da extensão ficam em
+`apps/extension/src/shared/ui/components/<componente>`. Cada diretório mantém o
+TSX, seu CSS Module e um `index.ts` lado a lado. Views importam a interface
+pública do diretório e não importam o arquivo interno nem o Radix diretamente.
+
+Primitives com comportamento complexo, como diálogo, abas e switch, são
+encapsulados pelos componentes compartilhados. Atualmente esses wrappers usam
+Radix com `preact/compat`. Essa dependência não altera o contrato das Views e
+pode ser substituída sem atravessar os vertical slices.
+
+O botão animado compartilhado entre a landing e a extensão permanece separado
+do botão base da extensão. A nova interface usa o botão simples; a animação não
+é transformada em comportamento implícito de toda ação.
+
+### Imports
+
+- `@/` aponta para o diretório `src` da aplicação atual;
+- `@workspace/` aponta para a raiz do workspace;
+- imports entre módulos não sobem diretórios com `../`;
+- `./` permanece permitido para arquivos que pertencem ao mesmo módulo, como um
+  componente e seu CSS Module.
+
+### Dados estáticos durante o refactor
+
+Mocks visuais temporários ficam próximos ao Model da superfície, nunca dentro
+do domínio, controller ou infraestrutura. Quando o contrato real ainda não
+existe, o estado correspondente não deve aparecer na interface de produção. O
+popup atual usa somente integrações existentes e não mantém um mock próprio.
+
+As lacunas conhecidas do handoff ficam documentadas em
+`.new_features/design_handoff_block_pill_interfaces/DYNAMIC_INTERFACE_REQUIREMENTS.md`.
+
+WCAG 2.2 AA é o requisito obrigatório: contraste mínimo de `4.5:1` para texto
+normal e `3:1` para texto grande, controles e indicadores significativos. O nível
+AAA de `7:1` é aplicado quando surgir naturalmente, sem comprometer identidade,
+clareza ou manutenção.
+
+Cor nunca é o único indicador de estado. Erro, sucesso, aviso, seleção e bloqueio
+também usam texto, ícone, borda, forma ou outro sinal perceptível. O foco possui
+tratamento próprio para superfícies claras e escuras, e movimentos não essenciais
+respeitam `prefers-reduced-motion`.
+
+## Convenções de nomes
+
+- O nome segue a ordem `<domínio-de-negócio>.<camada>.<browser>.<tipo>`;
+- segmentos que formam um mesmo conceito usam hífen, enquanto o ponto separa
+  responsabilidades: `standard-block-settings.repository.chrome.ts`;
+- o segmento de browser só existe quando a implementação depende daquela
+  plataforma;
+- extensões compostas mantêm seus pontos próprios, como `.module.css` e
+  `.test.ts`;
+- Constantes ficam em `<domínio>.constants.ts` dentro do slice; só são movidas
+  para `shared` após reutilização real entre domínios.
+- Bloqueio padrão e bloqueio permanente nunca compartilham o mesmo serviço ou
+  intervalo de IDs de regras.
 
 ## Builds
 
 - `apps/web/dist`: site estático da landing page.
 - `apps/extension/dist`: extensão validada contra o manifesto.
-- `pnpm check`: executa as verificações dos dois projetos.
-
-## Convenções
-
-- Bloqueio padrão e bloqueio permanente permanecem em módulos separados.
-- Constantes e tipos derivados ficam próximos da regra que representam.
-- Evitamos arquivos genéricos como `constants.ts` e diretórios vagos.
-- Código só vai para `shared` quando é utilizado por dois ou mais consumidores.
-- Não criamos diretórios ou abstrações antes de existir uma necessidade real.
-- `apps/extension/src/shared` continua sendo interno à extensão; `shared/` na
-  raiz é reservado ao que possui consumidores em aplicações diferentes.
-- A landing não depende de APIs ou artefatos internos da extensão.
+- `pnpm check`: executa testes, tipos e builds dos projetos.

@@ -1,0 +1,7 @@
+{
+  "symbols.folders.associations": {
+    "tests": "folder-red-code",
+    "_tests": "folder-red-code",
+    "__tests__": "folder-red-code"
+  }
+}

@@ -15,6 +15,25 @@
   --brand-inverse-foreground: var(--brand-white);
   --brand-muted: color-mix(in srgb, var(--brand-black) 62%, var(--brand-white));
   --brand-line: color-mix(in srgb, var(--brand-black) 18%, var(--brand-white));
-  --brand-line-inverse: color-mix(in srgb, var(--brand-white) 24%, var(--brand-black));
-  --brand-action-hover: color-mix(in srgb, var(--brand-red) 86%, var(--brand-black));
+  --brand-line-inverse: color-mix(
+    in srgb,
+    var(--brand-white) 24%,
+    var(--brand-black)
+  );
+  --brand-action-hover: color-mix(
+    in srgb,
+    var(--brand-red) 86%,
+    var(--brand-black)
+  );
+
+  --brand-button-height: 44px;
+  --brand-button-radius: 999px;
+  --brand-button-bright-background: var(--brand-red);
+  --brand-button-bright-foreground: var(--brand-black);
+  --brand-button-bright-hover-background: var(--brand-black);
+  --brand-button-bright-hover-foreground: var(--brand-red);
+  --brand-button-inverse-background: var(--brand-black);
+  --brand-button-inverse-foreground: var(--brand-red);
+  --brand-button-inverse-hover-background: var(--brand-red);
+  --brand-button-inverse-hover-foreground: var(--brand-black);
 }

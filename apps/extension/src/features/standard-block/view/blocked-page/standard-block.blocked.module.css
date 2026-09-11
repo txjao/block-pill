@@ -1,0 +1,84 @@
+.page {
+  width: min(100% - 32px, 1040px);
+  margin: 0 auto;
+  padding: 32px 0;
+}
+
+.openingMessage {
+  max-width: 60ch;
+  margin: 24px 0;
+  padding: 18px 0;
+  color: var(--color-text);
+  font-size: 1.2rem;
+  font-weight: 650;
+  line-height: 1.6;
+}
+
+.interruption {
+  margin-top: 48px;
+}
+
+.interruption h1 {
+  margin: 0;
+  max-width: 18ch;
+  font-size: clamp(2.2rem, 7vw, 4.5rem);
+  line-height: 0.98;
+  letter-spacing: -0.04em;
+}
+
+.interruption p {
+  margin: 16px 0 0;
+  color: var(--color-text-muted);
+  line-height: 1.55;
+}
+
+.subdomainInterruption {
+  margin-top: 0;
+  padding: 20px;
+  background: var(--color-danger-surface);
+}
+
+.eyebrow {
+  color: var(--color-danger);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.supportCopy {
+  max-width: 65ch;
+  color: var(--color-text-muted);
+}
+
+.textLink {
+  align-self: center;
+}
+
+.subdomainButton.subdomainButton {
+  --interactive-button-background: var(--color-button-primary);
+  --interactive-button-foreground: var(--color-button-primary-text);
+  --interactive-button-primary: var(--color-button-primary-hover);
+  border-color: var(--color-button-primary);
+  border-radius: var(--radius-control);
+  padding-inline: 20px;
+}
+
+.subdomainButton:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-action) 28%, transparent);
+}
+
+@media (max-width: 760px) {
+  .page {
+    width: min(100% - 24px, 1040px);
+    padding-top: 20px;
+  }
+}
+
+.accessActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 22px;
+}

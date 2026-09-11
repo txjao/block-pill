@@ -1,0 +1,107 @@
+import { ReflectionQuotePage } from '@/features/reflections';
+import type { AntiModeBlockedModel } from './anti-mode.blocked-model';
+import { Button } from '@/shared/ui/components/button';
+import { PageBrand } from '@/shared/ui/components/page-brand';
+import styles from './anti-mode.blocked.module.css';
+import { Recommendation } from './components/recommendation';
+
+export function AntiModeBlockedView(props: AntiModeBlockedModel) {
+  const {
+    accessDurations,
+    kind,
+    mode,
+    config,
+    need,
+    feedback,
+    isLoading,
+    recommendationText,
+    setNeed,
+    requestAccess,
+    title,
+  } = props;
+
+  return (
+    <main class={styles.page}>
+      <PageBrand title="Block Pill" />
+      <section class={styles.interruption} aria-labelledby="anti-blocked-title">
+        <span class={styles.eyebrow}>Uma pausa escolhida por você</span>
+        <h1 id="anti-blocked-title">{title} está protegendo este momento.</h1>
+        {kind === 'warning' && mode === 'anti-bet' && (
+          <p>
+            Páginas ligadas a apostas podem reunir promoções, resultados em
+            tempo real e decisões rápidas. Esse ritmo pode dificultar a pausa
+            antes de gastar.
+          </p>
+        )}
+        {config?.goals.length ? (
+          <blockquote>
+            Você ativou este modo por: {config.goals.join(', ')}.
+          </blockquote>
+        ) : (
+          <p class={styles.supportCopy}>
+            Respire por alguns segundos antes de decidir o próximo passo.
+          </p>
+        )}
+
+        {kind === 'warning' && (
+          <div class={styles.needSection}>
+            <h2>O que você estava procurando?</h2>
+            <div class={styles.needSelector}>
+              {(
+                [
+                  ['entertainment', 'Entretenimento'],
+                  ['information', 'Informação'],
+                  ['impulse', 'Foi só impulso'],
+                ] as const
+              ).map(([value, label]) => (
+                <Button
+                  key={value}
+                  className={need === value ? styles.selected : undefined}
+                  variant="secondary"
+                  type="button"
+                  onClick={() => setNeed(value)}
+                >
+                  {label}
+                </Button>
+              ))}
+            </div>
+            <Recommendation
+              need={need}
+              recommendationText={recommendationText}
+            />
+          </div>
+        )}
+
+        <ReflectionQuotePage />
+
+        {kind === 'warning' ? (
+          <div class={styles.warningAccess}>
+            <h2>Este site também pode ter outros usos.</h2>
+            <p>
+              Se decidir continuar, escolha um período curto. O acesso acontece
+              somente neste navegador.
+            </p>
+            <div class={styles.accessActions}>
+              {accessDurations.map((minutes) => (
+                <Button
+                  key={minutes}
+                  type="button"
+                  disabled={isLoading}
+                  onClick={() => void requestAccess(minutes)}
+                >
+                  Usar {minutes} min
+                </Button>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div class={styles.explicitBlock}>
+            <strong>Este site não oferece liberação.</strong>
+            <p>Ele faz parte da proteção explícita deste modo.</p>
+          </div>
+        )}
+        {feedback && <p role="status">{feedback}</p>}
+      </section>
+    </main>
+  );
+}

@@ -1,0 +1,53 @@
+.toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.copy {
+  display: grid;
+  gap: 3px;
+}
+
+.copy small {
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+}
+
+.root {
+  position: relative;
+  width: 46px;
+  height: 27px;
+  flex: 0 0 auto;
+  padding: 2px;
+  border: 1px solid var(--color-border-control);
+  border-radius: var(--radius-pill);
+  background: var(--color-disabled);
+  cursor: pointer;
+}
+
+.root[data-state='checked'] {
+  border-color: var(--color-action);
+  background: var(--color-action);
+}
+
+.root:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.thumb {
+  display: block;
+  width: 21px;
+  height: 21px;
+  border-radius: 50%;
+  background: #000;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 30%);
+  transform: translateX(0);
+  transition: transform 160ms ease-out;
+}
+
+.thumb[data-state='checked'] {
+  transform: translateX(19px);
+}

@@ -1,0 +1,261 @@
+import { useCallback, useEffect, useMemo, useState } from 'preact/hooks';
+import type { JSX } from 'preact';
+import type {
+  StandardBlockRequest,
+  StandardBlockResponse,
+} from '@/features/standard-block/application/standard-block.messages';
+import { STANDARD_BLOCK_MESSAGE_TYPE } from '@/features/standard-block/application/standard-block.messages.constants';
+import type { StandardBlock } from '@/features/standard-block/domain/standard-block.types';
+
+export interface UseStandardBlockModelProps {
+  sendMessage: (
+    request: StandardBlockRequest,
+  ) => Promise<StandardBlockResponse>;
+  initialHighlightedHostname?: string;
+}
+
+export function useStandardBlockModel({
+  sendMessage,
+  initialHighlightedHostname,
+}: UseStandardBlockModelProps) {
+  const [blocks, setBlocks] = useState<StandardBlock[]>([]);
+  const [hostname, setHostname] = useState('');
+  const [settingsOpen, setSettingsOpenState] = useState(false);
+  const [feedback, setFeedback] = useState('');
+  const [settingsFeedback, setSettingsFeedback] = useState('');
+  const [domainSettingsFeedback, setDomainSettingsFeedback] = useState('');
+  const [editingBlock, setEditingBlock] = useState<StandardBlock>();
+  const [isLoading, setIsLoading] = useState(true);
+  const [highlightedHostname, setHighlightedHostname] = useState<string>();
+  const [globalCooldownHours, setGlobalCooldownHours] = useState('1');
+  const blockRows = useMemo(
+    () => createStandardBlockRows(blocks, globalCooldownHours),
+    [blocks, globalCooldownHours],
+  );
+
+  const loadBlocks = useCallback(async () => {
+    setIsLoading(true);
+    const response = await sendMessage({
+      type: STANDARD_BLOCK_MESSAGE_TYPE.settings,
+    });
+
+    if (response.ok && 'blocks' in response) {
+      setBlocks(response.blocks);
+      if (
+        initialHighlightedHostname &&
+        response.blocks.some(
+          (block) => block.hostname === initialHighlightedHostname,
+        )
+      ) {
+        setHighlightedHostname(initialHighlightedHostname);
+      }
+      if ('settings' in response) {
+        setGlobalCooldownHours(
+          String(response.settings.globalCooldownMilliseconds / 3_600_000),
+        );
+      }
+      setFeedback('');
+    } else {
+      setFeedback(
+        response.ok ? 'Resposta inesperada da extensão.' : response.message,
+      );
+    }
+
+    setIsLoading(false);
+  }, [initialHighlightedHostname, sendMessage]);
+
+  useEffect(() => {
+    void loadBlocks();
+  }, [loadBlocks]);
+
+  useEffect(() => {
+    if (!highlightedHostname) return;
+    const timeout = window.setTimeout(
+      () => setHighlightedHostname(undefined),
+      1200,
+    );
+    return () => window.clearTimeout(timeout);
+  }, [highlightedHostname]);
+
+  function setSettingsOpen(open: boolean) {
+    setSettingsOpenState(open);
+    if (open) setSettingsFeedback('');
+  }
+
+  function openDomainSettings(block: StandardBlock) {
+    setDomainSettingsFeedback('');
+    setEditingBlock(block);
+  }
+
+  function closeDomainSettings() {
+    setEditingBlock(undefined);
+    setDomainSettingsFeedback('');
+  }
+
+  async function addBlock(event: JSX.TargetedSubmitEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setIsLoading(true);
+
+    const response = await sendMessage({
+      type: STANDARD_BLOCK_MESSAGE_TYPE.add,
+      hostname,
+    });
+
+    if (response.ok && 'blocks' in response) {
+      const added = findAddedHostname(blocks, response.blocks);
+      setBlocks(response.blocks);
+      setHighlightedHostname(added);
+      setHostname('');
+      setFeedback('Domínio bloqueado.');
+    } else {
+      setFeedback(
+        response.ok ? 'Resposta inesperada da extensão.' : response.message,
+      );
+    }
+
+    setIsLoading(false);
+  }
+
+  async function removeBlock(block: StandardBlock) {
+    setIsLoading(true);
+    const response = await sendMessage({
+      type: STANDARD_BLOCK_MESSAGE_TYPE.remove,
+      hostname: block.hostname,
+    });
+
+    if (response.ok && 'blocks' in response) {
+      setBlocks(response.blocks);
+      setFeedback('Domínio removido dos bloqueios padrão.');
+    } else {
+      setFeedback(
+        response.ok ? 'Resposta inesperada da extensão.' : response.message,
+      );
+    }
+
+    setIsLoading(false);
+  }
+
+  async function saveGlobalCooldown(
+    event: JSX.TargetedSubmitEvent<HTMLFormElement>,
+  ) {
+    event.preventDefault();
+    setIsLoading(true);
+    const response = await sendMessage({
+      type: STANDARD_BLOCK_MESSAGE_TYPE.updateSettings,
+      globalCooldownMilliseconds: Number(globalCooldownHours) * 3_600_000,
+    });
+    if (response.ok && 'settings' in response) {
+      setBlocks(response.blocks);
+      setSettingsFeedback('Tempo de espera atualizado.');
+    } else
+      setSettingsFeedback(
+        response.ok ? 'Resposta inesperada da extensão.' : response.message,
+      );
+    setIsLoading(false);
+  }
+
+  async function saveDomainCooldown(
+    event: JSX.TargetedSubmitEvent<HTMLFormElement>,
+  ) {
+    event.preventDefault();
+    if (!editingBlock) return;
+    const form = new FormData(event.currentTarget);
+    const value = readFormText(form, 'cooldownHours').trim();
+    setIsLoading(true);
+    const response = await sendMessage({
+      type: STANDARD_BLOCK_MESSAGE_TYPE.updateDomainCooldown,
+      hostname: editingBlock.hostname,
+      cooldownMilliseconds: value ? Number(value) * 3_600_000 : null,
+    });
+    if (response.ok && 'blocks' in response) {
+      setBlocks(response.blocks);
+      setEditingBlock(undefined);
+      setFeedback(
+        value
+          ? 'Cooldown específico atualizado.'
+          : 'O domínio voltou a usar o cooldown global.',
+      );
+    } else
+      setDomainSettingsFeedback(
+        response.ok ? 'Resposta inesperada da extensão.' : response.message,
+      );
+    setIsLoading(false);
+  }
+
+  async function addSubdomainException(
+    block: StandardBlock,
+    event: JSX.TargetedSubmitEvent<HTMLFormElement>,
+  ) {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    const subdomain = readFormText(form, 'subdomain');
+    setIsLoading(true);
+    const response = await sendMessage({
+      type: STANDARD_BLOCK_MESSAGE_TYPE.addSubdomainException,
+      hostname: block.hostname,
+      subdomain,
+    });
+    if (response.ok && 'blocks' in response) {
+      setBlocks(response.blocks);
+      event.currentTarget.reset();
+      setFeedback(
+        'Subdomínio liberado. O domínio principal continua bloqueado.',
+      );
+    } else
+      setFeedback(
+        response.ok ? 'Resposta inesperada da extensão.' : response.message,
+      );
+    setIsLoading(false);
+  }
+
+  return {
+    settingsOpen,
+    setSettingsOpen,
+    blocks,
+    blockRows,
+    hostname,
+    feedback,
+    settingsFeedback,
+    domainSettingsFeedback,
+    editingBlock,
+    isLoading,
+    highlightedHostname,
+    globalCooldownHours,
+    setHostname,
+    setGlobalCooldownHours,
+    addBlock,
+    removeBlock,
+    openDomainSettings,
+    closeDomainSettings,
+    saveGlobalCooldown,
+    saveDomainCooldown,
+    addSubdomainException,
+  };
+}
+
+export function findAddedHostname(
+  previous: readonly StandardBlock[],
+  next: readonly StandardBlock[],
+): string | undefined {
+  const previousHostnames = new Set(previous.map((block) => block.hostname));
+  return next.find((block) => !previousHostnames.has(block.hostname))?.hostname;
+}
+
+export type StandardBlockModel = ReturnType<typeof useStandardBlockModel>;
+
+export function createStandardBlockRows(
+  blocks: StandardBlock[],
+  globalCooldownHours: string,
+) {
+  return blocks.map((block) => ({
+    block,
+    cooldownLabel: block.cooldownMilliseconds
+      ? `espera própria de ${block.cooldownMilliseconds / 3_600_000} h`
+      : `espera geral de ${globalCooldownHours} h`,
+  }));
+}
+
+function readFormText(form: FormData, field: string): string {
+  const value = form.get(field);
+  return typeof value === 'string' ? value : '';
+}
