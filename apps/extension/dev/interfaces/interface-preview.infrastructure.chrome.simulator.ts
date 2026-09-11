@@ -67,6 +67,21 @@ let activityEvents: ActivityEvent[] = createActivityEvents();
 let globalCooldownMilliseconds = 3_600_000;
 
 export function installChromeSimulator(): void {
+  const parameters = new URLSearchParams(globalThis.location.search);
+  const previewHostname = parameters.get('hostname');
+  if (
+    parameters.get('mode') === 'standard' &&
+    previewHostname &&
+    !standardBlocks.some((block) => block.hostname === previewHostname)
+  ) {
+    standardBlocks.push({
+      hostname: previewHostname as StandardBlock['hostname'],
+      ruleId: nextRuleId++,
+      createdAt: currentTime,
+      allowedSubdomains: [],
+      temporaryAccess: { usedMinutes: 0 },
+    });
+  }
   const preferences: Record<string, unknown> = {
     [REFLECTIONS_STORAGE_KEY]: true,
   };

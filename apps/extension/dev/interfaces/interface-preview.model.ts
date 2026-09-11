@@ -166,14 +166,18 @@ export function useInterfacePreviewModel() {
   const [selectedId, setSelectedId] =
     useState<InterfacePreviewId>('popup-outside');
   const [reloadKey, setReloadKey] = useState(0);
+  const [commitmentOverride, setCommitmentOverride] = useState<string>();
   const selectedPreview =
     interfacePreviewOptions.find((preview) => preview.id === selectedId) ??
     interfacePreviewOptions[0];
   const frameUrl = useMemo(() => {
     const parameters = new URLSearchParams(selectedPreview.parameters);
+    if (commitmentOverride && 'commitment' in selectedPreview.parameters) {
+      parameters.set('commitment', commitmentOverride);
+    }
     parameters.set('reload', String(reloadKey));
     return `/dev/interfaces/frame/index.html?${parameters.toString()}`;
-  }, [reloadKey, selectedPreview]);
+  }, [reloadKey, selectedPreview, commitmentOverride]);
 
   function selectPreview(
     event: JSX.TargetedEvent<HTMLSelectElement, Event>,
@@ -181,7 +185,10 @@ export function useInterfacePreviewModel() {
     const preview = interfacePreviewOptions.find(
       (item) => item.id === event.currentTarget.value,
     );
-    if (preview) setSelectedId(preview.id);
+    if (preview) {
+      setSelectedId(preview.id);
+      setCommitmentOverride(undefined);
+    }
   }
 
   function reloadPreview(): void {
@@ -189,6 +196,14 @@ export function useInterfacePreviewModel() {
   }
 
   return {
+    commitmentState:
+      'commitment' in selectedPreview.parameters
+        ? (commitmentOverride ?? selectedPreview.parameters.commitment)
+        : undefined,
+    setCommitmentState: (value: string) => {
+      setCommitmentOverride(value);
+      setReloadKey((key) => key + 1);
+    },
     frameHeight: selectedPreview.height,
     frameTitle: selectedPreview.label,
     frameUrl,

@@ -12,6 +12,8 @@ export function InterfacePreviewView({
   reloadPreview,
   selectedId,
   selectPreview,
+  commitmentState,
+  setCommitmentState,
 }: InterfacePreviewModel) {
   return (
     <main class={styles.page}>
@@ -30,6 +32,22 @@ export function InterfacePreviewView({
             ))}
           </select>
         </label>
+        {commitmentState && (
+          <label class={styles.selector}>
+            <span>Estado simulado</span>
+            <select
+              value={commitmentState}
+              onChange={(event) =>
+                setCommitmentState(event.currentTarget.value)
+              }
+            >
+              <option value="inactive">
+                Sem compromisso — mostrar formulário
+              </option>
+              <option value="ongoing">Compromisso ativo</option>
+            </select>
+          </label>
+        )}
         <button type="button" onClick={reloadPreview}>
           Reiniciar interface
         </button>
