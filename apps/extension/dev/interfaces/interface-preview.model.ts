@@ -78,16 +78,6 @@ const interfacePreviewOptions = [
     height: 820,
   },
   {
-    id: 'settings-activity',
-    label: 'Configurações: atividade',
-    parameters: {
-      interface: INTERFACE_PREVIEW_NAME.settings,
-      section: 'activity',
-    },
-    width: 1280,
-    height: 820,
-  },
-  {
     id: 'blocked-standard',
     label: 'Bloqueio padrão: acesso disponível',
     parameters: {

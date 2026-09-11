@@ -4,12 +4,10 @@ import { Button } from '@/shared/ui/components/button';
 import { PageBrand } from '@/shared/ui/components/page-brand';
 import styles from './anti-mode.blocked.module.css';
 import { Recommendation } from './components/recommendation';
-import { ReflectionForm } from './components/reflection-form';
 
 export function AntiModeBlockedView(props: AntiModeBlockedModel) {
   const {
     accessDurations,
-    feelingOptions,
     kind,
     mode,
     config,
@@ -76,14 +74,12 @@ export function AntiModeBlockedView(props: AntiModeBlockedModel) {
 
         <ReflectionQuotePage />
 
-        <ReflectionForm {...props} feelingOptions={feelingOptions} />
-
         {kind === 'warning' ? (
           <div class={styles.warningAccess}>
             <h2>Este site também pode ter outros usos.</h2>
             <p>
-              Se decidir continuar, escolha um período curto. Cada decisão fica
-              registrada somente no seu histórico local.
+              Se decidir continuar, escolha um período curto. O acesso acontece
+              somente neste navegador.
             </p>
             <div class={styles.accessActions}>
               {accessDurations.map((minutes) => (

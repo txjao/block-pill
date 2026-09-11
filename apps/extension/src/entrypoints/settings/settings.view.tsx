@@ -1,5 +1,4 @@
 import type { useSettingsModel } from './settings.model';
-import { ActivityDashboardPage } from '@/features/activity';
 import { AntiModePage } from '@/features/anti-mode';
 import { PermanentBlockPage } from '@/features/permanent-block';
 import { StandardBlockPage } from '@/features/standard-block';
@@ -167,11 +166,6 @@ export function SettingsView(props: SettingsModel) {
             </section>
           ))}
         {section === 'reflections' && <ReflectionsPage />}
-        {section === 'activity' && (
-          <div class={styles.legacyActivity}>
-            <ActivityDashboardPage />
-          </div>
-        )}
       </section>
     </main>
   );

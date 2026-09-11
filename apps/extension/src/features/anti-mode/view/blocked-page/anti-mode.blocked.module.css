@@ -39,7 +39,6 @@
 }
 
 .needSection,
-.reflectionForm,
 .searchAlternative,
 .warningAccess,
 .explicitBlock,
@@ -58,64 +57,10 @@
   margin-top: 22px;
 }
 
-.selected.selected,
-.feelingOption.selected {
+.selected.selected {
   color: var(--color-text);
   border-color: var(--color-action);
   background: var(--color-danger-surface);
-}
-
-.reflectionForm {
-  display: grid;
-  gap: 14px;
-}
-
-.reflectionForm :global(.interactive-hover-button-wrapper) {
-  width: 100%;
-}
-
-.reflectionSaveButton.reflectionSaveButton {
-  --interactive-button-background: var(--color-surface);
-  --interactive-button-foreground: var(--color-text);
-  --interactive-button-primary: var(--color-button-primary);
-  border-color: var(--color-border-control);
-  border-radius: var(--radius-control);
-}
-
-.feelingGrid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
-}
-
-.feelingOption {
-  display: flex;
-  min-height: 70px;
-  align-items: center;
-  gap: 9px;
-  padding: 10px;
-  border: 1px solid var(--color-border-medium);
-  border-radius: var(--radius-surface);
-  cursor: pointer;
-}
-
-.feelingOption:hover,
-.feelingOption:focus-within {
-  border-color: var(--color-action);
-  background: var(--color-danger-surface);
-}
-
-.feelingEmoji {
-  font-size: 1.55rem;
-}
-
-.visuallyHidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
 }
 
 .searchAlternative {
@@ -126,8 +71,7 @@
   margin-top: 5px;
 }
 
-.searchAlternative input,
-.reflectionForm textarea {
+.searchAlternative input {
   width: 100%;
   min-width: 0;
   min-height: 46px;
@@ -136,11 +80,6 @@
   border-radius: var(--radius-control);
   color: var(--color-text);
   background: var(--color-surface);
-}
-
-.reflectionForm textarea {
-  min-height: 92px;
-  resize: none;
 }
 
 .formRow {
@@ -164,10 +103,6 @@
   .page {
     width: min(100% - 24px, 1040px);
     padding-top: 20px;
-  }
-
-  .feelingGrid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 

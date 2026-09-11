@@ -1,9 +1,4 @@
 import { useEffect, useState } from 'preact/hooks';
-import { ACTIVITY_MESSAGE_TYPE } from '@/features/activity';
-import type {
-  ActivityRequest,
-  ActivityResponse,
-} from '@/features/activity/application/activity.messages';
 import { ANTI_MODE_MESSAGE_TYPE } from '@/features/anti-mode/application/anti-mode.messages.constants';
 import type {
   AntiModeRequest,
@@ -18,21 +13,11 @@ import type {
 export type AntiModeNeed = 'entertainment' | 'information' | 'impulse';
 
 const accessDurations = [1, 5, 15] as const;
-const feelingOptions = [
-  ['tristeza', '😔'],
-  ['raiva', '😠'],
-  ['frustração', '😣'],
-  ['ansiedade', '😰'],
-  ['solidão', '🫥'],
-  ['impulso externo', '⚡'],
-] as const;
-
 export interface UseAntiModeBlockedModelProps {
   hostname: string | null;
   kind: string | null;
   mode: string | null;
   navigate: (url: string) => void;
-  sendActivityMessage: (request: ActivityRequest) => Promise<ActivityResponse>;
   sendMessage: (request: AntiModeRequest) => Promise<AntiModeResponse>;
 }
 
@@ -57,7 +42,6 @@ export function useAntiModeBlockedModel({
   kind: requestedKind,
   mode: requestedMode,
   navigate,
-  sendActivityMessage,
   sendMessage,
 }: UseAntiModeBlockedModelProps) {
   const mode: AntiModeId =
@@ -65,8 +49,6 @@ export function useAntiModeBlockedModel({
   const hostname = requestedHostname ?? '';
   const kind = requestedKind === 'warning' ? 'warning' : 'explicit';
   const [config, setConfig] = useState<AntiModeConfig>();
-  const [feelings, setFeelings] = useState<string[]>([]);
-  const [reason, setReason] = useState('');
   const [need, setNeed] = useState<'entertainment' | 'information' | 'impulse'>(
     'impulse',
   );
@@ -88,30 +70,6 @@ export function useAntiModeBlockedModel({
     void load();
   }, [hostname, mode, sendMessage]);
 
-  function toggleFeeling(feeling: string): void {
-    setFeelings((current) =>
-      current.includes(feeling)
-        ? current.filter((item) => item !== feeling)
-        : [...current, feeling],
-    );
-  }
-
-  async function saveReflection(): Promise<void> {
-    if (!hostname) return;
-    const response = await sendActivityMessage({
-      type: ACTIVITY_MESSAGE_TYPE.record,
-      source: mode,
-      kind: 'reflection',
-      hostname,
-      path: '/',
-      feelings,
-      reason,
-    });
-    setFeedback(
-      response.ok ? 'Relato salvo somente neste navegador.' : response.message,
-    );
-  }
-
   async function requestAccess(minutes: AntiAccessMinutes): Promise<void> {
     setIsLoading(true);
     const response = await sendMessage({
@@ -121,21 +79,6 @@ export function useAntiModeBlockedModel({
       minutes,
     });
     if (response.ok && 'configs' in response) {
-      const matchingModes = response.configs.filter(
-        (item) => item.enabled && item.warningDomains.includes(hostname),
-      );
-      await Promise.all(
-        matchingModes.map((item) =>
-          sendActivityMessage({
-            type: ACTIVITY_MESSAGE_TYPE.record,
-            source: item.id,
-            kind: 'access-granted',
-            hostname,
-            path: '/',
-            durationMinutes: minutes,
-          }),
-        ),
-      );
       navigate(`https://${hostname}`);
       return;
     }
@@ -145,21 +88,15 @@ export function useAntiModeBlockedModel({
 
   return {
     accessDurations,
-    feelingOptions,
     mode,
     hostname,
     kind,
     config,
-    feelings,
-    reason,
     need,
     feedback,
     isLoading,
     recommendationText: getRecommendationText(need, config?.hobbies ?? []),
-    setReason,
     setNeed,
-    toggleFeeling,
-    saveReflection,
     requestAccess,
     title:
       mode === 'anti-porn'

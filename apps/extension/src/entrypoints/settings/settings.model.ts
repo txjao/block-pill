@@ -1,13 +1,12 @@
 import { useState } from 'preact/hooks';
 import type { AntiModeId } from '@/features/anti-mode';
 
-export type SettingsSection = 'blocking' | 'anti' | 'activity' | 'reflections';
+export type SettingsSection = 'blocking' | 'anti' | 'reflections';
 export type BlocksTab = 'flexible' | 'permanent';
 
 const settingsSections = [
   { id: 'blocking', label: 'Bloqueios', hint: 'Flexíveis e permanentes' },
   { id: 'anti', label: 'Modos anti', hint: 'Compromissos de proteção' },
-  { id: 'activity', label: 'Atividade', hint: 'Registros locais' },
   { id: 'reflections', label: 'Reflexões', hint: 'Mensagens para suas pausas' },
 ] as const;
 

@@ -1,4 +1,3 @@
-import { ActivityService, ChromeActivityRepository } from '@/features/activity';
 import {
   AntiModeController,
   AntiModeService,
@@ -22,7 +21,6 @@ import type { Clock } from '@/shared/current-time/domain';
 import { systemClock } from '@/shared/current-time/infrastructure';
 
 export interface ChromeBrowserContext {
-  activity: ActivityService;
   antiMode: AntiModeController;
   clock: Clock;
   permanentBlock: PermanentBlockController;
@@ -47,12 +45,6 @@ export function createChromeBrowserContext(): ChromeBrowserContext {
     ),
   );
 
-  const activity = new ActivityService(
-    new ChromeActivityRepository(),
-    systemClock,
-    () => crypto.randomUUID(),
-  );
-
   const antiMode = new AntiModeController(
     new AntiModeService(
       new ChromeAntiModeRepository(),
@@ -62,7 +54,6 @@ export function createChromeBrowserContext(): ChromeBrowserContext {
   );
 
   return {
-    activity,
     antiMode,
     clock: systemClock,
     permanentBlock,

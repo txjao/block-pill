@@ -37,7 +37,6 @@ features/
 ├── anti-mode/       # motor compartilhado dos compromissos
 ├── anti-porn/       # dados específicos da categoria
 ├── anti-bet/        # dados específicos da categoria
-└── activity/        # histórico local e dashboard
 ```
 
 Pastas vazias não são criadas antecipadamente. O motor `anti-mode` concentra as
@@ -252,7 +251,6 @@ navegações ou formatos de mensagem específicos.
 
 ```text
 browser/chrome/
-├── activity/register-activity.ts
 ├── anti-mode/register-anti-mode.ts
 ├── permanent-block/register-permanent-block.ts
 ├── standard-block/register-standard-block.ts

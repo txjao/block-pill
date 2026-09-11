@@ -1,8 +1,4 @@
 import type {
-  ActivityRequest,
-  ActivityResponse,
-} from '@/features/activity/application/activity.messages';
-import type {
   AntiModeRequest,
   AntiModeResponse,
 } from '@/features/anti-mode/application/anti-mode.messages';
@@ -12,21 +8,6 @@ import { useMemo } from 'preact/hooks';
 
 function navigate(url: string): void {
   window.location.assign(url);
-}
-
-async function sendActivityMessage(
-  request: ActivityRequest,
-): Promise<ActivityResponse> {
-  try {
-    return await chrome.runtime.sendMessage<ActivityRequest, ActivityResponse>(
-      request,
-    );
-  } catch {
-    return {
-      ok: false,
-      message: 'Não foi possível atualizar o histórico local.',
-    };
-  }
 }
 
 async function sendMessage(
@@ -51,7 +32,6 @@ export function AntiModeBlockedPage() {
     kind: parameters.get('kind'),
     mode: parameters.get('mode'),
     navigate,
-    sendActivityMessage,
     sendMessage,
   });
   return <AntiModeBlockedView {...model} />;

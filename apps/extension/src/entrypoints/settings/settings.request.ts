@@ -33,9 +33,7 @@ export function readSettingsRequest(search: string): SettingsRequest {
 }
 
 function readSection(value: string | null): SettingsSection {
-  return value === 'anti' || value === 'activity' || value === 'reflections'
-    ? value
-    : 'blocking';
+  return value === 'anti' || value === 'reflections' ? value : 'blocking';
 }
 
 function readMode(value: string | null): AntiModeId | undefined {

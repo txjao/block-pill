@@ -205,10 +205,6 @@
   color: var(--color-text-secondary);
 }
 
-.legacyActivity {
-  isolation: isolate;
-}
-
 @media (max-width: 900px) {
   .shell {
     display: block;

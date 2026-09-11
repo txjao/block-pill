@@ -1,4 +1,3 @@
-import { ACTIVITY_MESSAGE_PREFIX } from '@/features/activity';
 import {
   ANTI_MODE_MESSAGE_PREFIX,
   INCOGNITO_MESSAGE_PREFIX,
@@ -13,7 +12,6 @@ export type ChromeMessageHandler = (
 ) => boolean;
 
 export interface ChromeMessageHandlers {
-  activity: ChromeMessageHandler;
   antiMode: ChromeMessageHandler;
   permanentBlock: ChromeMessageHandler;
   standardBlock: ChromeMessageHandler;
@@ -28,8 +26,6 @@ export function registerChromeMessageRouter(
         return handlers.standardBlock(message, sender, sendResponse);
       case PERMANENT_BLOCK_MESSAGE_PREFIX:
         return handlers.permanentBlock(message, sender, sendResponse);
-      case ACTIVITY_MESSAGE_PREFIX:
-        return handlers.activity(message, sender, sendResponse);
       case ANTI_MODE_MESSAGE_PREFIX:
       case INCOGNITO_MESSAGE_PREFIX:
         return handlers.antiMode(message, sender, sendResponse);

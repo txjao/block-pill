@@ -1,8 +1,3 @@
-import {
-  ACTIVITY_MESSAGE_PREFIX,
-  ACTIVITY_MESSAGE_TYPE,
-} from '@/features/activity/application/activity.messages.constants';
-import type { ActivityEvent } from '@/features/activity/domain/activity.types';
 import { REFLECTIONS_STORAGE_KEY } from '@/features/reflections/domain/reflections.constants';
 import {
   ANTI_MODE_MESSAGE_TYPE,
@@ -63,7 +58,6 @@ let antiModeConfigs: AntiModeConfig[] = [
     ['cozinhar'],
   ),
 ];
-let activityEvents: ActivityEvent[] = createActivityEvents();
 let globalCooldownMilliseconds = 3_600_000;
 
 export function installChromeSimulator(): void {
@@ -142,10 +136,6 @@ function dispatchMessage(message: unknown): unknown {
   ) {
     return handleAntiModeMessage(message);
   }
-  if (message.type.startsWith(ACTIVITY_MESSAGE_PREFIX)) {
-    return handleActivityMessage(message);
-  }
-
   return createErrorResponse('Esta mensagem não é suportada pelo simulador.');
 }
 
@@ -355,43 +345,6 @@ function handleAntiModeMessage(message: PreviewMessage): unknown {
   return createErrorResponse('Esta operação do modo anti não está simulada.');
 }
 
-function handleActivityMessage(message: PreviewMessage): unknown {
-  if (message.type === ACTIVITY_MESSAGE_TYPE.record) {
-    const source = readActivitySource(message.source);
-    const kind = readActivityKind(message.kind);
-    const hostname = readString(message.hostname);
-    if (!source || !kind || !hostname) {
-      return createErrorResponse('A atividade simulada é inválida.');
-    }
-    activityEvents = [
-      ...activityEvents,
-      {
-        id: crypto.randomUUID(),
-        source,
-        kind,
-        hostname,
-        path: readString(message.path) || '/',
-        at: Date.now(),
-        durationMinutes: readActivityDuration(message.durationMinutes),
-        feelings: readStringArray(message.feelings),
-        reason: readString(message.reason) || undefined,
-      },
-    ];
-  } else if (message.type === ACTIVITY_MESSAGE_TYPE.remove) {
-    const source = readString(message.source);
-    const hostname = readString(message.hostname);
-    activityEvents = activityEvents.filter(
-      (event) =>
-        (source && event.source !== source) ||
-        (hostname && event.hostname !== hostname),
-    );
-  } else if (message.type !== ACTIVITY_MESSAGE_TYPE.list) {
-    return createErrorResponse('Esta operação de atividade não está simulada.');
-  }
-
-  return { ok: true, events: activityEvents };
-}
-
 function createStandardBlockSnapshot(
   hostname: string,
   forcedState?: StandardBlockSnapshot['status'],
@@ -450,45 +403,6 @@ function createAntiModeConfig(
   };
 }
 
-function createActivityEvents(): ActivityEvent[] {
-  return [
-    {
-      id: 'standard-created',
-      source: 'standard',
-      kind: 'created',
-      hostname: 'video.example',
-      path: '/',
-      at: currentTime - 12 * 86_400_000,
-    },
-    {
-      id: 'standard-attempt',
-      source: 'standard',
-      kind: 'attempt',
-      hostname: 'video.example',
-      path: '/watch',
-      at: currentTime - 3_600_000,
-    },
-    {
-      id: 'anti-reflection',
-      source: 'anti-porn',
-      kind: 'reflection',
-      hostname: 'adult.example',
-      path: '/',
-      at: currentTime - 86_400_000,
-      feelings: ['ansiedade', 'impulso externo'],
-      reason: 'Eu estava procurando uma distração rápida.',
-    },
-    {
-      id: 'anti-bet-attempt',
-      source: 'anti-bet',
-      kind: 'attempt',
-      hostname: 'sports.example',
-      path: '/',
-      at: currentTime - 7_200_000,
-    },
-  ];
-}
-
 interface PreviewMessage extends Record<string, unknown> {
   type: string;
 }
@@ -520,32 +434,6 @@ function readStringArray(value: unknown): string[] {
 
 function readAntiModeId(value: unknown): AntiModeId | undefined {
   return value === 'anti-porn' || value === 'anti-bet' ? value : undefined;
-}
-
-function readActivitySource(
-  value: unknown,
-): ActivityEvent['source'] | undefined {
-  return value === 'standard' ||
-    value === 'permanent' ||
-    value === 'anti-porn' ||
-    value === 'anti-bet'
-    ? value
-    : undefined;
-}
-
-function readActivityKind(value: unknown): ActivityEvent['kind'] | undefined {
-  return value === 'created' ||
-    value === 'attempt' ||
-    value === 'access-granted' ||
-    value === 'reflection'
-    ? value
-    : undefined;
-}
-
-function readActivityDuration(
-  value: unknown,
-): ActivityEvent['durationMinutes'] {
-  return value === 1 || value === 5 || value === 15 ? value : undefined;
 }
 
 function createErrorResponse(message: string) {

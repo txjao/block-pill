@@ -10,7 +10,7 @@ import {
   type ParsedPermanentBlockRequest,
   type PermanentBlockResponse,
 } from '@/features/permanent-block';
-import { matchesHostname, parseHostname } from '@/shared/web-address/domain';
+import { parseHostname } from '@/shared/web-address/domain';
 
 export function registerPermanentBlock(
   context: ChromeBrowserContext,
@@ -21,12 +21,6 @@ export function registerPermanentBlock(
 
   chrome.runtime.onStartup.addListener(() => {
     void synchronizePermanentBlock(context);
-  });
-
-  chrome.webNavigation.onBeforeNavigate.addListener((details) => {
-    if (details.frameId === 0) {
-      void recordPermanentBlockNavigation(context, details.url);
-    }
   });
 
   return (message, _sender, sendResponse) => {
@@ -60,14 +54,7 @@ async function handlePermanentRequest(
     request,
   );
 
-  if (response.ok) {
-    await context.activity.record({
-      source: 'permanent',
-      kind: 'created',
-      hostname,
-      path: '/',
-    });
-  } else if (standard) {
+  if (!response.ok && standard) {
     await context.standardBlock.add(
       standard.hostname,
       standard.cooldownMilliseconds,
@@ -87,31 +74,5 @@ async function synchronizePermanentBlock(
       'Não foi possível sincronizar os bloqueios permanentes.',
       error,
     );
-  }
-}
-
-async function recordPermanentBlockNavigation(
-  context: ChromeBrowserContext,
-  value: string,
-): Promise<void> {
-  let path: string;
-
-  try {
-    path = new URL(value).pathname || '/';
-    parseHostname(value);
-  } catch {
-    return;
-  }
-
-  const blocks = await context.permanentBlock.list();
-  for (const block of blocks) {
-    if (matchesHostname(value, block.hostname)) {
-      await context.activity.record({
-        source: 'permanent',
-        kind: 'attempt',
-        hostname: block.hostname,
-        path,
-      });
-    }
   }
 }

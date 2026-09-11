@@ -147,8 +147,8 @@ levantamento dessas regras. Vitest permanece como executor dos testes existentes
 1. Sem autorização anônima, tente ativar cada modo e confirme o bloqueio da ação.
 2. Conceda a autorização em `chrome://extensions` e ative um compromisso de um dia.
 3. Ative os dois modos simultaneamente e confirme dados independentes.
-4. Ative o segundo modo importando objetivos/hobbies e confirme que eventos e
-   relatos não foram copiados.
+4. Ative o segundo modo importando objetivos/hobbies e confirme que apenas os
+   dados de perfil selecionados foram copiados.
 5. Teste duração de 1, 7, 31, 366 e 732 dias.
 6. Teste valores customizados em dias, meses e anos, incluindo os limites.
 7. Confirme que um domínio explícito não oferece liberação.
@@ -176,25 +176,11 @@ levantamento dessas regras. Vitest permanece como executor dos testes existentes
 
 ### Reflexões e recomendações
 
-1. Selecione múltiplos sentimentos e escreva um relato.
-2. Recarregue a página e confirme o registro no dashboard.
-3. Teste as opções entretenimento, informação e impulso.
-4. Confirme que entretenimento sugere atividades fora da tela.
-5. Confirme que informação abre uma pesquisa Google com o texto digitado.
-6. Confirme que impulso prioriza hobbies cadastrados.
-7. Ative conhecimento filosófico e confirme a exibição da frase.
-
-### Dashboard e privacidade
-
-1. Confirme tentativas, liberações, último acesso, última tentativa e data inicial.
-2. Confirme relatórios independentes por modo e por domínio.
-3. Confirme sentimentos recorrentes e detalhes de cada reflexão.
-4. Navegue para uma URL com query e fragmento sensíveis; inspecione
-   `chrome.storage.local` e confirme que apenas domínio e caminho foram salvos.
-5. Exclua registros por domínio, por modo e em conjunto após marcar a confirmação;
-   confirme em todos os casos que os bloqueios permanecem.
-6. Desinstale a extensão, reinstale e confirme que nenhum dado anterior reaparece.
-7. Monitore a aba Network do service worker e confirme ausência de envio de dados.
+1. Teste as opções entretenimento, informação e impulso.
+2. Confirme que entretenimento sugere atividades fora da tela.
+3. Confirme que informação abre uma pesquisa Google com o texto digitado.
+4. Confirme que impulso prioriza hobbies cadastrados.
+5. Ative conhecimento filosófico e confirme a exibição da frase.
 
 ### Acessibilidade e interface
 

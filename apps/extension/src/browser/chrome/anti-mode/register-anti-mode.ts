@@ -12,7 +12,7 @@ import {
   type AntiModeResponse,
   type ParsedAntiModeRequest,
 } from '@/features/anti-mode';
-import { matchesHostname, parseHostname } from '@/shared/web-address/domain';
+import { matchesHostname } from '@/shared/web-address/domain';
 
 const INCOGNITO_CONTROL_STORAGE_KEY = 'incognitoControl';
 
@@ -36,12 +36,6 @@ export function registerAntiMode(
   chrome.windows.onCreated.addListener((window) => {
     if (window.incognito) {
       void closeIncognitoWindowWhenProtected(context, window.id);
-    }
-  });
-
-  chrome.webNavigation.onBeforeNavigate.addListener((details) => {
-    if (details.frameId === 0) {
-      void recordAntiModeNavigation(context, details.url);
     }
   });
 
@@ -135,40 +129,6 @@ async function synchronizeAntiMode(
     );
   } catch (error) {
     console.error('Não foi possível sincronizar os modos anti.', error);
-  }
-}
-
-async function recordAntiModeNavigation(
-  context: ChromeBrowserContext,
-  value: string,
-): Promise<void> {
-  let path: string;
-
-  try {
-    path = new URL(value).pathname || '/';
-    parseHostname(value);
-  } catch {
-    return;
-  }
-
-  const configs = await context.antiMode.list();
-  for (const config of configs) {
-    if (!config.enabled) continue;
-
-    const matched = [...config.domains, ...config.warningDomains].find(
-      (domain) => matchesHostname(value, domain),
-    );
-    if (
-      matched &&
-      (config.accessUntilByHostname[matched] ?? 0) <= context.clock.now()
-    ) {
-      await context.activity.record({
-        source: config.id,
-        kind: 'attempt',
-        hostname: matched,
-        path,
-      });
-    }
   }
 }
 

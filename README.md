@@ -9,7 +9,7 @@ O repositório também contém a landing page pública do projeto.
 Os fluxos de bloqueio padrão, permanente, anti-pornografia e anti-aposta estão
 integrados às APIs Manifest V3. A extensão oferece liberações temporárias,
 cooldown por domínio, proteção anônima autorizada pelo usuário, reflexões locais
-e um dashboard de tentativas e progresso.
+e recomendações durante as pausas.
 
 A organização do código e as regras de dependência estão descritas em
 [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md).

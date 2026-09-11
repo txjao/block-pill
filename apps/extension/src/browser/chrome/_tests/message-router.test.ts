@@ -1,5 +1,4 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { ACTIVITY_MESSAGE_TYPE } from '@/features/activity';
 import {
   ANTI_MODE_MESSAGE_TYPE,
   INCOGNITO_MESSAGE_TYPE,
@@ -28,7 +27,6 @@ describe('Chrome message router', () => {
     });
 
     handlers = {
-      activity: createHandler(),
       antiMode: createHandler(),
       permanentBlock: createHandler(),
       standardBlock: createHandler(),
@@ -39,7 +37,6 @@ describe('Chrome message router', () => {
   it.each([
     [STANDARD_BLOCK_MESSAGE_TYPE.list, 'standardBlock'],
     [PERMANENT_BLOCK_MESSAGE_TYPE.list, 'permanentBlock'],
-    [ACTIVITY_MESSAGE_TYPE.list, 'activity'],
     [ANTI_MODE_MESSAGE_TYPE.list, 'antiMode'],
     [INCOGNITO_MESSAGE_TYPE.status, 'antiMode'],
   ] as const)('direciona %s somente para %s', (type, destination) => {

@@ -76,24 +76,6 @@ async function respondToStandardBlockMessage(
         when: response.snapshot.activeUntil,
       },
     );
-    await context.activity.record({
-      source: 'standard',
-      kind: 'access-granted',
-      hostname: response.snapshot.hostname,
-      path: '/',
-      durationMinutes: request.minutes,
-    });
-  } else if (
-    request.type === STANDARD_BLOCK_MESSAGE_TYPE.add &&
-    response.ok &&
-    'blocks' in response
-  ) {
-    await context.activity.record({
-      source: 'standard',
-      kind: 'created',
-      hostname: parseHostname(request.hostname),
-      path: '/',
-    });
   }
 
   return response;
@@ -154,12 +136,8 @@ async function recordStandardNavigation(
   tabId: number,
 ): Promise<void> {
   let hostname: string;
-  let path: string;
-
   try {
-    const url = new URL(value);
     hostname = parseHostname(value);
-    path = url.pathname || '/';
   } catch {
     return;
   }
@@ -180,16 +158,6 @@ async function recordStandardNavigation(
       originalUrl: value,
     },
   });
-
-  const status = await context.standardBlock.getStatus(standard.hostname);
-  if (status.status !== 'active') {
-    await context.activity.record({
-      source: 'standard',
-      kind: 'attempt',
-      hostname: standard.hostname,
-      path,
-    });
-  }
 }
 
 async function getStandardBlockContext(
